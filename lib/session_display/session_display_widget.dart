@@ -111,7 +111,8 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
       content: new Row(
         children: [
           CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 5), child: Text("   Loading")),
+          Container(
+              margin: EdgeInsets.only(left: 5), child: Text("   Loading")),
         ],
       ),
     );
@@ -247,6 +248,37 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
         print('(VA102)${sessions![i].videoController}');
       }
     }
+  }
+
+  Future<void> loadVideo(int index) async {
+    currentSessionIndex = index;
+    tempDirPath = await getTempDirPath();
+    final String videoStorageId =
+        'video${sessions![currentSessionIndex].reference!.path}_0.mp4';
+    final String videoPlayPath = '${tempDirPath}/video.mp4';
+    print('(VA200)${videoStorageId}....${videoPlayPath}');
+    bool okVideo = await copyStorageFiletoLocal(
+      bucketId: artTheopyAIRvideosRef.path,
+      fileId: videoStorageId,
+      localPath: videoPlayPath,
+      fileKind: FileKind.video,
+    );
+/*    sessions![index].videoController =
+        VideoPlayerController.file(File(videoPlayPath),)
+          ..initialize().then((_) {
+            print('(VA202)${index},,,,${sessions![index].videoController}....${videoPlayPath}');
+            setState(() {
+              *//*  sessions![currentSessionIndex].videoController!.value.isPlaying
+                  ? sessions![currentSessionIndex].videoController!.pause()
+                  :*//*
+
+            });
+          });*/
+    sessions![index].videoController = await VideoPlayerController.file(File(videoPlayPath),);
+    await sessions![index].videoController!.initialize();
+    print('(VA201)${sessions![index].videoController}');
+
+    dumpVC();
   }
 
   Widget displaySession(SessionsRecord session, int index) {
@@ -501,41 +533,38 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                           : Icon(Icons.play_arrow)),
                   onPressed: /*(!session.videoCreated!) ? null :*/
                       () async {
-                    currentSessionIndex = index;
-                    tempDirPath = await getTempDirPath();
-                    final String videoStorageId =
-                        'video${sessions![currentSessionIndex].reference!.path}_0.mp4';
-                    final String videoPlayPath = '${tempDirPath}/video.mp4';
-                    print('(VA200)${videoStorageId}....${videoPlayPath}');
-                    bool okVideo = await copyStorageFiletoLocal(
-                      bucketId: artTheopyAIRvideosRef.path,
-                      fileId: videoStorageId,
-                      localPath: videoPlayPath,
-                      fileKind: FileKind.video,
-                    );
-                    print('(VA201)${okVideo}....${videoPlayPath}');
-                    sessions![index].videoController =
-                        VideoPlayerController.file(File(videoPlayPath))
-                          ..initialize().then((_) {
-
-                            setState(() {
-                              sessions![currentSessionIndex]
-                                  .videoController!
-                                  .value
-                                  .isPlaying
-                                  ? sessions![currentSessionIndex]
-                                  .videoController!
-                                  .pause()
-                                  : sessions![currentSessionIndex]
-                                  .videoController!
-                                  .play();
-                            });
-
+                    await loadVideo(index);
+                    print('(VA203)${index},,,,${sessions![index].videoController}');
+                    showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return StatefulBuilder(builder: (context, setState) {
+                            return AlertDialog(
+                              title: Text('Video'),
+                              content: Container(
+                                width: 400,
+                                height: 400,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 1, color: Colors.black)),
+                                child: sessions![currentSessionIndex].videoController!.value.isInitialized
+                                    ? AspectRatio(
+                                  aspectRatio: sessions![currentSessionIndex].videoController!.value.aspectRatio,
+                                  child: VideoPlayer(sessions![currentSessionIndex].videoController!),
+                                )
+                                    : Container(color: Colors.amber),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () async {
+                                    sessions![currentSessionIndex].videoController!.play();
+                                  },
+                                  child: const Text('Start'),
+                                ),
+                              ],
+                            );
                           });
-
-                    dumpVC();
-
-
+                        });
                   }),
               SizedBox(height: kIconButtonGap),
               FlutterFlowIconButton(
@@ -641,9 +670,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                           : sessions![index].videoController!.value.size.width,
                       child: (sessions![index].videoController == null)
                           ? Container()
-                          : VideoPlayer(
-                              sessions![index].videoController!,
-                            ),
+                          : Container(),
                     ),
                   ),
                 ),
@@ -883,7 +910,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                 child: Scaffold(
                     key: scaffoldKey,
                     backgroundColor: const Color(0xFFF5F5F5),
- /*                   floatingActionButton: FloatingActionButton(
+                    /*                   floatingActionButton: FloatingActionButton(
                       onPressed: () {
                         setState(() {
                           sessions![currentSessionIndex]
@@ -912,7 +939,8 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                                     : Icons.play_arrow),
                       ),
                     ),
- */                   appBar: AppBar(
+ */
+                    appBar: AppBar(
                       leading: BackButton(color: Colors.white),
                       backgroundColor: FlutterFlowTheme.of(context).primary,
                       automaticallyImplyLeading: false,

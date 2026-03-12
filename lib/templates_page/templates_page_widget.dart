@@ -328,6 +328,7 @@ class _QuestionsEditPageState extends State<QuestionsEditPage> {
                 Navigator.pop(context);
               },
             ),
+
         ],
       ),
       body: ListView.builder(
@@ -358,6 +359,7 @@ class _QuestionsEditPageState extends State<QuestionsEditPage> {
       ),
       floatingActionButton: canEdit
           ? FloatingActionButton(
+        foregroundColor: Colors.white,
               onPressed: _addQuestion,
               child: Icon(Icons.add),
               backgroundColor: FlutterFlowTheme.of(context).primary,

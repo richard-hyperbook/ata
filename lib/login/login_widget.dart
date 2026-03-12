@@ -174,85 +174,22 @@ class _LoginWidgetState extends State<LoginWidget> {
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Container(),
-                                  /*Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        */ /*#await loadCachedChaptersReadReferencesCachedHyperbookIndex(
-                                            hyperbook: tutorialHyperbook,
-                                            user: currentUser);
-                                        */ /*
-                                        toast(
-                                            context,
-                                            'Please wait while Hyperbook Tutorial loads',
-                                            ToastKind.success);
-                                        */ /*context.pushNamed(
-                                          'map_display',
-                                          queryParameters: <String, String?>{
-                                            'hyperbook': serializeParam(
-                                              localDB
-                                                  .getWorkingHyperbook()
-                                                  .reference,
-                                              ParamType.DocumentReference,
-                                            ),
-                                            'hyperbookTitle': serializeParam(
-                                              localDB
-                                                  .getWorkingHyperbook()
-                                                  .title,
-                                              ParamType.String,
-                                            ),
-                                            'hyperbookBlurb': serializeParam(
-                                              localDB
-                                                  .getWorkingHyperbook()
-                                                  .blurb,
-                                              ParamType.String,
-                                            ),
-                                          }.withoutNulls,
-                                        );*/ /*
-                                        Navigator.push(
-                                            context,
-                                            PageTransition(
-                                              type: kStandardPageTransitionType,
-                                              duration: kStandardTransitionTime,
-                                              reverseDuration:
-                                                  kStandardReverseTransitionTime,
-                                              child: LoginWidget(),
-                                            ));
-                                      },
-                                      child: Container(),
-                                      //FittedBox(child: Container(color: Colors.amber, child: Text('ArtTherapyAIR App')),)
-                                      */ /* SvgPicture.asset(
-                                        'assets/images/brush4.svg',
+                                  SizedBox(width: 100),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      /* border: Border.all(
+                                        color: Colors.red,
+                                      ),*/
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.green,
+                                    ),
+                                    child: FittedBox(
+                                      child: SvgPicture.asset(
+                                        'assets/images/paintbrush2.svg',
                                         width: logoSize,
                                         height: logoSize,
-                                      ),*/ /*
+                                      ),
                                     ),
-                                  ),*/
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child:
-                                        Container(), /*FittedBox(
-                                          fit: BoxFit.contain,
-                                          child: Text(
-                                              '\u2B05Click the\n\u2B05logo\n\u2B05to learn about\n\u2B05this app.',
-                                              overflow: TextOverflow.fade,
-                                              //   style: FlutterFlowTheme.of(context)
-                                              //      .headlineMedium,),
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize:
-                                                    MediaQuery.sizeOf(context)
-                                                                .width <
-                                                            1000
-                                                        ? (MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width <
-                                                                500
-                                                            ? 12
-                                                            : 12)
-                                                        : 20,
-                                              )))*/
                                   ),
                                   Expanded(child: Container(width: 50)),
                                   Column(
@@ -262,16 +199,19 @@ class _LoginWidgetState extends State<LoginWidget> {
                                           child: FittedBox(
                                               fit: BoxFit.contain,
                                               child: Text(
-                                                  'Art Therapy AIR\nApp',
-                                                  style:FlutterFlowTheme.of(context).headlineMedium.override(
-                                                    fontFamily: 'Rubik',
-                                                    color: Colors.white,
-                                                    fontSize: 22.0,
-                                                  ),
-                                                  overflow: TextOverflow.fade,
-                                                  //   style: FlutterFlowTheme.of(context)
-                                                  //      .headlineMedium,),
-                                                  ))),
+                                                'AIR Studio',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .headlineLarge
+                                                        .override(
+                                                          fontFamily: 'Rubik',
+                                                          color: Colors.white,
+                                                          fontSize: 22.0,
+                                                        ),
+                                                overflow: TextOverflow.fade,
+                                                //   style: FlutterFlowTheme.of(context)
+                                                //      .headlineMedium,),
+                                              ))),
                                       insertMenu(
                                           context, loginMenuDetails, setState),
                                     ],
@@ -793,7 +733,6 @@ class _LoginWidgetState extends State<LoginWidget> {
 
                                             buttonWidth: kIconButtonWidth - 50,
 
-
                                             // borderRadius: 30,
                                             // borderWidth: 1,
                                             // buttonSize: 60,
@@ -1031,10 +970,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     child: Text(
                                       '\u00a92025 Hyperbook Ltd.    ${versionNumber.toString()}',
                                       style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
+                                          .bodySmall
                                           .override(
                                             fontFamily: 'Rubik',
                                             fontWeight: FontWeight.w100,
+                                            fontSize: 15,
                                           ),
                                     ),
                                   ),
