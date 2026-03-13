@@ -48,6 +48,7 @@ import 'package:appwrite/appwrite.dart' as appwrite;
 import 'package:appwrite/models.dart' as models;
 import 'package:appwrite/enums.dart' as enums;
 // import 'package:compressor/compressor.dart';
+import '/custom_code/widgets/audio_trimmer.dart';
 
 http.Client _http = http.Client();
 
@@ -146,6 +147,41 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
     }
   }
 
+  Widget editRecordingsButton(SessionStepsRecord sessionStep, int index){
+    return  FlutterFlowIconButton(
+      showLoadingIndicator: true,
+      caption: 'Edit recordings',
+      captionFontSize: basicFontSize,
+      tooltipMessage: 'Select photo from gallery',
+      borderColor: Colors.transparent,
+      borderRadius: 0.0,
+      borderWidth: 1.0,
+      buttonSize: 40.0,
+      buttonWidth: kIconButtonWidth * 1.5,
+      icon: Icon(Icons.edit_note),
+      onPressed: () async {
+        showDialog<bool>(
+            context: context,
+            builder:
+                (BuildContext context) {
+              // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
+              //>print('(UM6)${message}')
+                  currentSessionStep = sessionStep;
+              return StatefulBuilder(
+                  builder:
+                      (context, setState) {
+                    return AlertDialog(
+                      title: Text('Edit Recording'),
+                      content: Container(
+                          width: MediaQuery.sizeOf(context).width * 0.85,
+                          child: AudioTrimmerPopup()),
+
+                    );
+                  });
+            });
+      });
+  }
+
   Widget displaySessionStep(
     SessionStepsRecord sessionStep,
     int index,
@@ -242,6 +278,9 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         setState(() => audioPath = path);
                       },
                     ),
+                    SizedBox(width: 50),
+                    editRecordingsButton(sessionStep, index),
+
                   ],
                 ),
               ),

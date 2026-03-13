@@ -268,13 +268,15 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
           ..initialize().then((_) {
             print('(VA202)${index},,,,${sessions![index].videoController}....${videoPlayPath}');
             setState(() {
-              *//*  sessions![currentSessionIndex].videoController!.value.isPlaying
+              */ /*  sessions![currentSessionIndex].videoController!.value.isPlaying
                   ? sessions![currentSessionIndex].videoController!.pause()
-                  :*//*
+                  :*/ /*
 
             });
           });*/
-    sessions![index].videoController = await VideoPlayerController.file(File(videoPlayPath),);
+    sessions![index].videoController = await VideoPlayerController.file(
+      File(videoPlayPath),
+    );
     await sessions![index].videoController!.initialize();
     print('(VA201)${sessions![index].videoController}');
 
@@ -293,7 +295,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
         margin: EdgeInsets.all(5),
         padding: EdgeInsets.all(5),
         width: MediaQuery.sizeOf(context).width * 1.0,
-        height: 600.0,
+        height: 350.0,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(16)),
           color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -518,7 +520,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
               FlutterFlowIconButton(
                   showLoadingIndicator: true,
                   caption: (sessions![index].videoCreated!)
-                      ? 'Play video'
+                      ? 'Load video'
                       : 'Video not available',
                   tooltipMessage: 'Load video',
                   borderColor: Colors.transparent,
@@ -530,11 +532,12 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                       ? Icon(Icons.local_movies)
                       : (sessions![index].videoController!.value.isPlaying
                           ? Icon(Icons.pause)
-                          : Icon(Icons.play_arrow)),
+                          : Icon(Icons.slow_motion_video)),
                   onPressed: /*(!session.videoCreated!) ? null :*/
                       () async {
                     await loadVideo(index);
-                    print('(VA203)${index},,,,${sessions![index].videoController}');
+                    print(
+                        '(VA203)${index},,,,${sessions![index].videoController}');
                     showDialog<bool>(
                         context: context,
                         builder: (BuildContext context) {
@@ -547,19 +550,49 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         width: 1, color: Colors.black)),
-                                child: sessions![currentSessionIndex].videoController!.value.isInitialized
+                                child: sessions![currentSessionIndex]
+                                        .videoController!
+                                        .value
+                                        .isInitialized
                                     ? AspectRatio(
-                                  aspectRatio: sessions![currentSessionIndex].videoController!.value.aspectRatio,
-                                  child: VideoPlayer(sessions![currentSessionIndex].videoController!),
-                                )
+                                        aspectRatio:
+                                            sessions![currentSessionIndex]
+                                                .videoController!
+                                                .value
+                                                .aspectRatio,
+                                        child: VideoPlayer(
+                                            sessions![currentSessionIndex]
+                                                .videoController!),
+                                      )
                                     : Container(color: Colors.amber),
                               ),
                               actions: [
-                                TextButton(
-                                  onPressed: () async {
-                                    sessions![currentSessionIndex].videoController!.play();
+                                FlutterFlowIconButton(
+                                  showLoadingIndicator: true,
+                                  caption: (sessions![index].videoCreated!)
+                                      ? 'Play video'
+                                      : 'Video not available',
+                                  tooltipMessage: 'Load video',
+                                  borderColor: Colors.transparent,
+                                  borderRadius: 0.0,
+                                  borderWidth: 1.0,
+                                  buttonSize: 40.0,
+                                  buttonWidth: kIconButtonWidth,
+                                  icon:
+                                      (sessions![index].videoController == null)
+                                          ? Icon(Icons.local_movies)
+                                          : (sessions![index]
+                                                  .videoController!
+                                                  .value
+                                                  .isPlaying
+                                              ? Icon(Icons.pause)
+                                              : Icon(Icons.play_arrow)),
+                                  onPressed: /*(!session.videoCreated!) ? null :*/
+                                      () async {
+                                    sessions![currentSessionIndex]
+                                        .videoController!
+                                        .play();
                                   },
-                                  child: const Text('Start'),
                                 ),
                               ],
                             );
@@ -652,8 +685,8 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                           });
                         });
                   }),
-              SizedBox(height: 100),
-              Container(
+
+              /*        Container(
                 //color: Colors.amber,
                 child: SizedBox(
                   width: MediaQuery.sizeOf(context).width * 0.9,
@@ -674,7 +707,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                     ),
                   ),
                 ),
-              ),
+              ),*/
             ]),
       ),
     );
