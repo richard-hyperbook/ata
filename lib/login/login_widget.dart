@@ -968,7 +968,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     alignment:
                                         const AlignmentDirectional(0.95, 0.0),
                                     child: Text(
-                                      '\u00a92025 Hyperbook Ltd.    ${versionNumber.toString()}',
+                                      '\u00a92026 Hyperbook Ltd.    ${versionNumber.toString()}  ',
                                       style: FlutterFlowTheme.of(context)
                                           .bodySmall
                                           .override(

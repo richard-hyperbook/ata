@@ -178,7 +178,8 @@ class _AudioTrimWaveformPanelState extends State<AudioTrimWaveformPanel>
 
   @override
   Widget build(BuildContext context) {
-    print('(AT201)${ widget.leftPaddingPx}....${widget.totalWaveformWidth},,,,${widget.waveformHeight}++++${widget.waveformHeight}');
+    print('(AT201A)${widget.leftPaddingPx}....${widget.totalWaveformWidth},,,,${widget.waveformHeight}++++${widget.waveformHeight}');
+    print('(AT201B)${widget.waveSpacing}++++${widget.scaleFactor}');
     return SizedBox(
       width: widget.availableWidth,
       height: widget.waveformHeight,

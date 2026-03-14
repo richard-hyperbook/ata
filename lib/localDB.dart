@@ -115,7 +115,8 @@ const kAttrBackupHyperbook = 'hyperbook';
 const kAttrBackupConnectedUserList = 'connectedUserList';
 const kAttrBackupChapterList = 'chapterList';
 
-const double kIconButtonWidth = 200;
+const double kSessionStepCardHeight = 430;
+const double kIconButtonWidth = 240;
 const double kIconButtonHeight = 40;
 const double kIconButtonGap = 10;
 

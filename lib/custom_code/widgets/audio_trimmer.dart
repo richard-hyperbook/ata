@@ -9,6 +9,11 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import '../../appwrite_interface.dart';
 import '/../custom_code/widgets/toast.dart';
 import '../../platform/audio_recorder_platform.dart';
+import 'package:interactive_slider/interactive_slider.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/session.dart';
+
 
 class AudioTrimmerPopup extends StatefulWidget {
   const AudioTrimmerPopup({super.key});
@@ -25,6 +30,8 @@ class _AudioTrimmerPopupState extends State<AudioTrimmerPopup>
   int? _startMs;
   int? _endMs;
   bool _isPlaying = false;
+  int _durationMsec = 0;
+  double? _durationMsecWindow;
 
   final _trimmerController = AudioTrimmerController();
 
@@ -42,17 +49,6 @@ class _AudioTrimmerPopupState extends State<AudioTrimmerPopup>
   Future<void> _pickAudio() async {
     try {
       setState(() => _isLoadingAudio = true);
-
-/*
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowMultiple: false,
-        allowedExtensions: const ['mp3', 'wav', 'm4a', 'flac', 'aac'],
-      );
-
-      if (result != null && result.files.single.path != null) {
-        final filePath = result.files.single.path!;
-*/
 
       await setMaxVersionNumbersCurrentSessionStep();
       if (currentSessionStep!.maxAudioVersion! < 1) {
@@ -76,10 +72,27 @@ class _AudioTrimmerPopupState extends State<AudioTrimmerPopup>
           localPath: localPath,
           fileKind: FileKind.audio,
         );
-         print(
-           '(AT1)${localPath}....${generateAudioStorageFilename(currentSessionStep!, currentSessionStep!.maxAudioVersion!)}',
+        Session ffmpegSession = await FFmpegKit.execute('-y -i ${localPath}');
+        print(
+           '(AT1A)${ffmpegSession.getStartTime()}....${await ffmpegSession.getEndTime()}****${generateAudioStorageFilename(currentSessionStep!, currentSessionStep!.maxAudioVersion!)}',
          );
-
+        print(await ffmpegSession.getLogs());
+        var logs = await ffmpegSession.getAllLogs();
+        String log = '';
+        for (int i = 0; i < logs.length; i++) {
+          log = log + logs[i].getMessage();
+        }
+        print('(AT1B)${log}');
+        List<String> split1 = log.split('Duration: ');
+        print("(AT1C)${split1.length}....${log.contains('Duration :')}++++${split1[1]}<<<<<<<<<<<<<<<<<");
+        List<String> split2 = split1[1].split(',');
+        print("(AT1D)${split2[0]}<<<<<<<<<<<<<<<");
+        List<String> split3 = split2[0].split(':');
+        double? hours = double.tryParse(split3[0])?? 0;
+        double? minutes = double.tryParse(split3[1])?? 0;
+        double? seconds = double.tryParse(split3[2])?? 0;
+        _durationMsec = ((((hours * 3600) + (minutes * 60) + seconds)) * 1000).toInt();
+        print("(AT1E)${_durationMsec}");
 
         // Use the controller's importFile method
         await _trimmerController.importFile(localPath);
@@ -156,8 +169,11 @@ class _AudioTrimmerPopupState extends State<AudioTrimmerPopup>
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    print('(AT5)${_durationMsecWindow}');
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -167,7 +183,7 @@ class _AudioTrimmerPopupState extends State<AudioTrimmerPopup>
             _isLoadingAudio
                 ? const Center(child: CircularProgressIndicator())
                 : AudioTrimWidget(
-                    trimWindowMs: 5000,
+                    // trimWindowMs: _durationMsecWindow?? 5000 - 100,
                     containerWidthFraction: 0.5,
                     onTap: _pickAudio,
                     trimmerController: _trimmerController,
@@ -177,15 +193,20 @@ class _AudioTrimmerPopupState extends State<AudioTrimmerPopup>
                       });
                     },
                     config: AudioTrimmerConfig(
-                      borderColor: Colors.blue,
-                      handleColor: Colors.blue,
+                      borderColor: Colors.black,
+                      handleColor: Colors.black,
                       progressColor:
-                          Colors.blueAccent.withValues(alpha: 0.7),
+                          Colors.black.withValues(alpha: 0.7),
+                      borderWidth: 2.0,
+                      tintColor: Colors.amber.withValues(alpha: 0.3),
+
+
                     ),
-                    scaleFactor: 75.0,
-                    fixedWaveColor: Colors.blue.withOpacity(0.2),
+                    scaleFactor: 350.0,
+                    fixedWaveColor: Colors.black,
                     waveSpacing: 4.0,
                     onTrimRangeChanged: _handleTrimRangeChanged,
+                    waveformHeight: 100,
                   ),
 
             // Trim range info
@@ -279,6 +300,16 @@ class _AudioTrimmerPopupState extends State<AudioTrimmerPopup>
                 ),
               ),
 
+
+            InteractiveSlider(
+              initialProgress: _durationMsec.toDouble() - 100,
+              startIcon: const Text('0'),
+              centerIcon: const Text('Duration'),
+              endIcon: Text(_durationMsec.toString()),
+              min: 0,
+              max: _durationMsec.toDouble(),
+              onChanged: (value) => setState(() => _durationMsecWindow = value),
+            ),
             // Play button
             if (_audioPath != null)
               Padding(

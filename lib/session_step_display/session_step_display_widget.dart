@@ -49,6 +49,8 @@ import 'package:appwrite/models.dart' as models;
 import 'package:appwrite/enums.dart' as enums;
 // import 'package:compressor/compressor.dart';
 import '/custom_code/widgets/audio_trimmer.dart';
+import '/custom_code/widgets/trimmer2.dart';
+
 
 http.Client _http = http.Client();
 
@@ -157,7 +159,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
       borderRadius: 0.0,
       borderWidth: 1.0,
       buttonSize: 40.0,
-      buttonWidth: kIconButtonWidth * 1.5,
+      buttonWidth: kIconButtonWidth,
       icon: Icon(Icons.edit_note),
       onPressed: () async {
         showDialog<bool>(
@@ -174,8 +176,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       title: Text('Edit Recording'),
                       content: Container(
                           width: MediaQuery.sizeOf(context).width * 0.85,
-                          child: AudioTrimmerPopup()),
-
+                          child: FileSelectorWidget(),//AudioTrimmerPopup()),
+                      )
                     );
                   });
             });
@@ -196,7 +198,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         margin: EdgeInsets.all(5),
         padding: EdgeInsets.all(5),
         width: MediaQuery.sizeOf(context).width * 1.0,
-        height: 400.0,
+        height: kSessionStepCardHeight,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(16)),
           color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -278,8 +280,6 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         setState(() => audioPath = path);
                       },
                     ),
-                    SizedBox(width: 50),
-                    editRecordingsButton(sessionStep, index),
 
                   ],
                 ),
@@ -347,6 +347,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
               children: [
                 Column(
                   children: [
+                    editRecordingsButton(sessionStep, index),
+                    SizedBox(height: kIconButtonGap),
                     FlutterFlowIconButton(
                       showLoadingIndicator: true,
                       caption: 'Select photo',
@@ -411,9 +413,29 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         var respDynamic = jsonDecode(respAccessToken.body);
                         Map<String, dynamic> respObject =
                             respDynamic as Map<String, dynamic>;
-                        setState(() {
-                          transcriptionList[index] = respObject['transcription']! as String;
-                        });
+
+                        showDialog<bool>(
+                            context: context,
+                            builder:
+                                (BuildContext context) {
+                              // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
+                              //>print('(UM6)${message}')
+                              currentSessionStep = sessionStep;
+                              return StatefulBuilder(
+                                  builder:
+                                      (context, setState) {
+                                    return AlertDialog(
+                                      title: Text('Transcription'),
+                                      content: SingleChildScrollView(
+                                        child: Container(
+                                            width: MediaQuery.sizeOf(context).width * 0.85,
+                                            child: Text( respObject['transcription']! as String, style:  FlutterFlowTheme.of(context).bodyMedium)),
+                                      ),
+
+                                    );
+                                  });
+                            });
+
 
                         print(
                           '(PQ4)${index}~~~~${respDynamic}....${respObject},,,,${transcriptionList[index]}',
