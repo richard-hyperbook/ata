@@ -43,7 +43,7 @@ import 'package:video_player/video_player.dart';
 
 // part 'appwrite_interface.g.dart';
 
-enum FileKind { audio, photo, video }
+enum FileKind { /*audio,*/ photo, video, wav, mp3 }
 
 const String _numericChars = '1234567890';
 Random _numericRnd = Random();
@@ -1116,7 +1116,7 @@ String generateAudioStorageFilename(
   SessionStepsRecord sessionStep,
   int version,
 ) {
-  return 'audio${sessionStep.reference!.path}_${version}.wav';
+  return 'mp3${sessionStep.reference!.path}_${version}.mp3';
 }
 
 String generatePhotoStorageFilename(
@@ -1715,14 +1715,20 @@ Future<bool> copyStorageFiletoLocal({
   print('(DE70A)${fileId}....${localPath}');
   String token = '';
   switch (fileKind) {
-    case FileKind.audio:
+/*    case FileKind.audio:
       token = 'audio';
-      break;
+      break;*/
     case FileKind.photo:
       token = 'photo';
       break;
     case FileKind.video:
       token = 'video';
+      break;
+    case FileKind.wav:
+      token = 'wav';
+      break;
+    case FileKind.mp3:
+      token = 'mp3';
       break;
     case null:
       break;

@@ -9,14 +9,14 @@ import '../../appwrite_interface.dart';
 
 mixin AudioRecorderMixin {
   Future<void> recordFile(AudioRecorder recorder, RecordConfig config,  String sessionStepId, int version) async {
-    final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.audio, version: version);
+    final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav, version: version);
     print('(AU10)${path}');
     await recorder.start(config, path: path);
     print('(AU11)${config}');
   }
 
   Future<void> recordStream(AudioRecorder recorder, RecordConfig config,  String sessionStepId, int version) async {
-    final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.audio, version: version);
+    final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav, version: version);
 
     final file = File(path);
     print('(AU12)${path}');
@@ -43,10 +43,10 @@ mixin AudioRecorderMixin {
     String prefix = '';
     String suffix = '';
     switch(fileKind){
-      case FileKind.audio:
+      /*case FileKind.audio:
         prefix = 'audio';
         suffix = '.wav';
-        break;
+        break;*/
       case FileKind.photo:
         prefix = 'photo';
         suffix = '.jpg';
@@ -54,6 +54,14 @@ mixin AudioRecorderMixin {
       case FileKind.video:
         prefix = 'video';
         suffix = '.mp4';
+        break;
+      case FileKind.wav:
+        prefix = 'wav';
+        suffix = '.wav';
+        break;
+      case FileKind.mp3:
+        prefix = 'mp3';
+        suffix = '.mp3';
         break;
     }
     return p.join(

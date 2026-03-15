@@ -146,12 +146,16 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
             '${tempDirPath}/photo_${(step + 1).toString()}.jpg';
         final String videoPath =
             '${tempDirPath}/video_${(step + 1).toString()}.mp4';
+        final String wavPath =
+            '${tempDirPath}/wav_${(step + 1).toString()}.wav';
+        final String mp3Path =
+            '${tempDirPath}/mp3_${(step + 1).toString()}.mp3';
         print('(VA11)${maxAudioVersion}....${maxPhotoVersion}');
         bool okAudio = await copyStorageFiletoLocal(
           bucketId: artTheopyAIRaudiosRef.path,
           fileId: generateAudioStorageFilename(sessionStep, maxAudioVersion),
           localPath: audioPath,
-          fileKind: FileKind.audio,
+          fileKind: FileKind.mp3,
         );
         print(
             '(VA12)${step}~~~~${okAudio}....${maxAudioVersion},,,,${audioPath}====${generateAudioStorageFilename(sessionStep, maxAudioVersion)}');

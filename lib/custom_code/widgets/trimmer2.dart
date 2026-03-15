@@ -8,64 +8,33 @@ import '../../custom_code/widgets/toast.dart';
 import '../../platform/audio_recorder_platform.dart';
 
 class FileSelectorWidget extends StatefulWidget {
-  const FileSelectorWidget({super.key});
+  String? filePath;
+  String? dirPath;
+  int? maxVersion;
+  final String sessionStepId;
+
+  FileSelectorWidget(
+      {super.key,
+      required this.filePath,
+      required this.dirPath,
+      required this.maxVersion,
+      required this.sessionStepId});
 
   @override
   State<FileSelectorWidget> createState() => _FileSelectorWidgetState();
 }
 
-class _FileSelectorWidgetState extends State<FileSelectorWidget>  with AudioRecorderMixin {
+class _FileSelectorWidgetState extends State<FileSelectorWidget>
+    with AudioRecorderMixin {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Audio Trimmer"),
-      ),
-      body: Center(
-        child: ElevatedButton(
-            onPressed: () async {
-              // FilePickerResult? result = await FilePicker.platform.pickFiles(
-              //   type: FileType.audio,
-              //   allowCompression: false,
-              // );
-
-
-              await setMaxVersionNumbersCurrentSessionStep();
-              if (currentSessionStep!.maxAudioVersion! < 1) {
-                toast(
-                  context,
-                  'No recording stored',
-                  ToastKind.warning,
-                );
-              } else {
-                String localPath = await getPath(
-                    sessionStepId: currentSessionStep!.reference!.path!,
-                    fileKind: FileKind.audio,
-                    version: currentSessionStep!.maxAudioVersion!);
-
-                bool ok = await copyStorageFiletoLocal(
-                  bucketId: artTheopyAIRaudiosRef.path,
-                  fileId: generateAudioStorageFilename(
-                    currentSessionStep!,
-                    currentSessionStep!.maxAudioVersion!,
-                  ),
-                  localPath: localPath,
-                  fileKind: FileKind.audio,
-                );
-
-
-                File file = File(localPath);
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) {
-                    return AudioTrimmerView(file);
-                  }),
-                );
-              }
-            },
-            child: const Text("Select File")),
-      ),
-    );
+    print('(EAT1)${widget.filePath}');
+    File file = File(widget.filePath!);
+    return AudioTrimmerView(
+        file: file,
+        dirPath: widget.dirPath!,
+        maxVersion: widget.maxVersion!,
+        sessionStepId: widget.sessionStepId);
   }
 }
 

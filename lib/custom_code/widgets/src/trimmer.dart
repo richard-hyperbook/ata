@@ -280,16 +280,22 @@ class Trimmer {
     required double startValue,
     required double endValue,
   }) async {
+    print('(EAT50)${audioPlayer?.state}');
     if (audioPlayer?.state == PlayerState.playing) {
+      print('(EAT51)${audioPlayer?.state}');
       await audioPlayer?.pause();
       return false;
     } else {
       var duration = await audioPlayer!.getCurrentPosition();
+      print('(EAT52)${audioPlayer?.state}...${duration}');
+
       if ((duration?.inMilliseconds ?? 0) >= endValue.toInt()) {
+        print('(EAT53)${duration?.inMilliseconds}');
         await audioPlayer!.seek(Duration(milliseconds: startValue.toInt()));
         await audioPlayer!.resume();
         return true;
       } else {
+        print('(EAT54)${duration}');
         await audioPlayer!.resume();
         return true;
       }

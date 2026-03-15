@@ -162,7 +162,7 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
             if (_audioPlayer.state == ap.PlayerState.playing) {
               pause();
             } else {
-              maxVersion = await widget.onPlay(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.audio, version: 999999));
+              maxVersion = await widget.onPlay(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.mp3, version: 999999));
               play();
             }
           },
@@ -215,9 +215,9 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
       localSource = await _source();
 
       String localPath = await getPath(sessionStepId: widget.sessionStepId!,
-          fileKind: FileKind.audio,
+          fileKind: FileKind.mp3,
           version: maxVersion!);
-      List<String> dirPath = localPath.split('/audio');
+      List<String> dirPath = localPath.split('/mp3');
       print('DE36A)${dirPath[0]}');
       var dir = Directory.fromRawPath(utf8Encoder.convert(dirPath[0]));
       await for (var entity in
@@ -250,7 +250,7 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
     //....${await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.audio, version: maxVersion!)}
     print('(AS2)${widget.sessionStepId}....${maxVersion}');
     return kIsWeb
-        ? ap.UrlSource(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.audio, version: maxVersion!))
-        : ap.DeviceFileSource(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.audio, version: maxVersion!));
+        ? ap.UrlSource(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.mp3, version: maxVersion!))
+        : ap.DeviceFileSource(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.mp3, version: maxVersion!));
   }
 }

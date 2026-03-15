@@ -48,8 +48,14 @@ import 'package:appwrite/appwrite.dart' as appwrite;
 import 'package:appwrite/models.dart' as models;
 import 'package:appwrite/enums.dart' as enums;
 // import 'package:compressor/compressor.dart';
-import '/custom_code/widgets/audio_trimmer.dart';
+// import '/custom_code/widgets/audio_trimmer.dart';
 import '/custom_code/widgets/trimmer2.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/log.dart';
+import 'package:ffmpeg_kit_flutter_new/session.dart';
+import 'package:ffmpeg_kit_flutter_new/statistics.dart';
 
 
 http.Client _http = http.Client();
@@ -113,7 +119,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
     models.DocumentList sessionStepList = await listDocumentsWithTwoQueries(
       collection: sessionStepsRef,
       attribute1: kSessionStepSessionId,
-      value1:     sessions![currentSessionIndex].reference!.path,
+      value1: sessions![currentSessionIndex].reference!.path,
       attribute2: kSessionStepIndex,
       value2: index,
     );
@@ -133,12 +139,10 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
 
   Widget displayThumbnail() {
     print('(DE410)${imageNetworkPath}');
-    if(imageNetworkPath.length > 0) {
+    if (imageNetworkPath.length > 0) {
       return Image.network(
         imageNetworkPath,
-        width: (MediaQuery
-            .sizeOf(context)
-            .width * 0.9) -
+        width: (MediaQuery.sizeOf(context).width * 0.9) -
             kIconButtonWidth -
             kIconButtonGap,
         height: (kIconButtonHeight * 2) + kIconButtonGap,
@@ -149,39 +153,64 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
     }
   }
 
-  Widget editRecordingsButton(SessionStepsRecord sessionStep, int index){
-    return  FlutterFlowIconButton(
-      showLoadingIndicator: true,
-      caption: 'Edit recordings',
-      captionFontSize: basicFontSize,
-      tooltipMessage: 'Select photo from gallery',
-      borderColor: Colors.transparent,
-      borderRadius: 0.0,
-      borderWidth: 1.0,
-      buttonSize: 40.0,
-      buttonWidth: kIconButtonWidth,
-      icon: Icon(Icons.edit_note),
-      onPressed: () async {
-        showDialog<bool>(
-            context: context,
-            builder:
-                (BuildContext context) {
-              // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
-              //>print('(UM6)${message}')
+  Widget editRecordingsButton(SessionStepsRecord sessionStep, int index) {
+    return FlutterFlowIconButton(
+        showLoadingIndicator: true,
+        caption: 'Edit recordings',
+        captionFontSize: basicFontSize,
+        tooltipMessage: 'Select photo from gallery',
+        borderColor: Colors.transparent,
+        borderRadius: 0.0,
+        borderWidth: 1.0,
+        buttonSize: 40.0,
+        buttonWidth: kIconButtonWidth,
+        icon: Icon(Icons.edit_note),
+        onPressed: () async {
+          await setMaxVersionNumbersCurrentSessionStep();
+          int maxVersion = currentSessionStep!.maxAudioVersion!;
+          if (currentSessionStep!.maxAudioVersion! < 1) {
+            toast(
+              context,
+              'No recording stored',
+              ToastKind.warning,
+            );
+          } else {
+            String localPath = await getPath(
+                sessionStepId: currentSessionStep!.reference!.path!,
+                fileKind: FileKind.mp3,
+                version: currentSessionStep!.maxAudioVersion!);
+
+            bool ok = await copyStorageFiletoLocal(
+              bucketId: artTheopyAIRaudiosRef.path,
+              fileId: generateAudioStorageFilename(
+                currentSessionStep!,
+                currentSessionStep!.maxAudioVersion!,
+              ),
+              localPath: localPath,
+              fileKind: FileKind.mp3,
+            );
+            String dirPath = (await getApplicationDocumentsDirectory()).path;
+            showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
+                  //>print('(UM6)${message}')
                   currentSessionStep = sessionStep;
-              return StatefulBuilder(
-                  builder:
-                      (context, setState) {
+                  return StatefulBuilder(builder: (context, setState) {
                     return AlertDialog(
-                      title: Text('Edit Recording'),
-                      content: Container(
+                        title: Text('Edit Recording'),
+                        content: Container(
                           width: MediaQuery.sizeOf(context).width * 0.85,
-                          child: FileSelectorWidget(),//AudioTrimmerPopup()),
-                      )
-                    );
+                          child: FileSelectorWidget(
+                              filePath: localPath,
+                          dirPath: dirPath,
+                          maxVersion : maxVersion,
+                              sessionStepId: sessionStep.reference!.path!), //AudioTrimmerPopup()),
+                        ));
                   });
-            });
-      });
+                });
+          }
+        });
   }
 
   Widget displaySessionStep(
@@ -229,16 +258,16 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
               ),
             ),
             // SingleChildScrollView(
-              // key: infoCount == 1
-              //     ? intro!.keys[3]
-              //     : UniqueKey(),
-              // scrollDirection: Axis.horizontal,
-              // child:
-              Text(
-                softWrap: true,
-                'Question: ${sessionStep.question}',
-                style: FlutterFlowTheme.of(context).bodyMedium,
-              ),
+            // key: infoCount == 1
+            //     ? intro!.keys[3]
+            //     : UniqueKey(),
+            // scrollDirection: Axis.horizontal,
+            // child:
+            Text(
+              softWrap: true,
+              'Question: ${sessionStep.question}',
+              style: FlutterFlowTheme.of(context).bodyMedium,
+            ),
             //),
 
             ///////////////////////////////
@@ -261,26 +290,33 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             document: sessions![currentSessionIndex].reference,
                             data: {kSessionSessionModified: true});
                         await setMaxVersionNumbersCurrentSessionStep();
-                        print('(DE3A)${currentSessionStep!.reference!.path}....${currentSessionStep!.maxAudioVersion!}');
+                        print(
+                            '(DE3A)${currentSessionStep!.reference!.path}....${currentSessionStep!.maxAudioVersion!}');
                         return currentSessionStep!.maxAudioVersion!;
                       },
                       onStop: (path) async {
-                        print(
-                          '(DE1)$path....${currentSessionStep!.maxAudioVersion!}',
-                        );
+                        String mp3Path = path.replaceAll('wav', 'mp3');
+                        //mp3Path = mp3Path.replaceAll('audio', 'audioMP3');
+                        final String command =
+                            '-y -i ${path} ${mp3Path}';
+                        print('(EAT10)${command}');
+                        Session ffmpegSession = await FFmpegKit.execute(command);
+                        List<Log> logList = await ffmpegSession.getAllLogs();
+                        for(Log log in logList) {
+                          print('(EAT11)${log.getMessage()}');
+                        }
                         await storeStorageFile(
                           bucketId: artTheopyAIRaudiosRef.path!,
                           storageFileId: generateAudioStorageFilename(
                             sessionStep,
                             currentSessionStep!.maxAudioVersion! + 1,
                           ),
-                          localFilePath: path,
+                          localFilePath: mp3Path,
                         );
-                        print('(DE6)${audioPath}');
+                        print('(EAT12)${audioPath}');
                         setState(() => audioPath = path);
                       },
                     ),
-
                   ],
                 ),
               ),
@@ -321,7 +357,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                               currentSessionStep!.maxAudioVersion!,
                             ),
                             localPath: correctedLocalPath,
-                            fileKind: FileKind.audio,
+                            fileKind: FileKind.mp3,
                           );
                           print(
                             '(DE33B)${generateAudioStorageFilename(sessionStep, currentSessionStep!.maxAudioVersion!)}',
@@ -416,26 +452,28 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
 
                         showDialog<bool>(
                             context: context,
-                            builder:
-                                (BuildContext context) {
+                            builder: (BuildContext context) {
                               // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
                               //>print('(UM6)${message}')
                               currentSessionStep = sessionStep;
                               return StatefulBuilder(
-                                  builder:
-                                      (context, setState) {
-                                    return AlertDialog(
-                                      title: Text('Transcription'),
-                                      content: SingleChildScrollView(
-                                        child: Container(
-                                            width: MediaQuery.sizeOf(context).width * 0.85,
-                                            child: Text( respObject['transcription']! as String, style:  FlutterFlowTheme.of(context).bodyMedium)),
-                                      ),
-
-                                    );
-                                  });
+                                  builder: (context, setState) {
+                                return AlertDialog(
+                                  title: Text('Transcription'),
+                                  content: SingleChildScrollView(
+                                    child: Container(
+                                        width:
+                                            MediaQuery.sizeOf(context).width *
+                                                0.85,
+                                        child: Text(
+                                            respObject['transcription']!
+                                                as String,
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium)),
+                                  ),
+                                );
+                              });
                             });
-
 
                         print(
                           '(PQ4)${index}~~~~${respDynamic}....${respObject},,,,${transcriptionList[index]}',
@@ -459,7 +497,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
             SizedBox(
               width: MediaQuery.sizeOf(context).width * 0.9,
               child: Text(transcriptionList[index],
-              style: TextStyle(fontSize: basicFontSize, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontSize: basicFontSize, fontWeight: FontWeight.bold)),
             ),
 
             ////////////////////
@@ -487,9 +526,9 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
       localMaxVersion,
     );
     final String PROJECT_ID = kProjectID;
-    if(FILE_ID.length > 0) {
+    if (FILE_ID.length > 0) {
       imageNetworkPath =
-      'https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${FILE_ID}/view?project=${PROJECT_ID}';
+          'https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${FILE_ID}/view?project=${PROJECT_ID}';
     } else {
       imageNetworkPath = '';
     }
@@ -511,10 +550,13 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
       PickedFile pickedFile;
 
       XFile? imageFile = await picker.pickImage(
-          source: ImageSource.gallery, maxWidth: 500, maxHeight: 500, imageQuality: 50);
+          source: ImageSource.gallery,
+          maxWidth: 500,
+          maxHeight: 500,
+          imageQuality: 50);
       print('(FF20)${await imageFile!.length()}....${imageFile.path}');
 
-     /* var result = await FlutterImageCompress.compressWithFile(
+      /* var result = await FlutterImageCompress.compressWithFile(
         imageFile.path,
         minWidth: 500,
         minHeight: 500,
@@ -525,7 +567,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
       // Compressor compressor = Compressor(path: imageFile.path, isLocal: true);
       // String result = compressor.compressVideo(); // Replace with a real image compression method in future updates
 
-      print('(FF20)${await imageFile!.length()}....${imageFile.path},,,,${result}');
+      print(
+          '(FF20)${await imageFile!.length()}....${imageFile.path},,,,${result}');
 
       String localFilePath = imageFile!
           .path; //= await getPath(sessionStepId: sessionStep.reference!.path!, fileKind: FileKind.photo);
@@ -541,10 +584,10 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         localFilePath: localFilePath,
       );
       setState(() {
-        if ((currentSessionStep!.maxPhotoVersion ?? 0) > 0){
+        if ((currentSessionStep!.maxPhotoVersion ?? 0) > 0) {
           loadImageNetworkPath(
               sessionStep, currentSessionStep!.maxPhotoVersion!);
-      }
+        }
       });
 
       print(
