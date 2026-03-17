@@ -118,10 +118,10 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 _buildControl(),
-                _buildSlider(constraints.maxWidth),
+                _buildSlider(constraints.maxWidth - 50),
                 IconButton(
                   icon: const Icon(Icons.delete,
-                      color: Color(0xFF73748D), size: _deleteBtnSize),
+                      color: Colors.red/*Color(0xFF73748D)*/, size: _deleteBtnSize),
                   onPressed: () {
                     if (_audioPlayer.state == ap.PlayerState.playing) {
                       stop().then((value) => widget.onDelete());
@@ -214,21 +214,22 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
     if (maxVersion != 0) {
       localSource = await _source();
 
-      String localPath = await getPath(sessionStepId: widget.sessionStepId!,
-          fileKind: FileKind.mp3,
-          version: maxVersion!);
-      List<String> dirPath = localPath.split('/mp3');
-      print('DE36A)${dirPath[0]}');
-      var dir = Directory.fromRawPath(utf8Encoder.convert(dirPath[0]));
-      await for (var entity in
-      dir.list(recursive: true, followLinks: false)) {
-        print('DE36B)${entity.path}');
+      // String localPath = await getPath(sessionStepId: widget.sessionStepId!,
+      //     fileKind: FileKind.mp3,
+      //     version: maxVersion!);
+      String localPath =  appDirPath! + '/mp3' + widget.sessionStepId! + '.mp3';
+      // List<String> dirPath = localPath.split('/mp3');
+      // print('DE36A)${dirPath[0]}');
+      // var dir = Directory.fromRawPath(utf8Encoder.convert(dirPath[0]));
+      // await for (var entity in
+      // dir.list(recursive: true, followLinks: false)) {
+      //   print('DE36B)${entity.path}');
         // if(entity.path.contains('audio')) {
         //   File file = File(entity.path);
         //   await file.delete();
         // }
-      }
-      print('(DE36C)${localSource.toString()}');
+      // }
+      // print('(DE36C)${localSource.toString()}');
       _audioPlayer.play(localSource);
     }
   }
@@ -251,6 +252,6 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
     print('(AS2)${widget.sessionStepId}....${maxVersion}');
     return kIsWeb
         ? ap.UrlSource(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.mp3, version: maxVersion!))
-        : ap.DeviceFileSource(await getPath(sessionStepId: widget.sessionStepId!, fileKind: FileKind.mp3, version: maxVersion!));
+        : ap.DeviceFileSource( appDirPath! + '/mp3' + widget.sessionStepId! + '.mp3');
   }
 }

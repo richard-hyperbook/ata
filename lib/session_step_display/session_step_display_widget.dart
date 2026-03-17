@@ -166,6 +166,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         buttonWidth: kIconButtonWidth,
         icon: Icon(Icons.edit_note),
         onPressed: () async {
+          currentSessionStep = sessionStep;
           await setMaxVersionNumbersCurrentSessionStep();
           int maxVersion = currentSessionStep!.maxAudioVersion!;
           if (currentSessionStep!.maxAudioVersion! < 1) {
@@ -175,26 +176,27 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
               ToastKind.warning,
             );
           } else {
-            String localPath = await getPath(
+           /* String localPath = await getPath(
                 sessionStepId: currentSessionStep!.reference!.path!,
-                fileKind: FileKind.mp3,
+                fileKind: FileKind.wav,
                 version: currentSessionStep!.maxAudioVersion!);
 
             bool ok = await copyStorageFiletoLocal(
               bucketId: artTheopyAIRaudiosRef.path,
-              fileId: generateAudioStorageFilename(
+              fileId: generateAudioStorageFilenameWav(
                 currentSessionStep!,
                 currentSessionStep!.maxAudioVersion!,
               ),
               localPath: localPath,
               fileKind: FileKind.mp3,
-            );
-            String dirPath = (await getApplicationDocumentsDirectory()).path;
+            );*/
+
+            print('(DE101)${appDirPath! + '/mp3' + sessionStep.reference!.path! +".mp3"}');
+
             showDialog<bool>(
                 context: context,
                 builder: (BuildContext context) {
                   // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
-                  //>print('(UM6)${message}')
                   currentSessionStep = sessionStep;
                   return StatefulBuilder(builder: (context, setState) {
                     return AlertDialog(
@@ -202,8 +204,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         content: Container(
                           width: MediaQuery.sizeOf(context).width * 0.85,
                           child: FileSelectorWidget(
-                              filePath: localPath,
-                          dirPath: dirPath,
+                              filePath: appDirPath! + '/wav' + sessionStep.reference!.path! +".wav",
+                          dirPath: appDirPath!,
                           maxVersion : maxVersion,
                               sessionStepId: sessionStep.reference!.path!), //AudioTrimmerPopup()),
                         ));
@@ -285,35 +287,46 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       onStart: () async {
                         currentSessionStep = sessionStep;
                         sessions![currentSessionIndex].sessionModified = true;
-                        await updateDocument(
+                        /*await updateDocument(
                             collection: sessionsRef,
                             document: sessions![currentSessionIndex].reference,
                             data: {kSessionSessionModified: true});
                         await setMaxVersionNumbersCurrentSessionStep();
+                        */
                         print(
                             '(DE3A)${currentSessionStep!.reference!.path}....${currentSessionStep!.maxAudioVersion!}');
                         return currentSessionStep!.maxAudioVersion!;
                       },
                       onStop: (path) async {
+                        await printTempDirListing();
                         String mp3Path = path.replaceAll('wav', 'mp3');
                         //mp3Path = mp3Path.replaceAll('audio', 'audioMP3');
                         final String command =
                             '-y -i ${path} ${mp3Path}';
-                        print('(EAT10)${command}');
+                        print('(EAT10)${command}' );
                         Session ffmpegSession = await FFmpegKit.execute(command);
                         List<Log> logList = await ffmpegSession.getAllLogs();
                         for(Log log in logList) {
                           print('(EAT11)${log.getMessage()}');
                         }
+                        await printAppDirListing();
+                        /*await storeStorageFile(
+                          bucketId: artTheopyAIRaudiosRef.path!,
+                          storageFileId: generateAudioStorageFilenameWav(
+                            sessionStep,
+                            currentSessionStep!.maxAudioVersion! + 1,
+                          ),
+                          localFilePath: path,
+                        );
                         await storeStorageFile(
                           bucketId: artTheopyAIRaudiosRef.path!,
-                          storageFileId: generateAudioStorageFilename(
+                          storageFileId: generateAudioStorageFilenameMp3(
                             sessionStep,
                             currentSessionStep!.maxAudioVersion! + 1,
                           ),
                           localFilePath: mp3Path,
-                        );
-                        print('(EAT12)${audioPath}');
+                        );*/
+                        print('(EAT12)${path}....${mp3Path}');
                         setState(() => audioPath = path);
                       },
                     ),
@@ -348,11 +361,11 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             (currentSessionStep!.maxAudioVersion!).toString(),
                           );
                           print(
-                            '(DE33A)${sessionStep.reference!.path!}....${localPath},,,,${currentSessionStep!.maxAudioVersion!}++++${correctedLocalPath}~~~~${generateAudioStorageFilename(sessionStep, currentSessionStep!.maxAudioVersion!)}',
+                            '(DE33A)${sessionStep.reference!.path!}....${localPath},,,,${currentSessionStep!.maxAudioVersion!}++++${correctedLocalPath}~~~~${generateAudioStorageFilenameMp3(sessionStep, currentSessionStep!.maxAudioVersion!)}',
                           );
                           bool ok = await copyStorageFiletoLocal(
                             bucketId: artTheopyAIRaudiosRef.path,
-                            fileId: generateAudioStorageFilename(
+                            fileId: generateAudioStorageFilenameMp3(
                               sessionStep,
                               currentSessionStep!.maxAudioVersion!,
                             ),
@@ -360,7 +373,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             fileKind: FileKind.mp3,
                           );
                           print(
-                            '(DE33B)${generateAudioStorageFilename(sessionStep, currentSessionStep!.maxAudioVersion!)}',
+                            '(DE33B)${generateAudioStorageFilenameMp3(sessionStep, currentSessionStep!.maxAudioVersion!)}',
                           );
                           if (maxVersion < 1) {
                             toast(context, 'Error in replay', ToastKind.error);
@@ -421,6 +434,11 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       buttonWidth: kIconButtonWidth,
                       icon: Icon(Icons.speaker_notes),
                       onPressed: () async {
+                        await storeStorageFile(
+                          bucketId: artTheopyAIRaudiosRef.path!,
+                          storageFileId: 'mp3' + sessionStep.reference!.path! + '.mp3',
+                          localFilePath: appDirPath! + '/mp3' + sessionStep.reference!.path! + '.mp3');
+
                         currentSessionStep = sessionStep;
                         //                      final uri = Uri.parse('698718ad000f1cc14442.fra.appwrite.run');
                         print(
@@ -436,14 +454,13 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             // 'Authorization': 'Basic $creds',
                             'Content-Type': 'application/json',
                           },
-                          body: 'audio' +
+                          body: 'mp3' +
                               sessionStep.reference!.path! +
-                              '_' +
-                              sessionStep.maxAudioVersion.toString() +
-                              '.wav',
+                              /*sessionStep.maxAudioVersion.toString()*/
+                              '.mp3',
                         );
                         print(
-                          '(PQ2)${respAccessToken.statusCode}....${'audio' + sessionStep.reference!.path! + '_' + sessionStep.maxAudioVersion.toString() + '.wav'}',
+                          '(PQ2)${respAccessToken.statusCode}....${'mp3' + sessionStep.reference!.path! + '_' + sessionStep.maxAudioVersion.toString() + '.mp3'}',
                         );
                         print(respAccessToken.body);
                         var respDynamic = jsonDecode(respAccessToken.body);

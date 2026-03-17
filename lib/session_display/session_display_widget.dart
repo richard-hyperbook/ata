@@ -153,12 +153,12 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
         print('(VA11)${maxAudioVersion}....${maxPhotoVersion}');
         bool okAudio = await copyStorageFiletoLocal(
           bucketId: artTheopyAIRaudiosRef.path,
-          fileId: generateAudioStorageFilename(sessionStep, maxAudioVersion),
+          fileId: generateAudioStorageFilenameMp3(sessionStep, maxAudioVersion),
           localPath: audioPath,
           fileKind: FileKind.mp3,
         );
         print(
-            '(VA12)${step}~~~~${okAudio}....${maxAudioVersion},,,,${audioPath}====${generateAudioStorageFilename(sessionStep, maxAudioVersion)}');
+            '(VA12)${step}~~~~${okAudio}....${maxAudioVersion},,,,${audioPath}====${generateAudioStorageFilenameMp3(sessionStep, maxAudioVersion)}');
         print(
             '(VA13)${step}~~~~${generatePhotoStorageFilename(sessionStep, maxPhotoVersion)}....${maxPhotoVersion},,,,${photoPath}====');
         bool okPhoto = await copyStorageFiletoLocal(
@@ -256,7 +256,6 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
 
   Future<void> loadVideo(int index) async {
     currentSessionIndex = index;
-    tempDirPath = await getTempDirPath();
     final String videoStorageId =
         'video${sessions![currentSessionIndex].reference!.path}_0.mp4';
     final String videoPlayPath = '${tempDirPath}/video.mp4';

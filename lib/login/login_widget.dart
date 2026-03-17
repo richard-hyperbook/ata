@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // import '/auth/firebase_auth/auth_util.dart';
@@ -29,6 +30,8 @@ import '../../paypal/paypal_widget.dart';
 import '../../sales/sales_widget.dart';
 import '../../conditional.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../../platform/audio_recorder_platform.dart';
+
 
 export 'login_model.dart';
 
@@ -602,6 +605,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                   .toList(),
                                             );*/
                                             loggedIn = true;
+                                            tempDirPath = (await getTemporaryDirectory()).path;
+                                            String appDirPathParent = (await getApplicationSupportDirectory()).path;
+                                            appDirPath = (await Directory(appDirPathParent + '/airStudio').create(recursive: true)).path;
+                                            print('(TD1)${tempDirPath}....${appDirPath}');
+                                            await printTempDirListing();
+                                            await printAppDirListing();
+
                                             //#hyperbookCacheValid = false;
                                             //# coonectedUsersCacheValid = false;
 

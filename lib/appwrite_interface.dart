@@ -40,6 +40,7 @@ import 'dart:io';
 import 'dart:convert';
 import '../app_state.dart';
 import 'package:video_player/video_player.dart';
+import '../platform/audio_recorder_platform.dart';
 
 // part 'appwrite_interface.g.dart';
 
@@ -133,6 +134,9 @@ double basicFontSize = 15;
 String? currentLocalAudioPath;
 UsersRecord? currentTherapist;
 UsersRecord? currentClient;
+String? tempDirPath;
+String? appDirPath;
+
 
 RealtimeSubscription? hyperbookDisplaySubscription;
 RealtimeSubscription? hyperbookEditSubscription;
@@ -1112,10 +1116,17 @@ Future<UsersRecord> getUser({DocumentReference? document}) async {
   return u;
 }
 
-String generateAudioStorageFilename(
-  SessionStepsRecord sessionStep,
-  int version,
-) {
+String generateAudioStorageFilenameWav(
+    SessionStepsRecord sessionStep,
+    int version,
+    ) {
+  return 'wav${sessionStep.reference!.path}_${version}.wav';
+}
+
+String generateAudioStorageFilenameMp3(
+    SessionStepsRecord sessionStep,
+    int version,
+    ) {
   return 'mp3${sessionStep.reference!.path}_${version}.mp3';
 }
 
@@ -1215,30 +1226,31 @@ Future<int> getMaxVersionNumber({
     print('(DE81.0)${fileList.files.length}');
     int maxVersion = 0;
     if (fileList.files.length > 0) {
-      print('(DE81.1)${fileList.files.length}');
+      // print('(DE81.1)${fileList.files.length}');
       // for (var file in fileList.files) {
       for (int i = 0; i < fileList.files.length; i++) {
-        print('(DE81.2)${i}');
+        // print('(DE81.2)${i}');
         var file = fileList.files[i];
-        print('(DE81.3)${i}...${file.$id}');
+        // print('(DE81.3)${i}...${file.$id}');
         List<String> filenameSplit1 = file.$id.split('_');
-        print('(DE81.4)${i}...${filenameSplit1}');
+        // print('(DE81.4)${i}...${filenameSplit1}');
         List<String> filenameSplit2 = filenameSplit1[1].split('.');
-        print('(DE81.5)${filenameSplit2}');
+        // print('(DE81.5)${filenameSplit2}');
         int? version = int.tryParse(filenameSplit2[0]);
-        print('(DE81.6)${version}');
+        // print('(DE81.6)${version}');
         if (version == null) {
           version = 0;
         }
         if (version > maxVersion) {
           maxVersion = version;
         }
-        print(
-          '(DE82)${file.name}....${filenameSplit2[0]}----${version}----${maxVersion}',
-        );
+        // print(
+          // '(DE81.7)${file.name}....${filenameSplit2[0]}----${version}----${maxVersion}',
+        // );
       }
     }
-    return maxVersion;
+    print('(DE81.8)${maxVersion}');
+        return maxVersion;
   } on AppwriteException catch (e) {
     print('(DE83)${e}....${e.code}');
     return 0;
@@ -1713,6 +1725,7 @@ Future<bool> copyStorageFiletoLocal({
     localBucketId = backupStorageRef.path!;
   }
   print('(DE70A)${fileId}....${localPath}');
+  printTempDirListing();
   String token = '';
   switch (fileKind) {
 /*    case FileKind.audio:
@@ -1757,12 +1770,39 @@ Future<bool> copyStorageFiletoLocal({
         print('(DE75)${error.response}');
       });
 
-  await for (var entity in dir.list(recursive: true, followLinks: false)) {
-    print('(DE76)${entity.path}');
-  }
 
   return true;
 }
+
+Future<void> printTempDirListing() async {
+  final utf8Encoder = utf8.encoder;
+  var dir = Directory.fromRawPath(utf8Encoder.convert(tempDirPath!));
+  await for (var entity in dir.list(recursive: true, followLinks: false)) {
+    print('(TD2)${entity.path}');
+  }
+}
+
+Future<void> printAppDirListing() async {
+  final utf8Encoder = utf8.encoder;
+  var dir = Directory.fromRawPath(utf8Encoder.convert(appDirPath!));
+  await for (var entity in dir.list(recursive: true, followLinks: false)) {
+    print('(AD2)${entity.path}');
+  }
+}
+
+Future<void> deleteAppFile(String filename) async{
+  final utf8Encoder = utf8.encoder;
+  var dir = Directory.fromRawPath(utf8Encoder.convert(appDirPath!));
+  await for (var entity in dir.list(recursive: true, followLinks: false)) {
+    if(entity.path.contains(filename)){
+      File file = File(entity.path);
+      print('(AD6)${entity.path}');
+      await file.delete();
+      break;
+    }
+  }
+}
+
 
 Future<String?> readStorageFile({
   required DocumentReference? user,

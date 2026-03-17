@@ -282,10 +282,13 @@ class Trimmer {
   }) async {
     print('(EAT50)${audioPlayer?.state}');
     if (audioPlayer?.state == PlayerState.playing) {
-      print('(EAT51)${audioPlayer?.state}');
+      print('(EAT51A)${audioPlayer?.state}');
       await audioPlayer?.pause();
       return false;
     } else {
+      print('(EAT51B)${audioPlayer?.state}');
+      // await audioPlayer!.seek(Duration(milliseconds: startValue.toInt()));
+      print('(EAT51C)${audioPlayer?.state}....${Duration(milliseconds: startValue.toInt())}');
       var duration = await audioPlayer!.getCurrentPosition();
       print('(EAT52)${audioPlayer?.state}...${duration}');
 
@@ -296,11 +299,20 @@ class Trimmer {
         return true;
       } else {
         print('(EAT54)${duration}');
-        await audioPlayer!.resume();
+        await audioPlayer!.play(DeviceFileSource(currentAudioFile!.path));
         return true;
       }
     }
   }
+
+  /*Source source, {
+  double? volume,
+      double? balance,
+  AudioContext? ctx,
+      Duration? position,
+  PlayerMode? mode,*/
+
+
 
   /// Clean up
   void dispose() {

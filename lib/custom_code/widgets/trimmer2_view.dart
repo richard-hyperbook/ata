@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
+
 import 'easy_audio_trimmer.dart';
 import 'package:flutter/material.dart';
 import '../../appwrite_interface.dart';
@@ -43,7 +45,10 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
     setState(() {
       isLoading = true;
     });
+    print('(EAT9A)${widget.file}');
+    printAppDirListing();
     await _trimmer.loadAudio(audioFile: widget.file);
+    print('(EAT9B)${_trimmer.currentAudioFile}....${_trimmer}');
     setState(() {
       isLoading = false;
     });
@@ -54,13 +59,13 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
       _progressVisibility = true;
     });
     final String newFileName =
-        'audio' +
+        'mp3' +
         widget.sessionStepId +
         '_' +
         (widget.maxVersion + 1).toString();
     print('(EAT30)${widget.maxVersion}....${widget.dirPath}++++${newFileName}');
     _trimmer.saveTrimmedAudio(
-      audioFolderName: 'x',
+      audioFolderName: '',
       audioFileName: newFileName,
       startValue: _startValue,
       endValue: _endValue,
@@ -147,7 +152,12 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                           color: Theme.of(context).primaryColor,
                         ),
                   onPressed: () async {
-                    print('(EAT46)${_startValue}....${_endValue}');
+                    print('(EAT46A)${_startValue}....${_endValue},,,,${_trimmer.audioPlayer!.state}');
+                    AudioLogger.logLevel = AudioLogLevel.info;
+                    _trimmer.audioPlayer!.state = PlayerState.stopped;
+                    // _trimmer.audioPlayer!.dur = PlayerState.stopped;
+                    _trimmer.audioPlayer!.seek(Duration(milliseconds: _startValue.floor()));
+                    AudioLogger.log('(EAT46B)');
                     bool playbackState = await _trimmer.audioPlaybackControl(
                       startValue: _startValue,
                       endValue: _endValue,
@@ -172,6 +182,7 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                         () {
                       _saveAudio();
                     }),
+                SizedBox(height: kIconButtonGap),
                 FlutterFlowIconButton(
                     showLoadingIndicator: true,
                     caption: 'Dir',

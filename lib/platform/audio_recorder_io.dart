@@ -9,16 +9,18 @@ import '../../appwrite_interface.dart';
 
 mixin AudioRecorderMixin {
   Future<void> recordFile(AudioRecorder recorder, RecordConfig config,  String sessionStepId, int version) async {
-    final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav, version: version);
-    print('(AU10)${path}');
-    await recorder.start(config, path: path);
+    // final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav, version: version);
+    // print('(AU10)${path}');
+    String filePath = appDirPath! + '/wav' + sessionStepId + '.wav';
+    await deleteAppFile(filePath);
+    await recorder.start(config, path: filePath);
     print('(AU11)${config}');
   }
 
   Future<void> recordStream(AudioRecorder recorder, RecordConfig config,  String sessionStepId, int version) async {
     final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav, version: version);
 
-    final file = File(path);
+    final file = File(tempDirPath!);
     print('(AU12)${path}');
 
     final stream = await recorder.startStream(config);
@@ -38,7 +40,7 @@ mixin AudioRecorderMixin {
 
 
   Future<String> getPath({required String sessionStepId, required FileKind fileKind, required int version}) async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await getTemporaryDirectory();
     print('(AU1IO)${dir.path}');
     String prefix = '';
     String suffix = '';
