@@ -326,6 +326,7 @@ class SessionStepsRecord {
   DateTime? $updatedAt;
   int? maxAudioVersion;
   int? maxPhotoVersion;
+  bool? photoFileValid;
 
   SessionStepsRecord({
     this.reference,
@@ -340,6 +341,7 @@ class SessionStepsRecord {
     this.$updatedAt,
     this.maxAudioVersion,
     this.maxPhotoVersion,
+    this.photoFileValid,
   });
 
   /* factory SessionStepsRecord.fromJson(Map<String, dynamic> json) =>
@@ -1118,34 +1120,28 @@ Future<UsersRecord> getUser({DocumentReference? document}) async {
 
 String generateAudioStorageFilenameWav(
     SessionStepsRecord sessionStep,
-    int version,
     ) {
-  return 'wav${sessionStep.reference!.path}_${version}.wav';
+  return 'wav${sessionStep.reference!.path}.wav';
 }
 
 String generateAudioStorageFilenameMp3(
     SessionStepsRecord sessionStep,
-    int version,
+
     ) {
-  return 'mp3${sessionStep.reference!.path}_${version}.mp3';
+  return 'mp3${sessionStep.reference!.path}.mp3';
 }
 
 String generatePhotoStorageFilename(
     SessionStepsRecord sessionStep,
-    int version,
-    ) {
-  if(version > 0) {
-    return 'photo${sessionStep.reference!.path}_${version}.jpg';
-  } else {
-    return '';
-  }
-}
+     ) {
+    return 'photo${sessionStep.reference!.path}.jpg';
+ }
 
 String generateVideoStorageFilename(
     SessionsRecord session,
-    int version,
+
     ) {
-  return 'video${session.reference!.path}_${version}.mp4';
+  return 'video${session.reference!.path}.mp4';
 }
 
 Future<List<SessionsRecord>> listSessionList({
@@ -1192,6 +1188,7 @@ Future<List<SessionsRecord>> listSessionList({
   return hh;
 }
 
+/*
 Future<void> setMaxVersionNumbersCurrentSessionStep() async {
   final int maxAudioVersion = await getMaxVersionNumber(
     bucketId: artTheopyAIRaudiosRef.path!,
@@ -1207,7 +1204,9 @@ Future<void> setMaxVersionNumbersCurrentSessionStep() async {
     '(VC5)${currentSessionStep!.maxAudioVersion}....${currentSessionStep!.maxPhotoVersion}',
   );
 }
+*/
 
+/*
 Future<int> getMaxVersionNumber({
   required String bucketId,
   required String fileId,
@@ -1256,11 +1255,12 @@ Future<int> getMaxVersionNumber({
     return 0;
   }
 }
+*/
 
 Future<List<SessionStepsRecord>> listSessionStepList({
   bool justCurrentSession = true,
 }) async {
-  print('(SS12)${sessionStepsRef.path}....${sessions![currentSessionIndex].reference!.path}');
+  print('(DE410D)${sessionStepsRef.path}....${sessions![currentSessionIndex].reference!.path}');
   models.DocumentList docs;
   if (justCurrentSession) {
     docs = await listDocumentsWithOneQueryDocumentReference(
@@ -1272,14 +1272,14 @@ Future<List<SessionStepsRecord>> listSessionStepList({
   } else {
     docs = await listDocuments(
       collection: sessionsRef,
-      orderByAttribute: kDBcreatedAt,
+      orderByAttribute: kSessionStepIndex,
     );
   }
   print('(SS16)${docs.documents.length}');
   List<SessionStepsRecord> hh = [];
 
   for (models.Document d in docs.documents) {
-    int maxPhotoVersion = await getMaxVersionNumber(
+  /*  int maxPhotoVersion = await getMaxVersionNumber(
       bucketId: artTheopyAIRphotosRef.path!,
       fileId: d.$id,
     );
@@ -1290,6 +1290,12 @@ Future<List<SessionStepsRecord>> listSessionStepList({
     print(
       '(SS13)${d.$id}&&&&${d.data[kSessionStepPhoto]}^^^^${maxPhotoVersion}',
     );
+
+  */
+
+    bool photoFileValid = await File(appDirPath! + '/photo' + d.$id + '.jpg').exists();
+    print('(PE1)${appDirPath! + '/photo' + d.$id + '.jpg'}....${photoFileValid}');
+
     SessionStepsRecord h = SessionStepsRecord(
       reference: DocumentReference(path: d.$id),
       sessionId: DocumentReference(
@@ -1301,8 +1307,9 @@ Future<List<SessionStepsRecord>> listSessionStepList({
       transcription: d.data[kSessionStepTranscription] as String,
       index: d.data[kSessionStepIndex] as int,
       question: d.data[kSessionStepQuestion] as String,
-      maxPhotoVersion: maxPhotoVersion,
-      maxAudioVersion: maxAudioVersion,
+      // maxPhotoVersion: maxPhotoVersion,
+      // maxAudioVersion: maxAudioVersion,
+      photoFileValid: photoFileValid,
     );
     print('(SS40)${hh.length}....${h.photo}');
     hh.add(h);
@@ -1666,22 +1673,29 @@ Future<String?> storeStorageFile({
   required String? bucketId,
   required String? storageFileId,
   required String? localFilePath,
+  bool deleteIfNecessary = false,
 }) async {
-  print('(AU30)${bucketId},,,,${storageFileId}...${localFilePath}');
+  print('(AU70)${bucketId},,,,${storageFileId}...${localFilePath}');
+  if(deleteIfNecessary){
+    if (await doesStorageFileExist(bucketId: bucketId, fileId: storageFileId)){
+      await deleteStorageFile(bucketId: bucketId, fileId: storageFileId);
+      print('(AU71)');
+    }
+  }
   models.File result = await storage.createFile(
     bucketId: bucketId!,
     fileId: storageFileId!,
     file: InputFile.fromPath(path: localFilePath!),
   );
   var file = await storage.getFile(bucketId: bucketId, fileId: storageFileId);
-  print('(AU62)${file.toString()}++++${result.name}@@@@${file.name}~~~~');
+  print('(AU72)${file.toString()}++++${result.name}@@@@${file.name}~~~~');
   const String head = imageFilenameHead;
   final b_id = artTheopyAIRphotosRef.path!;
   final f_id = storageFileId;
   final p_id = kProjectID;
   final String url =
       '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
-  print('(AU63)${head}££££${url}????');
+  print('(AU73)${head}££££${url}????');
   return url;
 }
 
@@ -1711,6 +1725,32 @@ Future<void> deleteFile(String path) async {
   } catch (e) {
     print('(DE50)${e}....${path}');
   }
+}
+
+String getFilePath(FileKind fileKind, String item){
+  String prefix = '';
+  String suffix = '';
+  switch (fileKind) {
+    case FileKind.photo:
+      prefix = 'photo';
+      suffix = '.jpg';
+      break;
+    case FileKind.video:
+      prefix = 'video';
+      suffix = '.mp4';
+      break;
+    case FileKind.wav:
+      prefix = 'wav';
+      suffix = '.wav';
+      break;
+    case FileKind.mp3:
+      prefix = 'mp3';
+      suffix = '.mp3';
+      break;
+    case null:
+      break;
+  }
+  return appDirPath! + '/' + prefix + item + suffix;
 }
 
 Future<bool> copyStorageFiletoLocal({
@@ -1790,6 +1830,27 @@ Future<void> printAppDirListing() async {
   }
 }
 
+Future<List<String>> getAppDirListing() async {
+  final utf8Encoder = utf8.encoder;
+  List<String> result = [];
+  var dir = Directory.fromRawPath(utf8Encoder.convert(appDirPath!));
+  await for (var entity in dir.list(recursive: true, followLinks: false)) {
+    result.add(entity.path);
+  }
+  print('(AD3)${result}');
+  return result;
+}
+
+Future<bool> isFileInAppDir(String filename) async {
+  List<String> listing = await getAppDirListing();
+  for(int i = 0; i < listing.length; i++){
+    if(listing[i].contains(filename)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Future<void> deleteAppFile(String filename) async{
   final utf8Encoder = utf8.encoder;
   var dir = Directory.fromRawPath(utf8Encoder.convert(appDirPath!));
@@ -1850,6 +1911,23 @@ Future<models.FileList> listStorageFiles({String? bucketId}) async {
     //>print('(XY9)${e.toString()}');
   }
   return fileList;
+}
+
+Future<bool> doesStorageFileExist({String? bucketId, String? fileId}) async {
+  print('(XY60)${bucketId}....${fileId}');
+  models.FileList fileList = models.FileList(total: 0, files: []);
+  try {
+    fileList = await storage.listFiles(
+      bucketId: bucketId!,
+      queries: [
+        Query.contains("name", fileId),
+      ],
+    );
+    print('(XY61)${fileList.files.length}');
+  } catch (e) {
+    //>print('(XY9)${e.toString()}');
+  }
+  return (fileList.files.length > 0);
 }
 
 Future<models.FileList> listStorageFilesOfCurrentStorageStep({String? bucketId}) async {

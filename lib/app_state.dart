@@ -12,7 +12,7 @@ import 'flutter_flow/flutter_flow_theme.dart';
 import 'dart:math';
 import 'appwrite_interface.dart';
 
-final int versionNumber = 42;
+final int versionNumber = 43;
 
 
 late SharedPreferences globalSharedPrefs;
@@ -31,7 +31,7 @@ Future initializePersistedState() async {
 }
 
 ////////////////////////////////////////////
- commit
+
 class FFAppState extends ChangeNotifier {
   factory FFAppState() {
     return _instance;

@@ -12,14 +12,14 @@ import '../../localDB.dart';
 class AudioTrimmerView extends StatefulWidget {
   final File file;
   final String dirPath;
-  final int maxVersion;
+  // final int maxVersion;
   final String sessionStepId;
 
   const AudioTrimmerView(
       {super.key,
       required this.file,
       required this.dirPath,
-      required this.maxVersion,
+      // required this.maxVersion,
       required this.sessionStepId});
   @override
   State<AudioTrimmerView> createState() => _AudioTrimmerViewState();
@@ -60,10 +60,8 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
     });
     final String newFileName =
         'mp3' +
-        widget.sessionStepId +
-        '_' +
-        (widget.maxVersion + 1).toString();
-    print('(EAT30)${widget.maxVersion}....${widget.dirPath}++++${newFileName}');
+        widget.sessionStepId;
+    print('(EAT30)${widget.dirPath}++++${newFileName}');
     _trimmer.saveTrimmedAudio(
       audioFolderName: '',
       audioFileName: newFileName,
@@ -91,7 +89,7 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
 
   @override
   Widget build(BuildContext context) {
-    print('(EAT44)${widget.dirPath}....${widget.maxVersion},,,,${widget.file}++++${widget.sessionStepId}');
+    print('(EAT44)${widget.dirPath},,,,${widget.file}++++${widget.sessionStepId}');
     return isLoading
         ? const CircularProgressIndicator()
         : Container(

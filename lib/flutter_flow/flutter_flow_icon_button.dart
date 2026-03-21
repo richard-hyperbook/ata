@@ -180,7 +180,7 @@ class _FlutterFlowIconButtonState extends State<FlutterFlowIconButton> {
             child: (widget.caption == null)
                 ? smartIconButton(style)
                 : Container(
-                    width: 100,
+                    width: 99,
                     height: 30,
                     decoration: BoxDecoration(
                         border: Border.all(

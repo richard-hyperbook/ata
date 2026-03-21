@@ -57,7 +57,6 @@ import 'package:ffmpeg_kit_flutter_new/log.dart';
 import 'package:ffmpeg_kit_flutter_new/session.dart';
 import 'package:ffmpeg_kit_flutter_new/statistics.dart';
 
-
 http.Client _http = http.Client();
 
 int _count = 0;
@@ -132,16 +131,19 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
     }
   }
 
-  String imageNetworkPath = '';
+  // String imageNetworkPath = '';
+  String localImagePath = '';
   // String transcription = '';
   List<String> transcriptionList = [];
   //int? maxVersion;
 
-  Widget displayThumbnail() {
-    print('(DE410)${imageNetworkPath}');
-    if (imageNetworkPath.length > 0) {
-      return Image.network(
-        imageNetworkPath,
+  Widget displayThumbnail(SessionStepsRecord sessionStep) {
+    print('(DE410A)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
+    if (sessionStep!.photoFileValid?? false) {
+      print('(DE410B)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
+
+      return Image.file(
+        File(appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg'),
         width: (MediaQuery.sizeOf(context).width * 0.9) -
             kIconButtonWidth -
             kIconButtonGap,
@@ -158,7 +160,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         showLoadingIndicator: true,
         caption: 'Edit recordings',
         captionFontSize: basicFontSize,
-        tooltipMessage: 'Select photo from gallery',
+        tooltipMessage: 'Edit recording',
         borderColor: Colors.transparent,
         borderRadius: 0.0,
         borderWidth: 1.0,
@@ -167,16 +169,17 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         icon: Icon(Icons.edit_note),
         onPressed: () async {
           currentSessionStep = sessionStep;
-          await setMaxVersionNumbersCurrentSessionStep();
-          int maxVersion = currentSessionStep!.maxAudioVersion!;
-          if (currentSessionStep!.maxAudioVersion! < 1) {
+          final String filePath = appDirPath! + '/mp3' + sessionStep.reference!.path! + '.mp3';
+          // await setMaxVersionNumbersCurrentSessionStep();
+          // int maxVersion = currentSessionStep!.maxAudioVersion!;
+          if (!(await isFileInAppDir(filePath))) {
             toast(
               context,
               'No recording stored',
               ToastKind.warning,
             );
           } else {
-           /* String localPath = await getPath(
+            /* String localPath = await getPath(
                 sessionStepId: currentSessionStep!.reference!.path!,
                 fileKind: FileKind.wav,
                 version: currentSessionStep!.maxAudioVersion!);
@@ -191,7 +194,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
               fileKind: FileKind.mp3,
             );*/
 
-            print('(DE101)${appDirPath! + '/mp3' + sessionStep.reference!.path! +".mp3"}');
+            print(
+                '(DE101)${filePath}');
 
             showDialog<bool>(
                 context: context,
@@ -204,10 +208,14 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         content: Container(
                           width: MediaQuery.sizeOf(context).width * 0.85,
                           child: FileSelectorWidget(
-                              filePath: appDirPath! + '/wav' + sessionStep.reference!.path! +".wav",
-                          dirPath: appDirPath!,
-                          maxVersion : maxVersion,
-                              sessionStepId: sessionStep.reference!.path!), //AudioTrimmerPopup()),
+                              filePath: appDirPath! +
+                                  '/wav' +
+                                  sessionStep.reference!.path! +
+                                  ".wav",
+                              dirPath: appDirPath!,
+                              maxVersion: 0,
+                              sessionStepId: sessionStep
+                                  .reference!.path!), //AudioTrimmerPopup()),
                         ));
                   });
                 });
@@ -218,10 +226,10 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
   Widget displaySessionStep(
     SessionStepsRecord sessionStep,
     int index,
-    int maxVersion,
+    // int maxVersion,
   ) {
-    print('(ss111)${maxVersion}');
-    loadImageNetworkPath(sessionStep, maxVersion);
+    print('(ss111)${index}');
+    loadImageLocalPath(sessionStep/*, maxVersion*/);
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
@@ -294,19 +302,18 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         await setMaxVersionNumbersCurrentSessionStep();
                         */
                         print(
-                            '(DE3A)${currentSessionStep!.reference!.path}....${currentSessionStep!.maxAudioVersion!}');
-                        return currentSessionStep!.maxAudioVersion!;
+                            '(DE3A)${currentSessionStep!.reference!.path}}');
                       },
                       onStop: (path) async {
-                        await printTempDirListing();
+                        await printAppDirListing();
                         String mp3Path = path.replaceAll('wav', 'mp3');
                         //mp3Path = mp3Path.replaceAll('audio', 'audioMP3');
-                        final String command =
-                            '-y -i ${path} ${mp3Path}';
-                        print('(EAT10)${command}' );
-                        Session ffmpegSession = await FFmpegKit.execute(command);
+                        final String command = '-y -i ${path} ${mp3Path}';
+                        print('(EAT10)${command}');
+                        Session ffmpegSession =
+                            await FFmpegKit.execute(command);
                         List<Log> logList = await ffmpegSession.getAllLogs();
-                        for(Log log in logList) {
+                        for (Log log in logList) {
                           print('(EAT11)${log.getMessage()}');
                         }
                         await printAppDirListing();
@@ -348,14 +355,15 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       sessionStepId: sessionStep.reference!.path,
                       onPlay: (String localPath) async {
                         currentSessionStep = sessionStep;
-                        await setMaxVersionNumbersCurrentSessionStep();
-                        if (currentSessionStep!.maxAudioVersion! < 1) {
+                        String filePath = getFilePath(FileKind.wav, sessionStep.reference!.path!);
+                        print('(AS22)${localPath}....${filePath}');
+                        if (!(await isFileInAppDir(filePath))) {
                           toast(
                             context,
                             'No recording stored',
                             ToastKind.warning,
                           );
-                        } else {
+                        } /*else {
                           String correctedLocalPath = localPath.replaceAll(
                             '999999',
                             (currentSessionStep!.maxAudioVersion!).toString(),
@@ -378,8 +386,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                           if (maxVersion < 1) {
                             toast(context, 'Error in replay', ToastKind.error);
                           }
-                        }
-                        print('(DE39)${currentSessionStep!.maxAudioVersion!}');
+                        }*/
+                        print('(DE39)${currentSessionStep}');
                         return currentSessionStep!.maxAudioVersion!;
                       },
                       onDelete: () {
@@ -412,7 +420,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       onPressed: () async {
                         FFAppState().update(() {});
                         currentSessionStep = sessionStep;
-                        await setMaxVersionNumbersCurrentSessionStep();
+                        // await setMaxVersionNumbersCurrentSessionStep();
                         insertPicture(context, sessionStep);
                         sessions![currentSessionIndex].sessionModified = true;
                         await updateDocument(
@@ -435,14 +443,16 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       icon: Icon(Icons.speaker_notes),
                       onPressed: () async {
                         await storeStorageFile(
-                          bucketId: artTheopyAIRaudiosRef.path!,
-                          storageFileId: 'mp3' + sessionStep.reference!.path! + '.mp3',
-                          localFilePath: appDirPath! + '/mp3' + sessionStep.reference!.path! + '.mp3');
+                            bucketId: artTheopyAIRaudiosRef.path!,
+                            storageFileId:
+                                'mp3' + sessionStep.reference!.path! + '.mp3',
+                            localFilePath: getFilePath(FileKind.mp3, sessionStep.reference!.path!),
+                        deleteIfNecessary: true);
 
                         currentSessionStep = sessionStep;
                         //                      final uri = Uri.parse('698718ad000f1cc14442.fra.appwrite.run');
                         print(
-                          '(PQ1)${sessionStep.reference!.path!}....${sessionStep.maxAudioVersion.toString()}',
+                          '(PQ1)${currentSessionStep}++++${sessionStep.reference!.path!}....${sessionStep.maxAudioVersion.toString()}',
                         );
                         final uri = Uri.parse(
                           'https://698718ad000f1cc14442.fra.appwrite.run',
@@ -508,7 +518,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                     ),
                   ],
                 ),
-                Expanded(child: displayThumbnail()),
+                Expanded(child: displayThumbnail(sessionStep)),
               ],
             ),
             SizedBox(
@@ -533,22 +543,11 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
 
   List<BackupFileDetail> backupFileDetailList = [];
 
-  void loadImageNetworkPath(
+  void loadImageLocalPath(
     SessionStepsRecord sessionStep,
-    int localMaxVersion,
   ) {
-    final String BUCKET_ID = artTheopyAIRphotosRef.path!;
-    final String FILE_ID = generatePhotoStorageFilename(
-      sessionStep,
-      localMaxVersion,
-    );
-    final String PROJECT_ID = kProjectID;
-    if (FILE_ID.length > 0) {
-      imageNetworkPath =
-          'https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${FILE_ID}/view?project=${PROJECT_ID}';
-    } else {
-      imageNetworkPath = '';
-    }
+    localImagePath = appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
+    print('(SS212)${localImagePath}');
   }
 
   void insertPicture(
@@ -571,8 +570,15 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
           maxWidth: 500,
           maxHeight: 500,
           imageQuality: 50);
-      print('(FF20)${await imageFile!.length()}....${imageFile.path}');
-
+      final String savedFilePath = appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
+      await deleteFile(savedFilePath);
+      await printAppDirListing();
+      File savedFile = File(savedFilePath);
+      final FileImage fileImage = FileImage(savedFile);
+      bool evictSuccess = await fileImage.evict();
+      File renewedSavedFile = await File(imageFile!.path).copy(savedFilePath);
+      print('(DE410C)${imageFile.path},,,,${await imageFile.length()}....${savedFile.path}++++${await savedFile.length()}!!!!${evictSuccess}~~~~${renewedSavedFile.path}');
+      await printAppDirListing();
       /* var result = await FlutterImageCompress.compressWithFile(
         imageFile.path,
         minWidth: 500,
@@ -584,31 +590,26 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
       // Compressor compressor = Compressor(path: imageFile.path, isLocal: true);
       // String result = compressor.compressVideo(); // Replace with a real image compression method in future updates
 
-      print(
-          '(FF20)${await imageFile!.length()}....${imageFile.path},,,,${result}');
-
       String localFilePath = imageFile!
           .path; //= await getPath(sessionStepId: sessionStep.reference!.path!, fileKind: FileKind.photo);
       print(
-        '(DE400)${currentSessionStep!.maxPhotoVersion!}====${localFilePath}....${sessionStep.reference!.path!}',
+        '(DE400)${localFilePath}....${sessionStep.reference!.path!}',
       );
-      await storeStorageFile(
+/*      await storeStorageFile(
         bucketId: artTheopyAIRphotosRef.path!,
         storageFileId: generatePhotoStorageFilename(
           sessionStep,
-          currentSessionStep!.maxPhotoVersion! + 1,
+
         ),
         localFilePath: localFilePath,
-      );
+      );*/
       setState(() {
-        if ((currentSessionStep!.maxPhotoVersion ?? 0) > 0) {
-          loadImageNetworkPath(
-              sessionStep, currentSessionStep!.maxPhotoVersion!);
-        }
+          loadImageLocalPath(
+              sessionStep,);
       });
 
       print(
-        '(DE401)${localFilePath}....${sessionStep.reference!.path!}----${imageNetworkPath}',
+        '(DE401)${localFilePath}....${sessionStep.reference!.path!}',
       );
 
       // //> print('(XJJP9A)±${snapshot}');
@@ -958,8 +959,6 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                                   return displaySessionStep(
                                     sessionSteps![listViewIndex],
                                     listViewIndex,
-                                    sessionSteps![listViewIndex]
-                                        .maxPhotoVersion!,
                                   );
                                 },
                               ),

@@ -7,13 +7,13 @@ import 'package:record/record.dart';
 import '../../appwrite_interface.dart';
 
 mixin AudioRecorderMixin {
-  Future<void> recordFile(AudioRecorder recorder, RecordConfig config,  String sessionStepId, int version) {
+  Future<void> recordFile(AudioRecorder recorder, RecordConfig config,  String sessionStepId) {
     print('(AU2WEB)${config}');
 
     return recorder.start(config, path: '');
   }
 
-  Future<void> recordStream(AudioRecorder recorder, RecordConfig config, String sessionStepId, int version) async {
+  Future<void> recordStream(AudioRecorder recorder, RecordConfig config, String sessionStepId) async {
     final bytes = <int>[];
     final stream = await recorder.startStream(config);
     print('(AU3WEB)${config}');
@@ -40,7 +40,7 @@ mixin AudioRecorderMixin {
     web.document.body!.removeChild(anchor);
   }
 
-  Future<String> getPath({required String sessionStepId, required FileKind fileKind, required int version}) async {
+  Future<String> getPath({required String sessionStepId, required FileKind fileKind}) async {
     return  '';
   }
 

@@ -8,8 +8,8 @@ import 'package:record/record.dart';
 import '../../appwrite_interface.dart';
 
 mixin AudioRecorderMixin {
-  Future<void> recordFile(AudioRecorder recorder, RecordConfig config,  String sessionStepId, int version) async {
-    // final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav, version: version);
+  Future<void> recordFile(AudioRecorder recorder, RecordConfig config,  String sessionStepId) async {
+    // final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav);
     // print('(AU10)${path}');
     String filePath = appDirPath! + '/wav' + sessionStepId + '.wav';
     await deleteAppFile(filePath);
@@ -17,8 +17,8 @@ mixin AudioRecorderMixin {
     print('(AU11)${config}');
   }
 
-  Future<void> recordStream(AudioRecorder recorder, RecordConfig config,  String sessionStepId, int version) async {
-    final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav, version: version);
+  Future<void> recordStream(AudioRecorder recorder, RecordConfig config,  String sessionStepId) async {
+    final path = await getPath(sessionStepId: sessionStepId, fileKind: FileKind.wav);
 
     final file = File(tempDirPath!);
     print('(AU12)${path}');
@@ -39,7 +39,7 @@ mixin AudioRecorderMixin {
   void downloadWebData(String path) {}
 
 
-  Future<String> getPath({required String sessionStepId, required FileKind fileKind, required int version}) async {
+  Future<String> getPath({required String sessionStepId, required FileKind fileKind}) async {
     final dir = await getTemporaryDirectory();
     print('(AU1IO)${dir.path}');
     String prefix = '';
@@ -68,7 +68,7 @@ mixin AudioRecorderMixin {
     }
     return p.join(
       dir.path,
-      prefix + sessionStepId + '_${version}' + suffix
+      prefix + sessionStepId + suffix
     );
   }
 

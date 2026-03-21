@@ -33,7 +33,7 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget>
     return AudioTrimmerView(
         file: file,
         dirPath: widget.dirPath!,
-        maxVersion: widget.maxVersion!,
+        // maxVersion: widget.maxVersion!,
         sessionStepId: widget.sessionStepId);
   }
 }
