@@ -39,7 +39,7 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget>
 }
 
 MaterialColor createMaterialColor(Color color) {
-  List strengths = <double>[.05];
+  List<double> strengths = <double>[.05];
   Map<int, Color> swatch = {};
   final int r = color.red, g = color.green, b = color.blue;
 

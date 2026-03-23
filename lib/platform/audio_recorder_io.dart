@@ -65,6 +65,10 @@ mixin AudioRecorderMixin {
         prefix = 'mp3';
         suffix = '.mp3';
         break;
+      case FileKind.aac:
+        prefix = 'aac';
+        suffix = '.aac';
+        break;
     }
     return p.join(
       dir.path,

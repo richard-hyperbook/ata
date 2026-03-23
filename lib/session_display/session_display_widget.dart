@@ -152,7 +152,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
           localPath: audioPath,
           fileKind: FileKind.mp3,
         );*/
-        String audioPath = getFilePath(FileKind.mp3, sessionStepsList![step].reference!.path!);
+        String audioPath = getFilePath(FileKind.aac, sessionStepsList![step].reference!.path!);
         print(
             '(VA12)${step}~~~${audioPath}====${generateAudioStorageFilenameMp3(sessionStep)}');
         print(

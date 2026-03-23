@@ -156,6 +156,7 @@ dependencies:
   #audio_trimmer_plus: ^0.0.2
   audio_waveforms: ^2.0.2
   interactive_slider: ^0.5.1
+  flutter_sound: ^9.30.0
   #record_mp3: ^3.0.0
 
 

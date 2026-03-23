@@ -34,8 +34,8 @@ import '../../login/login_widget.dart';
 import '../../hyperbook_edit/hyperbook_edit_widget.dart';
 import '../../chapter_display/chapter_display_widget.dart';
 import '../../paypal/paypal_widget.dart';
-import '../../audio/audio_player.dart';
-import '../../audio/audio_recorder.dart';
+// import '../../audio/audio_player.dart';
+// import '../../audio/audio_recorder.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
 import 'package:image_picker/image_picker.dart';
@@ -56,6 +56,10 @@ import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/log.dart';
 import 'package:ffmpeg_kit_flutter_new/session.dart';
 import 'package:ffmpeg_kit_flutter_new/statistics.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:async';
+import 'package:intl/intl.dart' show DateFormat;
 
 http.Client _http = http.Client();
 
@@ -158,7 +162,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
   Widget editRecordingsButton(SessionStepsRecord sessionStep, int index) {
     return FlutterFlowIconButton(
         showLoadingIndicator: true,
-        caption: 'Edit recordings',
+        caption: 'Edit recording',
         captionFontSize: basicFontSize,
         tooltipMessage: 'Edit recording',
         borderColor: Colors.transparent,
@@ -169,7 +173,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         icon: Icon(Icons.edit_note),
         onPressed: () async {
           currentSessionStep = sessionStep;
-          final String filePath = appDirPath! + '/mp3' + sessionStep.reference!.path! + '.mp3';
+          final String filePath = getFilePath(FileKind.aac, sessionStep.reference!.path!);
           // await setMaxVersionNumbersCurrentSessionStep();
           // int maxVersion = currentSessionStep!.maxAudioVersion!;
           if (!(await isFileInAppDir(filePath))) {
@@ -208,10 +212,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         content: Container(
                           width: MediaQuery.sizeOf(context).width * 0.85,
                           child: FileSelectorWidget(
-                              filePath: appDirPath! +
-                                  '/wav' +
-                                  sessionStep.reference!.path! +
-                                  ".wav",
+                              filePath: filePath,
                               dirPath: appDirPath!,
                               maxVersion: 0,
                               sessionStepId: sessionStep
@@ -223,11 +224,11 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         });
   }
 
-  Widget displaySessionStep(
-    SessionStepsRecord sessionStep,
-    int index,
+  Widget displaySessionStep({
+    required SessionStepsRecord sessionStep,
+    required int index
     // int maxVersion,
-  ) {
+  }) {
     print('(ss111)${index}');
     loadImageLocalPath(sessionStep/*, maxVersion*/);
     return Material(
@@ -278,10 +279,11 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
               'Question: ${sessionStep.question}',
               style: FlutterFlowTheme.of(context).bodyMedium,
             ),
+            RecordPlay(title: 'AirStudio', sessionStep: sessionStep),
             //),
 
             ///////////////////////////////
-            Container(
+/*            Container(
               height: 60,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -295,12 +297,12 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       onStart: () async {
                         currentSessionStep = sessionStep;
                         sessions![currentSessionIndex].sessionModified = true;
-                        /*await updateDocument(
+                        *//*await updateDocument(
                             collection: sessionsRef,
                             document: sessions![currentSessionIndex].reference,
                             data: {kSessionSessionModified: true});
                         await setMaxVersionNumbersCurrentSessionStep();
-                        */
+                        *//*
                         print(
                             '(DE3A)${currentSessionStep!.reference!.path}}');
                       },
@@ -317,7 +319,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                           print('(EAT11)${log.getMessage()}');
                         }
                         await printAppDirListing();
-                        /*await storeStorageFile(
+                        *//*await storeStorageFile(
                           bucketId: artTheopyAIRaudiosRef.path!,
                           storageFileId: generateAudioStorageFilenameWav(
                             sessionStep,
@@ -332,16 +334,18 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             currentSessionStep!.maxAudioVersion! + 1,
                           ),
                           localFilePath: mp3Path,
-                        );*/
+                        );*//*
                         print('(EAT12)${path}....${mp3Path}');
+
+
                         setState(() => audioPath = path);
                       },
                     ),
                   ],
                 ),
               ),
-            ),
-            SingleChildScrollView(
+            )*/
+            /*SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 // key: infoCount == 1
@@ -363,7 +367,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             'No recording stored',
                             ToastKind.warning,
                           );
-                        } /*else {
+                        } *//*else {
                           String correctedLocalPath = localPath.replaceAll(
                             '999999',
                             (currentSessionStep!.maxAudioVersion!).toString(),
@@ -386,7 +390,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                           if (maxVersion < 1) {
                             toast(context, 'Error in replay', ToastKind.error);
                           }
-                        }*/
+                        }*//*
                         print('(DE39)${currentSessionStep}');
                         return currentSessionStep!.maxAudioVersion!;
                       },
@@ -399,7 +403,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                 ],
               ),
             ),
-
+*/
             Row(
               children: [
                 Column(
@@ -445,8 +449,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         await storeStorageFile(
                             bucketId: artTheopyAIRaudiosRef.path!,
                             storageFileId:
-                                'mp3' + sessionStep.reference!.path! + '.mp3',
-                            localFilePath: getFilePath(FileKind.mp3, sessionStep.reference!.path!),
+                                'aac' + sessionStep.reference!.path! + '.aac',
+                            localFilePath: getFilePath(FileKind.aac, sessionStep.reference!.path!),
                         deleteIfNecessary: true);
 
                         currentSessionStep = sessionStep;
@@ -464,14 +468,13 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             // 'Authorization': 'Basic $creds',
                             'Content-Type': 'application/json',
                           },
-                          body: 'mp3' +
+                          body: 'aac' +
                               sessionStep.reference!.path! +
                               /*sessionStep.maxAudioVersion.toString()*/
-                              '.mp3',
+                              '.aac',
                         );
-                        print(
-                          '(PQ2)${respAccessToken.statusCode}....${'mp3' + sessionStep.reference!.path! + '_' + sessionStep.maxAudioVersion.toString() + '.mp3'}',
-                        );
+                        print('(PQ2)${respAccessToken.statusCode}');
+
                         print(respAccessToken.body);
                         var respDynamic = jsonDecode(respAccessToken.body);
                         Map<String, dynamic> respObject =
@@ -671,6 +674,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
               transcriptionList.add('');
             }
           }
+
+
 
           return Title(
             title: 'steps_display',
@@ -957,8 +962,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                                 itemBuilder:
                                     (BuildContext context, int listViewIndex) {
                                   return displaySessionStep(
-                                    sessionSteps![listViewIndex],
-                                    listViewIndex,
+                                    sessionStep:  sessionSteps![listViewIndex],
+                                    index: listViewIndex
                                   );
                                 },
                               ),
@@ -1018,6 +1023,213 @@ void listCP() {
       print(
         '(CP2)${cpList[i].count}>>>>${cpList[i].chapterPath}<<<<<${cpList[i].parentPath}',
       );
+    }
+  }
+}
+
+
+class RecordPlay extends StatefulWidget {
+  final String title;
+  final SessionStepsRecord sessionStep;
+
+
+  const RecordPlay({super.key, required this.title, required this.sessionStep});
+
+  @override
+  State<RecordPlay> createState() => _RecordPlayState();
+}
+
+class _RecordPlayState extends State<RecordPlay> {
+  late FlutterSoundRecorder _recordingSession;
+  final AudioPlayer audioPlayer = AudioPlayer();
+  String? _recordedFilePath;
+  bool _playAudio = false;
+  String _timerText = '00:00:00';
+  StreamSubscription? _recorderSubscription;
+  bool _isRecording = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initializer();
+  }
+
+  @override
+  void dispose() {
+    _recorderSubscription?.cancel();
+    _recordingSession.closeRecorder();
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void initializer() async {
+    if(widget.sessionStep.audioFileValid?? false){
+      _recordedFilePath = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
+    }
+    print('(IF40)${widget.sessionStep.reference!.path}....${widget.sessionStep.audioFileValid},,,,${_recordedFilePath}');
+    _recordingSession = FlutterSoundRecorder();
+    await _recordingSession.openRecorder();
+    await _recordingSession.setSubscriptionDuration(const Duration(milliseconds: 10));
+
+    // await [Permission.microphone, Permission.storage].request();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      width: 500,
+      child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              // const SizedBox(height: 40),
+              Center(
+                child: Text(
+                  _timerText,
+                  style: const TextStyle(fontSize: 20, color: Colors.black),
+                ),
+              ),
+               const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  createElevatedButton(
+                    icon: _isRecording ? Icons.stop : Icons.mic,
+                    iconColor: Colors.black,
+                    onPressFunc: () {
+                      if (_isRecording) {
+                        stopRecording();
+                      } else {
+                        startRecording();
+                      }
+                    },
+                  ),
+                  // const SizedBox(width: 30),
+                  /*createElevatedButton(
+                    icon: Icons.stop,
+                    iconColor: Colors.black,
+                    onPressFunc: stopRecording,
+                  ),*/
+                  // const SizedBox(width: 30),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        elevation: 9.0, backgroundColor: Colors.black),
+                    onPressed: _recordedFilePath == null ? null : () {
+                      setState(() {
+                        _playAudio = !_playAudio;
+                      });
+                      if (_playAudio) playFunc();
+                      if (!_playAudio) stopPlayFunc();
+                    },
+                    icon: _playAudio
+                        ? const Icon(Icons.stop, color: Colors.white)
+                        : const Icon(Icons.play_arrow, color: Colors.white),
+                    label: _playAudio
+                        ? const Text(
+                      "Stop",
+                      style: TextStyle(fontSize: 28, color: Colors.white),
+                    )
+                        : const Text(
+                      "Play",
+                      style: TextStyle(fontSize: 28, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+    );
+  }
+
+  ElevatedButton createElevatedButton({
+    required IconData icon,
+    required Color iconColor,
+    required VoidCallback? onPressFunc,
+  }) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(6.0),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 4.0,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 9.0,
+      ),
+      onPressed: onPressFunc,
+      icon: Icon(
+        icon,
+        color: iconColor,
+        size: 38.0,
+      ),
+      label: const Text(''),
+    );
+  }
+
+  Future<void> startRecording() async {
+    try {
+      // var appDir = await getApplicationDocumentsDirectory();
+      var path = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
+      // String path = '${appDir.path}/airStudio/$fileName';
+      print('(IF20)${path}');
+
+      await _recordingSession.startRecorder(
+        toFile: path,
+        codec: Codec.aacMP4,
+      );
+
+      setState(() {
+        _isRecording = true;
+      });
+
+      _recorderSubscription?.cancel();
+      _recorderSubscription = _recordingSession.onProgress?.listen((e) {
+        var date = DateTime.fromMillisecondsSinceEpoch(e.duration.inMilliseconds,
+            isUtc: true);
+        var timeText = DateFormat('mm:ss:SS', 'en_GB').format(date);
+        setState(() {
+          _timerText = timeText.substring(0, 8);
+        });
+      });
+    } catch (e) {
+      print('(IF1)Error starting recording: $e');
+    }
+  }
+
+  Future<void> stopRecording() async {
+    try {
+      _recordedFilePath = await _recordingSession.stopRecorder();
+      _recorderSubscription?.cancel();
+      setState(() {
+        _isRecording = false;
+        _timerText = '00:00:00';
+      });
+      print('(IF10)${_recordingSession.recorderState}');
+      printAppDirListing();
+    } catch (e) {
+      print('(IF2)Error stopping recording: $e');
+    }
+  }
+
+  Future<void> playFunc() async {
+    print('(IF21)${_recordedFilePath}');
+    if (_recordedFilePath != null) {
+      try {
+        await audioPlayer.play(DeviceFileSource(_recordedFilePath!));
+      } catch (e) {
+        print('(IF3)Error playing audio: $e');
+      }
+    }
+  }
+
+  Future<void> stopPlayFunc() async {
+    try {
+      await audioPlayer.stop();
+    } catch (e) {
+      print('(IF4)Error stopping playback: $e');
     }
   }
 }

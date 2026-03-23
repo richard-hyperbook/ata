@@ -59,12 +59,13 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
       _progressVisibility = true;
     });
     final String newFileName =
-        'mp3' +
-        widget.sessionStepId;
+        'aac' +
+        widget.sessionStepId + '.aac';
     print('(EAT30)${widget.dirPath}++++${newFileName}');
     _trimmer.saveTrimmedAudio(
-      audioFolderName: '',
-      audioFileName: newFileName,
+      // audioFolderName: appDirPath,
+      // audioFileName: newFileName,
+      audioPath: widget.file.path,
       startValue: _startValue,
       endValue: _endValue,
       // outputFormat: ,
@@ -177,7 +178,8 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                     icon: Icon(Icons.save),
                     onPressed:
                         //(_progressVisibility ? null : () => _saveAudio),
-                        () {
+                        () async {
+                          await printAppDirListing();
                       _saveAudio();
                     }),
                 SizedBox(height: kIconButtonGap),

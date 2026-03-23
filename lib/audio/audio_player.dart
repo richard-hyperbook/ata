@@ -151,6 +151,8 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
       icon = Icon(Icons.play_arrow, color: theme.primaryColor, size: 30);
       color = theme.primaryColor.withValues(alpha: 0.1);
     }
+    print('(DE500)${_audioPlayer.getDuration()}');
+
 
     return ClipOval(
       child: Material(
@@ -206,8 +208,10 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
   }
 
   Future<void> play() async {
-    //localSetSource();//???????????????
-
+    localSetSource();//???????????????
+    // AudioCache _audioCache = _audioPlayer.audioCache;
+    // await _audioCache.clearAll();
+    // print('(AC1)${_audioCache.cacheId}');
     final utf8Encoder = utf8.encoder;
     Source localSource;
     await printAppDirListing();

@@ -32,7 +32,6 @@ import '../../conditional.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../platform/audio_recorder_platform.dart';
 
-
 export 'login_model.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -605,10 +604,19 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                   .toList(),
                                             );*/
                                             loggedIn = true;
-                                            tempDirPath = (await getTemporaryDirectory()).path;
-                                            String appDirPathParent = (await getApplicationSupportDirectory()).path;
-                                            appDirPath = (await Directory(appDirPathParent + '/airStudio').create(recursive: true)).path;
-                                            print('(TD1)${tempDirPath}....${appDirPath}');
+                                            tempDirPath =
+                                                (await getTemporaryDirectory())
+                                                    .path;
+                                            String appDirPathParent =
+                                                (await getApplicationSupportDirectory())
+                                                    .path;
+                                            appDirPath = (await Directory(
+                                                        appDirPathParent +
+                                                            '/airStudio')
+                                                    .create(recursive: true))
+                                                .path;
+                                            print(
+                                                '(TD1)${tempDirPath}....${appDirPath}');
                                             await printTempDirListing();
                                             await printAppDirListing();
 
@@ -876,6 +884,45 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                                     false);
                                                               }
                                                             }
+                                                          },
+                                                          child: const Text(
+                                                              'Confirm'),
+                                                        ),
+                                                      ]);
+                                                });
+                                          }),
+                                      FlutterFlowIconButton(
+                                          enabled: true,
+                                          fillColor: Colors.white,
+                                          tooltipMessage: 'Delete app dir',
+                                          borderColor: Colors.red,
+                                          borderRadius: 30,
+                                          borderWidth: 1,
+                                          buttonSize: 40,
+                                          icon: kIconDepreciated,
+                                          onPressed: () {
+                                            showDialog<bool>(
+                                                context: context,
+                                                builder: (BuildContext
+                                                    alertDialogContext) {
+                                                  return AlertDialog(
+                                                      title: const Text(
+                                                          'Delete all session files?'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext,
+                                                                  false),
+                                                          child: const Text(
+                                                              'Cancel'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            await emptyAppDir();
+                                                            Navigator.pop(
+                                                                alertDialogContext,
+                                                                false);
                                                           },
                                                           child: const Text(
                                                               'Confirm'),

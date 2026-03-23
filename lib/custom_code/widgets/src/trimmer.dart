@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../appwrite_interface.dart';
 import 'utils/file_formats.dart';
 import 'utils/storage_dir.dart';
 
@@ -164,6 +165,7 @@ class Trimmer {
   /// audio format is passed in [customAudioFormat], then the app may
   /// crash.
   ///
+/*
   Future<void> saveTrimmedAudio({
     required double startValue,
     required double endValue,
@@ -245,10 +247,13 @@ class Trimmer {
 
     command += '"$outputPath"';
 
+
     FFmpegKit.executeAsync(command, (session) async {
       final state =
           FFmpegKitConfig.sessionStateToString(await session.getState());
       final returnCode = await session.getReturnCode();
+
+      print('(AC2A)${command}');
 
       debugPrint("FFmpeg process exited with state $state and rc $returnCode");
 
@@ -265,6 +270,72 @@ class Trimmer {
 
     // return _outputPath;
   }
+*/
+
+  Future<void> saveTrimmedAudio({
+    required double startValue,
+    required double endValue,
+    required Function(String? outputPath) onSave,
+    required String audioPath,
+  }) async {
+    // final String audioPath = currentAudioFile!.path;
+    // final String audioName = basename(audioPath).split('.')[0];
+
+      // String _resultString;
+
+    Duration startPoint = Duration(milliseconds: startValue.toInt());
+    Duration endPoint = Duration(milliseconds: endValue.toInt());
+
+    // Checking the start and end point strings
+    debugPrint("(AC3)Start: ${startPoint.toString()} & End: ${endPoint.toString()}");
+
+
+    String outputPath = '"${tempDirPath}/trimmed.aac"';
+
+    String command =
+        '-y -ss $startPoint -i "$audioPath" -t ${endPoint - startPoint} -c:a copy -c:v copy ${outputPath}';
+
+
+    FFmpegKit.executeAsync(command, (session) async {
+      final state =
+      FFmpegKitConfig.sessionStateToString(await session.getState());
+      final returnCode = await session.getReturnCode();
+      final output = await session.getOutput();
+      final duration = await session.getDuration();
+      final logs = await session.getAllLogs();
+      await printAppDirListing();
+      print('(AC2A)${command}');
+      print(
+          '(AC2B)${returnCode},,,,${output!.length}----${output.characters.length}>>>>${duration}<<<<${logs.length}');
+      String logString = '';
+      for(int i = 0; i < logs.length; i++){
+        print('(AC2C)${i}....${logs[i].getMessage()}');
+        // logString = logString + logs[i].getMessage() + '££££';
+      }
+
+
+      await printTempDirListing();
+      debugPrint("FFmpeg process exited with state $state and rc $returnCode");
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        debugPrint("FFmpeg processing completed successfully.");
+        debugPrint('Audio successfully saved');
+        onSave(outputPath);
+      } else {
+        debugPrint("FFmpeg processing failed.");
+        debugPrint('Couldn\'t save the audio');
+        onSave(null);
+      }
+      await copyFiletoAppDir(sourcePath: '${tempDirPath}/trimmed.aac', targetPath: audioPath);
+
+
+    });
+
+    // return _outputPath;
+  }
+
+
+
 
   /// For getting the audio controller state, to know whether the
   /// audio is playing or paused currently.

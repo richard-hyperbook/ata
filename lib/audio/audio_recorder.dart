@@ -95,7 +95,6 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
 
   Future<void> _stop() async {
     final path = await _audioRecorder.stop();
-
     if (path != null) {
       widget.onStop(path);
 

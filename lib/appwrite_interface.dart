@@ -44,7 +44,7 @@ import '../platform/audio_recorder_platform.dart';
 
 // part 'appwrite_interface.g.dart';
 
-enum FileKind { /*audio,*/ photo, video, wav, mp3 }
+enum FileKind { /*audio,*/ photo, video, wav, mp3, aac }
 
 const String _numericChars = '1234567890';
 Random _numericRnd = Random();
@@ -327,6 +327,7 @@ class SessionStepsRecord {
   int? maxAudioVersion;
   int? maxPhotoVersion;
   bool? photoFileValid;
+  bool? audioFileValid;
 
   SessionStepsRecord({
     this.reference,
@@ -342,6 +343,7 @@ class SessionStepsRecord {
     this.maxAudioVersion,
     this.maxPhotoVersion,
     this.photoFileValid,
+    this.audioFileValid,
   });
 
   /* factory SessionStepsRecord.fromJson(Map<String, dynamic> json) =>
@@ -1293,7 +1295,9 @@ Future<List<SessionStepsRecord>> listSessionStepList({
 
   */
 
-    bool photoFileValid = await File(appDirPath! + '/photo' + d.$id + '.jpg').exists();
+    // bool photoFileValid = await File(appDirPath! + '/photo' + d.$id + '.jpg').exists();
+    bool photoFileValid = await File(getFilePath(FileKind.photo, d.$id)).exists();
+    bool audioFileValid = await File(getFilePath(FileKind.aac, d.$id)).exists();
     print('(PE1)${appDirPath! + '/photo' + d.$id + '.jpg'}....${photoFileValid}');
 
     SessionStepsRecord h = SessionStepsRecord(
@@ -1310,6 +1314,7 @@ Future<List<SessionStepsRecord>> listSessionStepList({
       // maxPhotoVersion: maxPhotoVersion,
       // maxAudioVersion: maxAudioVersion,
       photoFileValid: photoFileValid,
+      audioFileValid: audioFileValid,
     );
     print('(SS40)${hh.length}....${h.photo}');
     hh.add(h);
@@ -1727,6 +1732,7 @@ Future<void> deleteFile(String path) async {
   }
 }
 
+
 String getFilePath(FileKind fileKind, String item){
   String prefix = '';
   String suffix = '';
@@ -1746,6 +1752,10 @@ String getFilePath(FileKind fileKind, String item){
     case FileKind.mp3:
       prefix = 'mp3';
       suffix = '.mp3';
+      break;
+    case FileKind.aac:
+      prefix = 'aac';
+      suffix = '.aac';
       break;
     case null:
       break;
@@ -1782,6 +1792,9 @@ Future<bool> copyStorageFiletoLocal({
       break;
     case FileKind.mp3:
       token = 'mp3';
+      break;
+    case FileKind.aac:
+      token = 'aac';
       break;
     case null:
       break;
@@ -1830,6 +1843,18 @@ Future<void> printAppDirListing() async {
   }
 }
 
+Future<void> emptyAppDir() async {
+  final utf8Encoder = utf8.encoder;
+  var dir = Directory.fromRawPath(utf8Encoder.convert(appDirPath!));
+  await for (var entity in dir.list(recursive: true, followLinks: false)) {
+    print('(AD9)${entity.path}');
+    await entity.delete(recursive: false);
+  }
+}
+
+
+
+
 Future<List<String>> getAppDirListing() async {
   final utf8Encoder = utf8.encoder;
   List<String> result = [];
@@ -1849,6 +1874,23 @@ Future<bool> isFileInAppDir(String filename) async {
     }
   }
   return false;
+}
+
+Future<bool> copyFiletoAppDir({
+  required String? sourcePath,
+  required String? targetPath,
+}) async {
+  List<String> targetFilenameSplit = targetPath!.split('/');
+  String targetFilename = targetFilenameSplit.last;
+  File sourceFile = File(sourcePath!);
+  print('(AD20)${sourcePath}....${targetFilename}');
+  if (await isFileInAppDir(targetFilename)){
+    print('(AD21)${sourcePath}....${targetFilename}');
+    await deleteAppFile(targetFilename);
+  }
+  File outputFile = await sourceFile.copy(appDirPath! + '/' + targetFilename);
+  print('(AD22)${outputFile}....${outputFile.existsSync()}');
+  return (outputFile.existsSync());
 }
 
 Future<void> deleteAppFile(String filename) async{
