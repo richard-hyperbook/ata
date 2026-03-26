@@ -42,7 +42,7 @@ import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/log.dart';
 import 'package:ffmpeg_kit_flutter_new/session.dart';
 import 'package:ffmpeg_kit_flutter_new/statistics.dart';
-import '../../platform/audio_recorder_platform.dart';
+// import '../../platform/audio_recorder_platform.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -66,7 +66,7 @@ class SessionDisplayWidget extends StatefulWidget {
 }
 
 class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
-    with AudioRecorderMixin {
+    /*with AudioRecorderMixin*/ {
   late SessionDisplayModel _model;
 
   TextEditingController? enteredHyperbookTitleController;
@@ -126,7 +126,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
   }
 
   List<SessionStepsRecord>? sessionStepsList;
-  String? tempDirPath;
+  // String? tempDirPath;
   Utf8Encoder? utf8Encoder;
   Directory? dir;
 
@@ -381,6 +381,13 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                     currentTherapist =
                         await getUser(document: session.therapistId);
                     currentClient = await getUser(document: session.clientId);
+                    await updateDocument(
+                        collection: sessionsRef,
+                        document: sessions![currentSessionIndex].reference,
+                        data: {
+                          kSessionSessionModified: true,
+                        });
+
 
                     print('(S1)${session.clientId}');
                     Navigator.push(
@@ -418,34 +425,13 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                         showAlertDialog(context);
                         sessionStepsList =
                             await listSessionStepList(justCurrentSession: true);
-                        tempDirPath = await getTempDirPath();
+                        // tempDirPath = await getTempDir
+                        await emptyTempDirOFPhotosVideos();
                         print(
                             '(VA1)${tempDirPath}....${sessionStepsList!.length}');
                         utf8Encoder = utf8.encoder;
                         dir = Directory.fromRawPath(
                             utf8Encoder!.convert(tempDirPath!));
-
-                        // currentSession = session;
-
-                        // await for (var entity
-                        //     in dir!.list(recursive: true, followLinks: false)) {
-                        //   print('(VA2)${entity.path}');
-                        //   if (entity.path.contains('audio')) {
-                        //     File file = File(entity.path);
-                        //     print('(VA3)${entity.path}');
-                        //     await file.delete();
-                        //   }
-                        //   if (entity.path.contains('photo')) {
-                        //     File file = File(entity.path);
-                        //     print('(VA4)${entity.path}');
-                        //     await file.delete();
-                        //   }
-                        //   if (entity.path.contains('video')) {
-                        //     File file = File(entity.path);
-                        //     print('(VA5)${entity.path}');
-                        //     await file.delete();
-                        //   }
-                        // }
                         for (int i = 0; i < sessionStepsList!.length; i++) {
                           print('(VA6A)${sessionStepsList!.length}....${i}');
                           bool ok = await generateStepVideo(i);
@@ -469,11 +455,10 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                         final File concatFile =
                             await File("${videoDir.path}/concat.txt")
                                 .writeAsString(concatList);
-
                         final String concatedVideo =
                             "${videoDir.path}/video.mp4";
                         final String concatCommand =
-                            "-f concat -safe 0 -i ${videoDir.path}/concat.txt -c copy ${concatedVideo}";
+                            "-y -f concat -safe 0 -i ${videoDir.path}/concat.txt -c copy ${concatedVideo}";
                         print('(VA32)${concatedVideo}....${concatCommand}');
                         Session ffmpegSession2 =
                             await FFmpegKit.execute(concatCommand);

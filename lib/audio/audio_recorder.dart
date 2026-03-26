@@ -1,10 +1,11 @@
+/*
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 
-import '../../platform/audio_recorder_platform.dart';
+// import '../../platform/audio_recorder_platform.dart';
 import '../../appwrite_interface.dart';
 
 class Recorder extends StatefulWidget {
@@ -265,3 +266,4 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
     });
   }
 }
+*/

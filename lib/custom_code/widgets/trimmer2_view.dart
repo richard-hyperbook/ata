@@ -54,7 +54,9 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
     });
   }
 
-  _saveAudio() {
+  _saveAudio(
+  {bool saveNotCut = true}
+      ) {
     setState(() {
       _progressVisibility = true;
     });
@@ -68,6 +70,7 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
       audioPath: widget.file.path,
       startValue: _startValue,
       endValue: _endValue,
+      saveNotCut: saveNotCut,
       // outputFormat: ,
       onSave: (outputPath) async {
         setState(() {
@@ -180,12 +183,12 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                         //(_progressVisibility ? null : () => _saveAudio),
                         () async {
                           await printAppDirListing();
-                      _saveAudio();
+                      _saveAudio(saveNotCut: true);
                     }),
                 SizedBox(height: kIconButtonGap),
-                FlutterFlowIconButton(
+               /* FlutterFlowIconButton(
                     showLoadingIndicator: true,
-                    caption: 'Dir',
+                    caption: 'Remove selection',
                     captionFontSize: basicFontSize,
                     tooltipMessage: 'Save selected audio',
                     borderColor: Colors.transparent,
@@ -195,14 +198,9 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                     buttonWidth: kIconButtonWidth,
                     icon: Icon(Icons.save),
                     onPressed: () async {
-                      final utf8Encoder = utf8.encoder;
-                      var dir = Directory.fromRawPath(
-                          utf8Encoder.convert(widget.dirPath));
-                      await for (var entity
-                          in dir.list(recursive: true, followLinks: false)) {
-                        print('(EAT32)${entity.path}....${await entity.stat()}');
+                      _saveAudio(saveNotCut: false);
                       }
-                    }),
+                    ),*/
               ],
             ),
           );

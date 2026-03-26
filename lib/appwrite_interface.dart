@@ -40,7 +40,7 @@ import 'dart:io';
 import 'dart:convert';
 import '../app_state.dart';
 import 'package:video_player/video_player.dart';
-import '../platform/audio_recorder_platform.dart';
+// import '../platform/audio_recorder_platform.dart';
 
 // part 'appwrite_interface.g.dart';
 
@@ -1852,8 +1852,16 @@ Future<void> emptyAppDir() async {
   }
 }
 
-
-
+Future<void> emptyTempDirOFPhotosVideos() async {
+  final utf8Encoder = utf8.encoder;
+  var dir = Directory.fromRawPath(utf8Encoder.convert(tempDirPath!));
+  await for (var entity in dir.list(recursive: true, followLinks: false)) {
+    print('(TD9)${entity.path}');
+    if((entity.path.contains('photo')) || (entity.path.contains('video'))) {
+      await entity.delete(recursive: false);
+    }
+  }
+}
 
 Future<List<String>> getAppDirListing() async {
   final utf8Encoder = utf8.encoder;

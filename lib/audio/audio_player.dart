@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
@@ -6,7 +7,7 @@ import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../../platform/audio_recorder_platform.dart';
+// import '../../platform/audio_recorder_platform.dart';
 import '../../appwrite_interface.dart';
 
 class AudioPlayer extends StatefulWidget {
@@ -121,7 +122,9 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
                 _buildSlider(constraints.maxWidth - 50),
                 IconButton(
                   icon: const Icon(Icons.delete,
-                      color: Colors.red/*Color(0xFF73748D)*/, size: _deleteBtnSize),
+                      color: Colors.red*/
+/*Color(0xFF73748D)*//*
+, size: _deleteBtnSize),
                   onPressed: () {
                     if (_audioPlayer.state == ap.PlayerState.playing) {
                       stop().then((value) => widget.onDelete());
@@ -259,3 +262,4 @@ class AudioPlayerState extends State<AudioPlayer> with AudioRecorderMixin {
         : ap.DeviceFileSource( appDirPath! + '/mp3' + widget.sessionStepId! + '.mp3');
   }
 }
+*/

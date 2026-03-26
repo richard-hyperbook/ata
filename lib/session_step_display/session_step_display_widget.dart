@@ -40,7 +40,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../../platform/audio_recorder_platform.dart';
+// import '../../platform/audio_recorder_platform.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:appwrite/appwrite.dart' as appwrite;
@@ -75,8 +75,8 @@ class SessionStepDisplayWidget extends StatefulWidget {
       _SessionStepDisplayWidgetState();
 }
 
-class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
-    with AudioRecorderMixin {
+class _SessionStepDisplayWidgetState
+    extends State<SessionStepDisplayWidget> /* with AudioRecorderMixin*/ {
   late SessionStepDisplayModel _model;
 
   TextEditingController? enteredHyperbookTitleController;
@@ -142,9 +142,11 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
   //int? maxVersion;
 
   Widget displayThumbnail(SessionStepsRecord sessionStep) {
-    print('(DE410A)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
-    if (sessionStep!.photoFileValid?? false) {
-      print('(DE410B)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
+    print(
+        '(DE410A)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
+    if (sessionStep!.photoFileValid ?? false) {
+      print(
+          '(DE410B)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
 
       return Image.file(
         File(appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg'),
@@ -173,7 +175,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         icon: Icon(Icons.edit_note),
         onPressed: () async {
           currentSessionStep = sessionStep;
-          final String filePath = getFilePath(FileKind.aac, sessionStep.reference!.path!);
+          final String filePath =
+              getFilePath(FileKind.aac, sessionStep.reference!.path!);
           // await setMaxVersionNumbersCurrentSessionStep();
           // int maxVersion = currentSessionStep!.maxAudioVersion!;
           if (!(await isFileInAppDir(filePath))) {
@@ -198,8 +201,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
               fileKind: FileKind.mp3,
             );*/
 
-            print(
-                '(DE101)${filePath}');
+            print('(DE101)${filePath}');
 
             showDialog<bool>(
                 context: context,
@@ -224,13 +226,12 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         });
   }
 
-  Widget displaySessionStep({
-    required SessionStepsRecord sessionStep,
-    required int index
-    // int maxVersion,
-  }) {
+  Widget displaySessionStep(
+      {required SessionStepsRecord sessionStep, required int index
+      // int maxVersion,
+      }) {
     print('(ss111)${index}');
-    loadImageLocalPath(sessionStep/*, maxVersion*/);
+    loadImageLocalPath(sessionStep /*, maxVersion*/);
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
@@ -297,12 +298,12 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                       onStart: () async {
                         currentSessionStep = sessionStep;
                         sessions![currentSessionIndex].sessionModified = true;
-                        *//*await updateDocument(
+                        */ /*await updateDocument(
                             collection: sessionsRef,
                             document: sessions![currentSessionIndex].reference,
                             data: {kSessionSessionModified: true});
                         await setMaxVersionNumbersCurrentSessionStep();
-                        *//*
+                        */ /*
                         print(
                             '(DE3A)${currentSessionStep!.reference!.path}}');
                       },
@@ -319,7 +320,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                           print('(EAT11)${log.getMessage()}');
                         }
                         await printAppDirListing();
-                        *//*await storeStorageFile(
+                        */ /*await storeStorageFile(
                           bucketId: artTheopyAIRaudiosRef.path!,
                           storageFileId: generateAudioStorageFilenameWav(
                             sessionStep,
@@ -334,7 +335,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             currentSessionStep!.maxAudioVersion! + 1,
                           ),
                           localFilePath: mp3Path,
-                        );*//*
+                        );*/ /*
                         print('(EAT12)${path}....${mp3Path}');
 
 
@@ -367,7 +368,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             'No recording stored',
                             ToastKind.warning,
                           );
-                        } *//*else {
+                        } */ /*else {
                           String correctedLocalPath = localPath.replaceAll(
                             '999999',
                             (currentSessionStep!.maxAudioVersion!).toString(),
@@ -390,7 +391,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                           if (maxVersion < 1) {
                             toast(context, 'Error in replay', ToastKind.error);
                           }
-                        }*//*
+                        }*/ /*
                         print('(DE39)${currentSessionStep}');
                         return currentSessionStep!.maxAudioVersion!;
                       },
@@ -450,8 +451,9 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                             bucketId: artTheopyAIRaudiosRef.path!,
                             storageFileId:
                                 'aac' + sessionStep.reference!.path! + '.aac',
-                            localFilePath: getFilePath(FileKind.aac, sessionStep.reference!.path!),
-                        deleteIfNecessary: true);
+                            localFilePath: getFilePath(
+                                FileKind.aac, sessionStep.reference!.path!),
+                            deleteIfNecessary: true);
 
                         currentSessionStep = sessionStep;
                         //                      final uri = Uri.parse('698718ad000f1cc14442.fra.appwrite.run');
@@ -549,7 +551,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
   void loadImageLocalPath(
     SessionStepsRecord sessionStep,
   ) {
-    localImagePath = appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
+    localImagePath =
+        appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
     print('(SS212)${localImagePath}');
   }
 
@@ -573,14 +576,16 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
           maxWidth: 500,
           maxHeight: 500,
           imageQuality: 50);
-      final String savedFilePath = appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
+      final String savedFilePath =
+          appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
       await deleteFile(savedFilePath);
       await printAppDirListing();
       File savedFile = File(savedFilePath);
       final FileImage fileImage = FileImage(savedFile);
       bool evictSuccess = await fileImage.evict();
       File renewedSavedFile = await File(imageFile!.path).copy(savedFilePath);
-      print('(DE410C)${imageFile.path},,,,${await imageFile.length()}....${savedFile.path}++++${await savedFile.length()}!!!!${evictSuccess}~~~~${renewedSavedFile.path}');
+      print(
+          '(DE410C)${imageFile.path},,,,${await imageFile.length()}....${savedFile.path}++++${await savedFile.length()}!!!!${evictSuccess}~~~~${renewedSavedFile.path}');
       await printAppDirListing();
       /* var result = await FlutterImageCompress.compressWithFile(
         imageFile.path,
@@ -607,8 +612,9 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
         localFilePath: localFilePath,
       );*/
       setState(() {
-          loadImageLocalPath(
-              sessionStep,);
+        loadImageLocalPath(
+          sessionStep,
+        );
       });
 
       print(
@@ -632,7 +638,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
   Widget build(BuildContext context) {
     print('(SS2)${sessions![currentSessionIndex]}`}');
     print('(SS3)${sessions![currentSessionIndex].clientDisplayName}');
-
+    sessions![currentSessionIndex].sessionModified = true;
     MenuDetails hyperbookDisplayMenuDetails = MenuDetails(
       menuLabelList: ['Login'],
       menuIconList: [kIconLogin],
@@ -675,10 +681,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
             }
           }
 
-
-
           return Title(
-            title: 'steps_display',
+            title: 'Edit AIR',
             color: FlutterFlowTheme.of(context).primary.withAlpha(0XFF),
             child: Scaffold(
               key: scaffoldKey,
@@ -688,7 +692,7 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                 backgroundColor: FlutterFlowTheme.of(context).primary,
                 automaticallyImplyLeading: false,
                 title: Text(
-                  'Steps',
+                  'Edit AIR',
                   style: FlutterFlowTheme.of(context).headlineMedium.override(
                         fontFamily: 'Rubik',
                         color: Colors.white,
@@ -747,204 +751,43 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Wrap(
-                              // mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                /*SizedBox(width: 20),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: FFButtonWidget(
-                                          // key: intro!.keys[1],
-                                          tooltipMessage:
-                                              'Click to create a new hyperbook',
-                                          onPressed: () async {
-                                            print(('AAT1'));
-                                          },
-                                          text: 'Create session',
-                                          options: FFButtonOptions(
-                                            //width: 200.0,
-                                            height: 30.0,
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(10.0, 0.0, 10.0, 0.0),
-                                            iconPadding:
-                                                const EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                    0.0, 0.0, 0.0, 0.0),
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .titleSmall
-                                                    .override(
-                                                      fontFamily: 'Rubik',
-                                                      color: Colors.white,
-                                                      fontSize: 12.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                            elevation: 2.0,
-                                            borderSide: const BorderSide(
-                                              color: Colors.transparent,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                        ),
-                                      ),*/
-                                (currentUser!.role! == kRoleAdministrator)
-                                    ? Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: FFButtonWidget(
-                                          text: 'check',
-                                          onPressed: () async {
-                                            String? message =
-                                                currentUser!.userMessage;
-                                            //>print('(UM4)${message}');
-                                            if ((message != null) &&
-                                                (message != '')) {
-                                              //>print('(UM5)${message}');
-                                              showDialog<bool>(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
-                                                  //>print('(UM6)${message}');
-                                                  return StatefulBuilder(
-                                                    builder:
-                                                        (context, setState) {
-                                                      return AlertDialog(
-                                                        title: Text('Message'),
-                                                        content: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Text(message),
-                                                          ],
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                              context,
-                                                              false,
-                                                            ),
-                                                            child: const Text(
-                                                              'Cancel',
-                                                            ),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed:
-                                                                () async {
-                                                              toast(
-                                                                context,
-                                                                '',
-                                                                ToastKind
-                                                                    .success,
-                                                              );
-                                                              context.pop();
-                                                            },
-                                                            child: const Text(
-                                                              'Confirm',
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          },
-                                          options: FFButtonOptions(
-                                            //width: 200.0,
-                                            height: 30.0,
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(
-                                              10.0,
-                                              0.0,
-                                              10.0,
-                                              0.0,
-                                            ),
-                                            iconPadding:
-                                                const EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                              0.0,
-                                              0.0,
-                                              0.0,
-                                              0.0,
-                                            ),
-                                            color: FlutterFlowTheme.of(
-                                              context,
-                                            ).primary,
-                                            textStyle: FlutterFlowTheme.of(
-                                              context,
-                                            ).titleSmall.override(
-                                                  fontFamily: 'Rubik',
-                                                  color: Colors.white,
-                                                  fontSize: 12.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                            elevation: 2.0,
-                                            borderSide: const BorderSide(
-                                              color: Colors.transparent,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
-                                (currentUser!.role! == kUserLevelSupervisor)
-                                    ? Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: FFButtonWidget(
-                                          text: 'loadDB',
-                                          onPressed: () async {},
-                                          options: FFButtonOptions(
-                                            //width: 200.0,
-                                            height: 30.0,
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(
-                                              10.0,
-                                              0.0,
-                                              10.0,
-                                              0.0,
-                                            ),
-                                            iconPadding:
-                                                const EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                              0.0,
-                                              0.0,
-                                              0.0,
-                                              0.0,
-                                            ),
-                                            color: FlutterFlowTheme.of(
-                                              context,
-                                            ).primary,
-                                            textStyle: FlutterFlowTheme.of(
-                                              context,
-                                            ).titleSmall.override(
-                                                  fontFamily: 'Rubik',
-                                                  color: Colors.white,
-                                                  fontSize: 12.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                            elevation: 2.0,
-                                            borderSide: const BorderSide(
-                                              color: Colors.transparent,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                          ),
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                20.0,
+                                0.0,
+                                20.0,
+                                0.0,
+                              ),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                // key: infoCount == 1
+                                // ? intro!.keys[2]
+                                // : UniqueKey(),
+                                child: Text(
+                                  'Client: ${sessions![currentSessionIndex].clientDisplayName}',
+                                  softWrap: false,
+                                  style:
+                                      FlutterFlowTheme.of(context).bodyMedium,
+                                ),
+                              )),
+                          Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                20.0,
+                                0.0,
+                                20.0,
+                                0.0,
+                              ),
+                              child: SingleChildScrollView(
+                                // key: infoCount == 1
+                                //     ? intro!.keys[3]
+                                //     : UniqueKey(),
+                                scrollDirection: Axis.horizontal,
+                                child: Text(
+                                  softWrap: false,
+                                  'Date: ${(DateFormat.yMMMd().format(sessions![currentSessionIndex].$createdAt!))}',
+                                  style:
+                                      FlutterFlowTheme.of(context).bodyMedium,
+                                ),
+                              )),
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
                               20.0,
@@ -962,9 +805,8 @@ class _SessionStepDisplayWidgetState extends State<SessionStepDisplayWidget>
                                 itemBuilder:
                                     (BuildContext context, int listViewIndex) {
                                   return displaySessionStep(
-                                    sessionStep:  sessionSteps![listViewIndex],
-                                    index: listViewIndex
-                                  );
+                                      sessionStep: sessionSteps![listViewIndex],
+                                      index: listViewIndex);
                                 },
                               ),
                             ),
@@ -1027,11 +869,9 @@ void listCP() {
   }
 }
 
-
 class RecordPlay extends StatefulWidget {
   final String title;
   final SessionStepsRecord sessionStep;
-
 
   const RecordPlay({super.key, required this.title, required this.sessionStep});
 
@@ -1063,13 +903,16 @@ class _RecordPlayState extends State<RecordPlay> {
   }
 
   void initializer() async {
-    if(widget.sessionStep.audioFileValid?? false){
-      _recordedFilePath = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
+    if (widget.sessionStep.audioFileValid ?? false) {
+      _recordedFilePath =
+          getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
     }
-    print('(IF40)${widget.sessionStep.reference!.path}....${widget.sessionStep.audioFileValid},,,,${_recordedFilePath}');
+    print(
+        '(IF40)${widget.sessionStep.reference!.path}....${widget.sessionStep.audioFileValid},,,,${_recordedFilePath}');
     _recordingSession = FlutterSoundRecorder();
     await _recordingSession.openRecorder();
-    await _recordingSession.setSubscriptionDuration(const Duration(milliseconds: 10));
+    await _recordingSession
+        .setSubscriptionDuration(const Duration(milliseconds: 10));
 
     // await [Permission.microphone, Permission.storage].request();
   }
@@ -1080,64 +923,67 @@ class _RecordPlayState extends State<RecordPlay> {
       height: 120,
       width: 500,
       child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          // const SizedBox(height: 40),
+
+          Center(
+            child: Text(
+              _timerText,
+              style: const TextStyle(fontSize: 20, color: Colors.black),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              // const SizedBox(height: 40),
-              Center(
-                child: Text(
-                  _timerText,
-                  style: const TextStyle(fontSize: 20, color: Colors.black),
-                ),
+              createElevatedButton(
+                icon: _isRecording ? Icons.stop : Icons.mic,
+                iconColor: Colors.black,
+                onPressFunc: () {
+                  if (_isRecording) {
+                    stopRecording();
+                  } else {
+                    startRecording();
+                  }
+                },
               ),
-               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  createElevatedButton(
-                    icon: _isRecording ? Icons.stop : Icons.mic,
-                    iconColor: Colors.black,
-                    onPressFunc: () {
-                      if (_isRecording) {
-                        stopRecording();
-                      } else {
-                        startRecording();
-                      }
-                    },
-                  ),
-                  // const SizedBox(width: 30),
-                  /*createElevatedButton(
+              // const SizedBox(width: 30),
+              /*createElevatedButton(
                     icon: Icons.stop,
                     iconColor: Colors.black,
                     onPressFunc: stopRecording,
                   ),*/
-                  // const SizedBox(width: 30),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                        elevation: 9.0, backgroundColor: Colors.black),
-                    onPressed: _recordedFilePath == null ? null : () {
-                      setState(() {
-                        _playAudio = !_playAudio;
-                      });
-                      if (_playAudio) playFunc();
-                      if (!_playAudio) stopPlayFunc();
-                    },
-                    icon: _playAudio
-                        ? const Icon(Icons.stop, color: Colors.white)
-                        : const Icon(Icons.play_arrow, color: Colors.white),
-                    label: _playAudio
-                        ? const Text(
-                      "Stop",
-                      style: TextStyle(fontSize: 28, color: Colors.white),
-                    )
-                        : const Text(
-                      "Play",
-                      style: TextStyle(fontSize: 28, color: Colors.white),
-                    ),
-                  ),
-                ],
+              // const SizedBox(width: 30),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                    elevation: 9.0, backgroundColor: Colors.black),
+                onPressed: _recordedFilePath == null
+                    ? null
+                    : () {
+                        setState(() {
+                          _playAudio = !_playAudio;
+                        });
+                        if (_playAudio) playFunc();
+                        if (!_playAudio) stopPlayFunc();
+                      },
+                icon: _playAudio
+                    ? const Icon(Icons.stop, color: Colors.white)
+                    : const Icon(Icons.play_arrow, color: Colors.white),
+                label: _playAudio
+                    ? const Text(
+                        "Stop",
+                        style: TextStyle(fontSize: 28, color: Colors.white),
+                      )
+                    : const Text(
+                        "Play",
+                        style: TextStyle(fontSize: 28, color: Colors.white),
+                      ),
               ),
             ],
           ),
+        ],
+      ),
     );
   }
 
@@ -1173,6 +1019,40 @@ class _RecordPlayState extends State<RecordPlay> {
     try {
       // var appDir = await getApplicationDocumentsDirectory();
       var path = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
+      bool carryOn = false;
+      if (await isFileInAppDir(path)) {
+        showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+              // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
+              return StatefulBuilder(builder: (context, setState) {
+                return AlertDialog(
+                  title: Text('Overwrite recording?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        carryOn = false;
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Cancel',
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        carryOn = true;
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Confirm',
+                      ),
+                    ),
+                  ],
+                );
+              });
+            });
+      }
+
       // String path = '${appDir.path}/airStudio/$fileName';
       print('(IF20)${path}');
 
@@ -1187,7 +1067,8 @@ class _RecordPlayState extends State<RecordPlay> {
 
       _recorderSubscription?.cancel();
       _recorderSubscription = _recordingSession.onProgress?.listen((e) {
-        var date = DateTime.fromMillisecondsSinceEpoch(e.duration.inMilliseconds,
+        var date = DateTime.fromMillisecondsSinceEpoch(
+            e.duration.inMilliseconds,
             isUtc: true);
         var timeText = DateFormat('mm:ss:SS', 'en_GB').format(date);
         setState(() {
@@ -1231,5 +1112,152 @@ class _RecordPlayState extends State<RecordPlay> {
     } catch (e) {
       print('(IF4)Error stopping playback: $e');
     }
+  }
+
+  Widget uknownWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Wrap(
+        // mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          (currentUser!.role! == kRoleAdministrator)
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FFButtonWidget(
+                    text: 'check',
+                    onPressed: () async {
+                      String? message = currentUser!.userMessage;
+                      //>print('(UM4)${message}');
+                      if ((message != null) && (message != '')) {
+                        //>print('(UM5)${message}');
+                        showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
+                            //>print('(UM6)${message}');
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return AlertDialog(
+                                  title: Text('Message'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(message),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(
+                                        context,
+                                        false,
+                                      ),
+                                      child: const Text(
+                                        'Cancel',
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        toast(
+                                          context,
+                                          '',
+                                          ToastKind.success,
+                                        );
+                                        context.pop();
+                                      },
+                                      child: const Text(
+                                        'Confirm',
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }
+                    },
+                    options: FFButtonOptions(
+                      //width: 200.0,
+                      height: 30.0,
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        10.0,
+                        0.0,
+                        10.0,
+                        0.0,
+                      ),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                      ),
+                      color: FlutterFlowTheme.of(
+                        context,
+                      ).primary,
+                      textStyle: FlutterFlowTheme.of(
+                        context,
+                      ).titleSmall.override(
+                            fontFamily: 'Rubik',
+                            color: Colors.white,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                      elevation: 2.0,
+                      borderSide: const BorderSide(
+                        color: Colors.transparent,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        8.0,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(),
+          (currentUser!.role! == kUserLevelSupervisor)
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FFButtonWidget(
+                    text: 'loadDB',
+                    onPressed: () async {},
+                    options: FFButtonOptions(
+                      //width: 200.0,
+                      height: 30.0,
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        10.0,
+                        0.0,
+                        10.0,
+                        0.0,
+                      ),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                      ),
+                      color: FlutterFlowTheme.of(
+                        context,
+                      ).primary,
+                      textStyle: FlutterFlowTheme.of(
+                        context,
+                      ).titleSmall.override(
+                            fontFamily: 'Rubik',
+                            color: Colors.white,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                      elevation: 2.0,
+                      borderSide: const BorderSide(
+                        color: Colors.transparent,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        8.0,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(),
+        ],
+      ),
+    );
   }
 }

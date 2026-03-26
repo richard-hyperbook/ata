@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../appwrite_interface.dart';
 import '../../custom_code/widgets/toast.dart';
-import '../../platform/audio_recorder_platform.dart';
+// import '../../platform/audio_recorder_platform.dart';
 
 class FileSelectorWidget extends StatefulWidget {
   String? filePath;
@@ -25,7 +25,7 @@ class FileSelectorWidget extends StatefulWidget {
 }
 
 class _FileSelectorWidgetState extends State<FileSelectorWidget>
-    with AudioRecorderMixin {
+    /*with AudioRecorderMixin */{
   @override
   Widget build(BuildContext context) {
     print('(EAT1)${widget.filePath}');

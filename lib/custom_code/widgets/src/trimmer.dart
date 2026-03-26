@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit_config.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_session.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:path/path.dart';
 
@@ -13,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../appwrite_interface.dart';
 import 'utils/file_formats.dart';
 import 'utils/storage_dir.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 
 enum TrimmerEvent { initialized }
 
@@ -28,9 +30,9 @@ class Trimmer {
   final StreamController<TrimmerEvent> _controller =
       StreamController<TrimmerEvent>.broadcast();
 
-  AudioPlayer? _audioPlayer;
+  ap.AudioPlayer? _audioPlayer;
 
-  AudioPlayer? get audioPlayer => _audioPlayer;
+  ap.AudioPlayer? get audioPlayer => _audioPlayer;
 
   File? currentAudioFile;
 
@@ -43,8 +45,8 @@ class Trimmer {
   Future<void> loadAudio({required File audioFile}) async {
     currentAudioFile = audioFile;
     if (audioFile.existsSync()) {
-      _audioPlayer = AudioPlayer();
-      await _audioPlayer?.setSource(DeviceFileSource(audioFile.path));
+      _audioPlayer = ap.AudioPlayer();
+      await _audioPlayer?.setSource(ap.DeviceFileSource(audioFile.path));
 
       _controller.add(TrimmerEvent.initialized);
 
@@ -272,31 +274,16 @@ class Trimmer {
   }
 */
 
-  Future<void> saveTrimmedAudio({
-    required double startValue,
-    required double endValue,
-    required Function(String? outputPath) onSave,
-    required String audioPath,
-  }) async {
-    // final String audioPath = currentAudioFile!.path;
-    // final String audioName = basename(audioPath).split('.')[0];
-
-      // String _resultString;
-
-    Duration startPoint = Duration(milliseconds: startValue.toInt());
-    Duration endPoint = Duration(milliseconds: endValue.toInt());
-
-    // Checking the start and end point strings
-    debugPrint("(AC3)Start: ${startPoint.toString()} & End: ${endPoint.toString()}");
-
-
-    String outputPath = '"${tempDirPath}/trimmed.aac"';
-
-    String command =
-        '-y -ss $startPoint -i "$audioPath" -t ${endPoint - startPoint} -c:a copy -c:v copy ${outputPath}';
-
-
-    FFmpegKit.executeAsync(command, (session) async {
+  Future<FFmpegSession> extractAudio({String? sourcePath, String? targetPath, Duration? startPoint, Duration? endPoint}) async {
+  String command = '';
+    if (endPoint == null){
+      command =
+      '-y -ss $startPoint -i "$sourcePath"  -c copy ${targetPath}';
+    } else {
+      command =
+      '-y -ss $startPoint -t ${endPoint} -i "$sourcePath"  -c copy ${targetPath}';
+    }
+    FFmpegSession ffmpegSession = await FFmpegKit.executeAsync(command, (session) async {
       final state =
       FFmpegKitConfig.sessionStateToString(await session.getState());
       final returnCode = await session.getReturnCode();
@@ -312,26 +299,61 @@ class Trimmer {
         print('(AC2C)${i}....${logs[i].getMessage()}');
         // logString = logString + logs[i].getMessage() + '££££';
       }
-
-
       await printTempDirListing();
       debugPrint("FFmpeg process exited with state $state and rc $returnCode");
-
       if (ReturnCode.isSuccess(returnCode)) {
         debugPrint("FFmpeg processing completed successfully.");
         debugPrint('Audio successfully saved');
-        onSave(outputPath);
       } else {
         debugPrint("FFmpeg processing failed.");
         debugPrint('Couldn\'t save the audio');
-        onSave(null);
       }
-      await copyFiletoAppDir(sourcePath: '${tempDirPath}/trimmed.aac', targetPath: audioPath);
-
-
+      //await copyFiletoAppDir(sourcePath: '${tempDirPath}/trimmed.aac', targetPath: audioPath);
     });
+   return ffmpegSession;
+  }
 
-    // return _outputPath;
+  Future<void> saveTrimmedAudio({
+    required double startValue,
+    required double endValue,
+    required Function(String? outputPath) onSave,
+    required String audioPath,
+    bool saveNotCut = true,
+  }) async {
+    // final String audioPath = currentAudioFile!.path;
+    // final String audioName = basename(audioPath).split('.')[0];
+
+      // String _resultString;
+
+    Duration startPoint = Duration(milliseconds: startValue.toInt());
+    Duration endPoint = Duration(milliseconds: endValue.toInt());
+
+    // Checking the start and end point strings
+    debugPrint("(AC3)Start: ${startPoint.toString()} & End: ${endPoint.toString()}");
+
+
+    String outputPath = '"${tempDirPath}/trimmed.aac"';
+
+    String command = '';
+    if(saveNotCut) {
+      await extractAudio(sourcePath: audioPath, targetPath: outputPath, startPoint: startPoint, endPoint: endPoint);
+    } else {
+      String beforePath = '${tempDirPath}/before.aac';
+      String afterPath = '${tempDirPath}/after.aac';
+      await extractAudio(sourcePath: audioPath, targetPath: beforePath, startPoint: Duration(microseconds: 0), endPoint: startPoint);
+      await extractAudio(sourcePath: audioPath, targetPath: afterPath, startPoint: endPoint, endPoint: null);
+      String concatList = 'file ${beforePath}\nfile ${afterPath}';
+      final File concatFile =
+      await File("${tempDirPath}/concat.txt")
+          .writeAsString(concatList);
+      final String concatCommand =
+          "-y -f concat -safe 0 -i ${tempDirPath}/concat.txt -c copy ${audioPath}";
+      print('(EV1)${audioPath}....${concatCommand}');
+      FFmpegSession ffmpegSession2 =
+      await FFmpegKit.execute(concatCommand);
+      print('(EV2)${ffmpegSession2}');
+    }
+   // return _outputPath;
   }
 
 
@@ -352,7 +374,7 @@ class Trimmer {
     required double endValue,
   }) async {
     print('(EAT50)${audioPlayer?.state}');
-    if (audioPlayer?.state == PlayerState.playing) {
+    if (audioPlayer?.state == ap.PlayerState.playing) {
       print('(EAT51A)${audioPlayer?.state}');
       await audioPlayer?.pause();
       return false;
@@ -370,7 +392,7 @@ class Trimmer {
         return true;
       } else {
         print('(EAT54)${duration}');
-        await audioPlayer!.play(DeviceFileSource(currentAudioFile!.path));
+        await audioPlayer!.play(ap.DeviceFileSource(currentAudioFile!.path));
         return true;
       }
     }
