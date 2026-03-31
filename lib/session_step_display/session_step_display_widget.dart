@@ -165,7 +165,7 @@ class _SessionStepDisplayWidgetState
     return FlutterFlowIconButton(
         showLoadingIndicator: true,
         caption: 'Edit recording',
-        captionFontSize: basicFontSize,
+        //captionFontSize: basicFontSize,
         tooltipMessage: 'Edit recording',
         borderColor: Colors.transparent,
         borderRadius: 0.0,
@@ -414,7 +414,7 @@ class _SessionStepDisplayWidgetState
                     FlutterFlowIconButton(
                       showLoadingIndicator: true,
                       caption: 'Select photo',
-                      captionFontSize: basicFontSize,
+                      // captionFontSize: basicFontSize,
                       tooltipMessage: 'Select photo from gallery',
                       borderColor: Colors.transparent,
                       borderRadius: 0.0,
@@ -438,7 +438,7 @@ class _SessionStepDisplayWidgetState
                     FlutterFlowIconButton(
                       showLoadingIndicator: true,
                       caption: 'Transcribe',
-                      captionFontSize: basicFontSize,
+                      // captionFontSize: basicFontSize,
                       tooltipMessage: 'Speech to text',
                       borderColor: Colors.transparent,
                       borderRadius: 0.0,

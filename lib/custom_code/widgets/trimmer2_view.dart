@@ -171,7 +171,7 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                 FlutterFlowIconButton(
                     showLoadingIndicator: true,
                     caption: 'Save selection',
-                    captionFontSize: basicFontSize,
+                    // captionFontSize: basicFontSize,
                     tooltipMessage: 'Save selected audio',
                     borderColor: Colors.transparent,
                     borderRadius: 0.0,

@@ -50,11 +50,11 @@ const String _numericChars = '1234567890';
 Random _numericRnd = Random();
 
 String getRandomNumericString(int length) => String.fromCharCodes(
-  Iterable.generate(
-    length,
-    (_) => _numericChars.codeUnitAt(_numericRnd.nextInt(_numericChars.length)),
-  ),
-);
+      Iterable.generate(
+        length,
+        (_) => _numericChars.codeUnitAt(_numericRnd.nextInt(_numericChars.length)),
+      ),
+    );
 
 /*
 //localhost
@@ -112,8 +112,6 @@ final DocumentReference templatesRef = DocumentReference(
   path: 'templates',
 );
 
-
-
 final DocumentReference constraintsRef = DocumentReference(path: '');
 
 // LocalDB localDB = LocalDB();
@@ -136,7 +134,6 @@ UsersRecord? currentTherapist;
 UsersRecord? currentClient;
 String? tempDirPath;
 String? appDirPath;
-
 
 RealtimeSubscription? hyperbookDisplaySubscription;
 RealtimeSubscription? hyperbookEditSubscription;
@@ -218,8 +215,7 @@ const double kMapNodeMoveMinChange = 2.0;
 const int kLimitDatabaseListDocuments = 1000;
 const int kLimitStorageListDocuments = 1000;
 
-const PageTransitionType kStandardPageTransitionType =
-    PageTransitionType.leftToRight;
+const PageTransitionType kStandardPageTransitionType = PageTransitionType.leftToRight;
 const Duration kStandardTransitionTime = Duration(milliseconds: 1000);
 const Duration kStandardReverseTransitionTime = Duration(milliseconds: 300);
 
@@ -262,11 +258,8 @@ Future<void> loadConstraisMatrix() async {
 TablesDB? tablesDB;
 void initAppwrite() {
   print('(AAT30)');
-  client = Client()
-      .setEndpoint(kEndpoint)
-      .setProject(kProjectID)
-      .setDevKey(kDevKey)
-      .setSelfSigned();
+  client =
+      Client().setEndpoint(kEndpoint).setProject(kProjectID).setDevKey(kDevKey).setSelfSigned();
   account = Account(client!);
   tablesDB = TablesDB(client!);
   print('(AAT31)${client},,,,${account}++++${tablesDB}');
@@ -293,7 +286,6 @@ class SessionsRecord {
   VideoPlayerController? videoController;
   DateTime? $createdAt;
   DateTime? $updatedAt;
-
 
   SessionsRecord({
     this.reference,
@@ -417,7 +409,8 @@ Future<models.Document> createDocument({
     id = ID.unique();
   }
   appwriteDatabases = Databases(client!);
-  print('(N100A)${id}////${data}::::${collection!.path},,,,${databaseRef.path}@@@@${collection.path}');
+  print(
+      '(N100A)${id}////${data}::::${collection!.path},,,,${databaseRef.path}@@@@${collection.path}');
   models.Document doc = await appwriteDatabases!.createDocument(
     databaseId: databaseRef.path!,
     collectionId: collection.path!,
@@ -471,14 +464,12 @@ Future<models.Document> getDocument({
   );
   models.Document? doc;
   try {
-    doc =
-        await appwriteDatabases!.getDocument(
-              databaseId: databaseRef.path!,
-              collectionId: collection.path!,
-              documentId: document.path!,
-              queries: [],
-            )
-            /*as models.Document*/;
+    doc = await appwriteDatabases!.getDocument(
+      databaseId: databaseRef.path!,
+      collectionId: collection.path!,
+      documentId: document.path!,
+      queries: [],
+    ) /*as models.Document*/;
   } on AppwriteException catch (e) {
     print('(AAT42)${e.type}****${e.message}');
     //   toast(context, 'Login failure: ${e.message}', ToastKind.error);
@@ -822,16 +813,16 @@ Future<SessionsRecord> createSession({
   TemplatesRecord template = await getTemplate(document: templateId);
   List<String> questions = extractQuestions(template.questions);
   print('(QQ2)${templateId!.path},,,,${questions}....${questions.length}');
-  for(int i = 0; i < questions.length; i++){
+  for (int i = 0; i < questions.length; i++) {
     var ss = await createSessionStep(
-        sessionId: session.reference,
-        photo: null,
-        audio: null,
-        completed: false,
-        transcription: null,
-        index: i,
-        question: questions[i],
-        );
+      sessionId: session.reference,
+      photo: null,
+      audio: null,
+      completed: false,
+      transcription: null,
+      index: i,
+      question: questions[i],
+    );
     print('(QQ3)${ss}');
   }
   return session;
@@ -881,7 +872,6 @@ Future<UsersRecord> createUser({
   DocumentReference? reference,
   String? email,
   String? displayName,
-
   String? phoneNumber,
   DocumentReference? userReference,
   int? userLevel,
@@ -896,7 +886,6 @@ Future<UsersRecord> createUser({
     data: {
       'email': email,
       'displayName': displayName,
-
       'phoneNumber': phoneNumber,
       'userReference': userReference!.path,
       'userLevel': userLevel,
@@ -916,7 +905,6 @@ Future<UsersRecord> createClient({
   DocumentReference? reference,
   String? email,
   String? displayName,
-
   String? phoneNumber,
   // int? userLevel,
   String? userMessage,
@@ -924,16 +912,17 @@ Future<UsersRecord> createClient({
   String id = '',
   String? therapistId,
 }) async {
-  print('(M2110`)${getRandomString(20)}....${displayName}....${DateTime.now().toIso8601String()}....${phoneNumber?? ''}....${userMessage?? ''}....${therapistId}');
+  print(
+      '(M2110`)${getRandomString(20)}....${displayName}....${DateTime.now().toIso8601String()}....${phoneNumber ?? ''}....${userMessage ?? ''}....${therapistId}');
   models.Document doc = await createDocument(
     collection: usersRef,
     data: {
-      'email': email?? getRandomString(20),
+      'email': email ?? getRandomString(20),
       'displayName': displayName,
 
-      'phoneNumber': phoneNumber?? '',
+      'phoneNumber': phoneNumber ?? '',
       // 'userLevel': kUserLevelNotLoggedIn,
-      'userMessage': userMessage?? '',
+      'userMessage': userMessage ?? '',
       'role': kRoleClient,
 
       'therapistId': therapistId,
@@ -974,7 +963,6 @@ Future<TemplatesRecord> createTemplate({
   );
 }
 
-
 Future<TemplatesRecord> getTemplate({DocumentReference? document}) async {
   models.Document doc = await getDocument(
     collection: templatesRef,
@@ -987,20 +975,19 @@ Future<TemplatesRecord> getTemplate({DocumentReference? document}) async {
     name: doc.data['name'] as String,
     questions: qqq, //q?.map((e) => e.toString()).toList() ?? [],
     isMaster: (doc.data['isMaster'] as bool?) ?? false,
-    creatorId:  DocumentReference(path: (doc.data['creatorId'] as String)),
+    creatorId: DocumentReference(path: (doc.data['creatorId'] as String)),
   );
   //>print('(N5005)${h}');
   return t;
 }
 
-List<String> extractQuestions(dynamic q){
-
+List<String> extractQuestions(dynamic q) {
   List<dynamic> qq = q as List<dynamic>;
   print('(QQ6)${qq}....${qq.length}');
   List<String> qqq = [];
 
-  if (qq.length > 0){
-    for(int i = 0; i < qq.length; i++){
+  if (qq.length > 0) {
+    for (int i = 0; i < qq.length; i++) {
       qqq.add(qq[i] as String);
       print('(QQ5)${qqq}');
     }
@@ -1026,8 +1013,7 @@ Future<List<TemplatesRecord>> listTemplateList() async {
       name: doc.data['name'] as String,
       questions: qqq, //q?.map((e) => e.toString()).toList() ?? [],
       isMaster: (doc.data['isMaster'] as bool?) ?? false,
-      creatorId:  DocumentReference(path: (doc.data['creatorId'] as String)),
-
+      creatorId: DocumentReference(path: (doc.data['creatorId'] as String)),
     ));
     print('(TP3)${doc.$id}');
   }
@@ -1046,7 +1032,7 @@ Future<List<TemplatesRecord>> listOwnedPlusMasterTemplateList() async {
     value: true,
   );
   List<models.Document> docs = List.from(docsUser.documents);
-  for(int i = 0; i < docsMaster.documents.length; i++){
+  for (int i = 0; i < docsMaster.documents.length; i++) {
     docs.add(docsMaster.documents[i]);
   }
   print('(TP21)${docs.length}');
@@ -1058,12 +1044,11 @@ Future<List<TemplatesRecord>> listOwnedPlusMasterTemplateList() async {
     // List<String>? q = doc.data['questions'] as List<dynamic>;
     var qq = doc.data['questions'] as List<dynamic>;
     List<String> qqq = [];
-    if (qq.length > 0){
-      for(int i = 0; i < qq.length; i++){
+    if (qq.length > 0) {
+      for (int i = 0; i < qq.length; i++) {
         var p = qq[i];
         print('(TP27)${p.runtimeType}...${p}');
         //qqq.add(qq[i] as String);
-
       }
     }
     items.add(TemplatesRecord(
@@ -1071,15 +1056,15 @@ Future<List<TemplatesRecord>> listOwnedPlusMasterTemplateList() async {
       name: doc.data['name'] as String,
       questions: qqq, //q?.map((e) => e.toString()).toList() ?? [],
       isMaster: (doc.data['isMaster'] as bool?) ?? false,
-      creatorId:  DocumentReference(path: (doc.data['creatorId'] as String)),
-
+      creatorId: DocumentReference(path: (doc.data['creatorId'] as String)),
     ));
     print('(TP23)${doc.$id}');
   }
   return items;
 }
 
-Future<void> updateTemplateQuestions(DocumentReference templateRef, List<String> newQuestions) async {
+Future<void> updateTemplateQuestions(
+    DocumentReference templateRef, List<String> newQuestions) async {
   await updateDocument(collection: templatesRef, document: templateRef, data: {
     'questions': newQuestions,
   });
@@ -1088,18 +1073,18 @@ Future<void> updateTemplateQuestions(DocumentReference templateRef, List<String>
 Future<void> deleteTemplate(DocumentReference templateRef) async {
   await deleteDocument(collection: templatesRef, document: templateRef);
 }
-    // },
-    // id: id,
-  // );
-  // UsersRecord u = UsersRecord(
-  //   reference: DocumentReference(path: doc.$id),
-  //   email: email,
-  //   displayName: displayName,
-  //   phoneNumber: phoneNumber,
-  //   role: role,
-  //   userMessage: userMessage,
-  // );
-  // return u;
+// },
+// id: id,
+// );
+// UsersRecord u = UsersRecord(
+//   reference: DocumentReference(path: doc.$id),
+//   email: email,
+//   displayName: displayName,
+//   phoneNumber: phoneNumber,
+//   role: role,
+//   userMessage: userMessage,
+// );
+// return u;
 // }
 
 Future<UsersRecord> getUser({DocumentReference? document}) async {
@@ -1114,35 +1099,33 @@ Future<UsersRecord> getUser({DocumentReference? document}) async {
     phoneNumber: ((row.data[kUserPhoneNumber]) ?? '') as String,
     role: (row.data[kUserRole]) as String,
     userMessage: (row.data[kUserUserMessage] as String?),
-      therapistId: (row.data[kUserTherapistId] as String?),
+    therapistId: (row.data[kUserTherapistId] as String?),
   );
   print('(N2005)${u.email}');
   return u;
 }
 
 String generateAudioStorageFilenameWav(
-    SessionStepsRecord sessionStep,
-    ) {
+  SessionStepsRecord sessionStep,
+) {
   return 'wav${sessionStep.reference!.path}.wav';
 }
 
 String generateAudioStorageFilenameMp3(
-    SessionStepsRecord sessionStep,
-
-    ) {
+  SessionStepsRecord sessionStep,
+) {
   return 'mp3${sessionStep.reference!.path}.mp3';
 }
 
 String generatePhotoStorageFilename(
-    SessionStepsRecord sessionStep,
-     ) {
-    return 'photo${sessionStep.reference!.path}.jpg';
- }
+  SessionStepsRecord sessionStep,
+) {
+  return 'photo${sessionStep.reference!.path}.jpg';
+}
 
 String generateVideoStorageFilename(
-    SessionsRecord session,
-
-    ) {
+  SessionsRecord session,
+) {
   return 'video${session.reference!.path}.mp4';
 }
 
@@ -1281,7 +1264,7 @@ Future<List<SessionStepsRecord>> listSessionStepList({
   List<SessionStepsRecord> hh = [];
 
   for (models.Document d in docs.documents) {
-  /*  int maxPhotoVersion = await getMaxVersionNumber(
+    /*  int maxPhotoVersion = await getMaxVersionNumber(
       bucketId: artTheopyAIRphotosRef.path!,
       fileId: d.$id,
     );
@@ -1414,8 +1397,7 @@ Future<List<UsersRecord>> listUsersListWithEmail({String? email}) async {
         phoneNumber: (d.data[kUserPhoneNumber] as String?),
         role: (d.data[kUserRole] as String?),
         userMessage: (d.data[kUserUserMessage] as String?),
-        therapistId: (d.data[kUserTherapistId] as String?)
-    );
+        therapistId: (d.data[kUserTherapistId] as String?));
     uu.add(u);
   }
   return uu;
@@ -1443,8 +1425,7 @@ Future<List<UsersRecord>> listUsersClientsOfUser({DocumentReference? therapist})
         phoneNumber: (d.data[kUserPhoneNumber] as String?),
         role: (d.data[kUserRole] as String?),
         userMessage: (d.data[kUserUserMessage] as String?),
-        therapistId: (d.data[kUserTherapistId] as String?)
-    );
+        therapistId: (d.data[kUserTherapistId] as String?));
     uu.add(u);
   }
   print('(NY228)${uu.length}');
@@ -1585,13 +1566,12 @@ Future<UsersRecord> appwriteCreateAccount(String email, String password) async {
     reference: DocumentReference(path: id),
     email: email,
     displayName: 'Unknown',
-
     phoneNumber: '',
     userReference: DocumentReference(path: id),
     id: id,
     userLevel: kUserLevelFree,
     userMessage: 'Welcome to the Hyperbook App',
-      therapistId: currentUser!.reference!.path,
+    therapistId: currentUser!.reference!.path,
   );
 
   loggedInUser = user;
@@ -1617,8 +1597,7 @@ bool canUserSeeSession(DocumentReference? user, SessionsRecord? session) {
       return true;
     } else {
       //>print('(N404T)${role}');
-      if ((role == kRoleTherapist) &&
-          (session.therapistId!.path == currentUser!.reference!.path)) {
+      if ((role == kRoleTherapist) && (session.therapistId!.path == currentUser!.reference!.path)) {
         return true;
       }
 
@@ -1642,13 +1621,9 @@ Future<String?> createStorageImageFile({
   // List<String> splitFilename = name!.split('.');
   // final String preffix = splitFilename.first;
   // final String suffix = splitFilename.last;
-  final String truncatedName = (name!.length > 15)
-      ? name.substring(0, 15)
-      : name;
-  final String fileId =
-      chapter!.path! + kStorageFilenameSpitString + randomFileNumber;
-  final String storageFilename =
-      chapter.path! + kStorageFilenameSpitString + truncatedName;
+  final String truncatedName = (name!.length > 15) ? name.substring(0, 15) : name;
+  final String fileId = chapter!.path! + kStorageFilenameSpitString + randomFileNumber;
+  final String storageFilename = chapter.path! + kStorageFilenameSpitString + truncatedName;
   //>print('(QE30)${fileId}++++${storageFilename}');
 
   models.File result = await storage.createFile(
@@ -1667,8 +1642,7 @@ Future<String?> createStorageImageFile({
   final b_id = artTheopyAIRphotosRef.path!;
   final f_id = fileId;
   final p_id = kProjectID;
-  final String url =
-      '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
+  final String url = '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
   //>print('(IS2)${head}££££${url}????');
 
   return url;
@@ -1680,26 +1654,27 @@ Future<String?> storeStorageFile({
   required String? localFilePath,
   bool deleteIfNecessary = false,
 }) async {
-  print('(AU70)${bucketId},,,,${storageFileId}...${localFilePath}');
-  if(deleteIfNecessary){
-    if (await doesStorageFileExist(bucketId: bucketId, fileId: storageFileId)){
+  print('(AU70A)${bucketId},,,,${storageFileId}...${localFilePath}');
+  if (deleteIfNecessary) {
+    if (await doesStorageFileExist(bucketId: bucketId, fileId: storageFileId)) {
       await deleteStorageFile(bucketId: bucketId, fileId: storageFileId);
       print('(AU71)');
     }
   }
+  print('(AU70B)${bucketId},,,,${storageFileId}...${localFilePath}');
   models.File result = await storage.createFile(
     bucketId: bucketId!,
     fileId: storageFileId!,
     file: InputFile.fromPath(path: localFilePath!),
   );
+  print('(AU70C)${result},,,,${result.name}...${result.$id}');
   var file = await storage.getFile(bucketId: bucketId, fileId: storageFileId);
   print('(AU72)${file.toString()}++++${result.name}@@@@${file.name}~~~~');
   const String head = imageFilenameHead;
   final b_id = artTheopyAIRphotosRef.path!;
   final f_id = storageFileId;
   final p_id = kProjectID;
-  final String url =
-      '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
+  final String url = '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
   print('(AU73)${head}££££${url}????');
   return url;
 }
@@ -1732,8 +1707,7 @@ Future<void> deleteFile(String path) async {
   }
 }
 
-
-String getFilePath(FileKind fileKind, String item){
+String getFilePath(FileKind fileKind, String item) {
   String prefix = '';
   String suffix = '';
   switch (fileKind) {
@@ -1812,17 +1786,13 @@ Future<bool> copyStorageFiletoLocal({
     }
   }
   print('(DE73)${localBucketId},,,,${fileId}----${dirPath[0]}...${dirPath[1]}');
-  await storage
-      .getFileDownload(bucketId: localBucketId!, fileId: fileId!)
-      .then((bytes) {
-        print('(DE74)${bytes.length}....${localPath}');
-        final file = File(localPath);
-        file.writeAsBytesSync(bytes);
-      })
-      .catchError((error) {
-        print('(DE75)${error.response}');
-      });
-
+  await storage.getFileDownload(bucketId: localBucketId!, fileId: fileId!).then((bytes) {
+    print('(DE74)${bytes.length}....${localPath}');
+    final file = File(localPath);
+    file.writeAsBytesSync(bytes);
+  }).catchError((error) {
+    print('(DE75)${error.response}');
+  });
 
   return true;
 }
@@ -1852,12 +1822,14 @@ Future<void> emptyAppDir() async {
   }
 }
 
-Future<void> emptyTempDirOFPhotosVideos() async {
+Future<void> emptyTempDirOFPhotosVideosConcat() async {
   final utf8Encoder = utf8.encoder;
   var dir = Directory.fromRawPath(utf8Encoder.convert(tempDirPath!));
   await for (var entity in dir.list(recursive: true, followLinks: false)) {
     print('(TD9)${entity.path}');
-    if((entity.path.contains('photo')) || (entity.path.contains('video'))) {
+    if ((entity.path.contains('photo')) ||
+        (entity.path.contains('video')) ||
+        (entity.path.contains('concat'))) {
       await entity.delete(recursive: false);
     }
   }
@@ -1876,8 +1848,8 @@ Future<List<String>> getAppDirListing() async {
 
 Future<bool> isFileInAppDir(String filename) async {
   List<String> listing = await getAppDirListing();
-  for(int i = 0; i < listing.length; i++){
-    if(listing[i].contains(filename)) {
+  for (int i = 0; i < listing.length; i++) {
+    if (listing[i].contains(filename)) {
       return true;
     }
   }
@@ -1892,7 +1864,7 @@ Future<bool> copyFiletoAppDir({
   String targetFilename = targetFilenameSplit.last;
   File sourceFile = File(sourcePath!);
   print('(AD20)${sourcePath}....${targetFilename}');
-  if (await isFileInAppDir(targetFilename)){
+  if (await isFileInAppDir(targetFilename)) {
     print('(AD21)${sourcePath}....${targetFilename}');
     await deleteAppFile(targetFilename);
   }
@@ -1901,11 +1873,11 @@ Future<bool> copyFiletoAppDir({
   return (outputFile.existsSync());
 }
 
-Future<void> deleteAppFile(String filename) async{
+Future<void> deleteAppFile(String filename) async {
   final utf8Encoder = utf8.encoder;
   var dir = Directory.fromRawPath(utf8Encoder.convert(appDirPath!));
   await for (var entity in dir.list(recursive: true, followLinks: false)) {
-    if(entity.path.contains(filename)){
+    if (entity.path.contains(filename)) {
       File file = File(entity.path);
       print('(AD6)${entity.path}');
       await file.delete();
@@ -1914,19 +1886,13 @@ Future<void> deleteAppFile(String filename) async{
   }
 }
 
-
 Future<String?> readStorageFile({
   required DocumentReference? user,
   required String? hyperbookTitle,
   required int? versionNumber,
 }) async {
   String expandedFilename =
-      user!.path! +
-      '_' +
-      hyperbookTitle! +
-      '-' +
-      versionNumber.toString() +
-      '.json';
+      user!.path! + '_' + hyperbookTitle! + '-' + versionNumber.toString() + '.json';
   Uint8List bytes = await storage.getFileDownload(
     bucketId: backupStorageRef.path!,
     fileId: expandedFilename,
