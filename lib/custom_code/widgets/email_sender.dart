@@ -72,7 +72,7 @@ Future<void> sendEmail({
   final bodyJsonCustomBody =
   '''{ 
       "sender":{
-      "name": "Art Therapy AIR",
+      "name": "AIR Studio",
       "email":"no_reply@hyperbook.co.uk"
       },
       "to":[
@@ -105,6 +105,7 @@ Future<void> sendEmail({
       collection: DocumentReference(path: '69a9253600091c44ad9f'),
       document: DocumentReference(path:  '69a925d2001d220fb19e'));
   final String value = doc.data['value'] as String;
+  print('(SE2B)${value}....${doc.data}');
   var response = await http.post(
     Uri.parse('https://api.brevo.com/v3/smtp/email'),
     headers: <String, String>{

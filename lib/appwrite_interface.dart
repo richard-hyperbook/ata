@@ -887,15 +887,16 @@ Future<UsersRecord> createUser({
       'email': email,
       'displayName': displayName,
       'phoneNumber': phoneNumber,
-      'userReference': userReference!.path,
+      // 'userReference': userReference!.path,
       'userLevel': userLevel,
       'userMessage': userMessage,
       'role': role,
-      'createdAt': DateTime.now().toIso8601String(),
+      // 'createdAt': DateTime.now().toIso8601String(),
       'therapistId': therapistId,
     },
     id: id,
   );
+  print('(N9000)${doc}');
   return UsersRecord(
     reference: DocumentReference(path: doc.$id),
   );
@@ -1094,10 +1095,10 @@ Future<UsersRecord> getUser({DocumentReference? document}) async {
   print('(M1A)${row.data['displayName']}');
   UsersRecord u = UsersRecord(
     reference: document,
-    email: (row.data[kUserEmail]) as String,
-    displayName: (row.data[kUserDisplayName]) as String,
-    phoneNumber: ((row.data[kUserPhoneNumber]) ?? '') as String,
-    role: (row.data[kUserRole]) as String,
+    email: (row.data[kUserEmail]) as String?,
+    displayName: (row.data[kUserDisplayName]) as String?,
+    phoneNumber: (row.data[kUserPhoneNumber]) as String?,
+    role: (row.data[kUserRole]) as String?,
     userMessage: (row.data[kUserUserMessage] as String?),
     therapistId: (row.data[kUserTherapistId] as String?),
   );
@@ -1299,7 +1300,7 @@ Future<List<SessionStepsRecord>> listSessionStepList({
       photoFileValid: photoFileValid,
       audioFileValid: audioFileValid,
     );
-    print('(SS40)${hh.length}....${h.photo}');
+    print('(SS40)${hh.length}....${h.photo},,,,${h.index}');
     hh.add(h);
     print('(SS41)${hh.length}');
   }
@@ -1561,17 +1562,18 @@ Future<UsersRecord> appwriteCreateAccount(String email, String password) async {
     password: password,
     name: 'Unknown',
   );
-  //>print('(N5000)${user}&&&&${user.email}');
+  print('(N5000)${user}&&&&${user.email}');
   UsersRecord userRecord = await createUser(
     reference: DocumentReference(path: id),
     email: email,
     displayName: 'Unknown',
     phoneNumber: '',
-    userReference: DocumentReference(path: id),
+    role: kRoleTherapist,
+    // userReference: DocumentReference(path: id),
     id: id,
     userLevel: kUserLevelFree,
     userMessage: 'Welcome to the Hyperbook App',
-    therapistId: currentUser!.reference!.path,
+    // therapistId: currentUser!.reference!.path,
   );
 
   loggedInUser = user;
@@ -1579,7 +1581,7 @@ Future<UsersRecord> appwriteCreateAccount(String email, String password) async {
   currentUserDisplayName = currentUser!.displayName!;
   currentUserEmail = currentUser!.email!;
   // });
-  //>print('(N5002)${userRecord}****${currentUser}');
+  print('(N5002)${userRecord}****${currentUser}');
   return userRecord;
 }
 

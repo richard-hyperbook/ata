@@ -149,7 +149,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                               children: <Widget>[
                                 Expanded(
                                   child: AutoSizeText(
-                                    'Get Started with Art Therapy AIR',
+                                    'Get Started with AIR Studio',
                                     style: FlutterFlowTheme.of(
                                       context,
                                     ).displaySmall,
@@ -405,8 +405,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                         _model.emailAddressController.text,
                                         _model.passwordController.text,
                                       );
-                                    } on AppwriteException {
-                                      //>print('(N91C)${e.message}');
+                                    } on AppwriteException catch(e) {
+                                      print('(N91Z)${e.message}');
                                     }
                                     // loggedInUser = user!;
                                     currentUser = await getUser(

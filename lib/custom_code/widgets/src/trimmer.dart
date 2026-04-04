@@ -291,7 +291,7 @@ class Trimmer {
       final duration = await session.getDuration();
       final logs = await session.getAllLogs();
       await printAppDirListing();
-      print('(AC2A)${command}');
+      print('(AC2A)${await File(sourcePath!).length()}....${command}');
       print(
           '(AC2B)${returnCode},,,,${output!.length}----${output.characters.length}>>>>${duration}<<<<${logs.length}');
       String logString = '';
@@ -299,15 +299,16 @@ class Trimmer {
         print('(AC2C)${i}....${logs[i].getMessage()}');
         // logString = logString + logs[i].getMessage() + '££££';
       }
-      await printTempDirListing();
-      debugPrint("FFmpeg process exited with state $state and rc $returnCode");
+      // await printTempDirListing();
+      debugPrint("(AC3)${state}....${returnCode}====${sourcePath}----${targetPath}");
       if (ReturnCode.isSuccess(returnCode)) {
-        debugPrint("FFmpeg processing completed successfully.");
-        debugPrint('Audio successfully saved');
+        File trimmedFile = await File(targetPath!).copy(sourcePath);
+
+        debugPrint("(AC4)${sourcePath}....${await File(sourcePath!).length()}");
+
       } else {
-        debugPrint("FFmpeg processing failed.");
-        debugPrint('Couldn\'t save the audio');
-      }
+        debugPrint("(AC5)FFmpeg processing failed.");
+        }
       //await copyFiletoAppDir(sourcePath: '${tempDirPath}/trimmed.aac', targetPath: audioPath);
     });
    return ffmpegSession;
@@ -332,7 +333,7 @@ class Trimmer {
     debugPrint("(AC3)Start: ${startPoint.toString()} & End: ${endPoint.toString()}");
 
 
-    String outputPath = '"${tempDirPath}/trimmed.aac"';
+    String outputPath = '${tempDirPath}/trimmed.aac';
 
     String command = '';
     if(saveNotCut) {

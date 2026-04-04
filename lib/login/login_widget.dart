@@ -31,6 +31,7 @@ import '../../sales/sales_widget.dart';
 import '../../conditional.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // import '../../platform/audio_recorder_platform.dart';
+import '../../create_account/create_account_widget.dart';
 
 export 'login_model.dart';
 
@@ -777,15 +778,18 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             .fromSTEB(0.0, 12.0, 0.0, 12.0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
-                                            context.pushNamed(
-                                              'createAccount',
-                                              // extra: <String, dynamic>{
-                                              //   kTransitionInfoKey: const TransitionInfo(
-                                              //     hasTransition: true,
-                                              //     duration: Duration(milliseconds: 250),
-                                              //   ),
-                                              // },
-                                            );
+                                            Navigator.push(
+                                                context,
+                                                PageTransition(
+                                                  type:
+                                                  kStandardPageTransitionType,
+                                                  duration:
+                                                  kStandardTransitionTime,
+                                                  reverseDuration:
+                                                  kStandardReverseTransitionTime,
+                                                  child: CreateAccountWidget(),
+                                                ));
+
                                           },
                                           text: 'Create Account',
                                           options: FFButtonOptions(
@@ -822,8 +826,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      FlutterFlowIconButton(
+                                    children: [ Container(),
+                                      /*FlutterFlowIconButton(
                                           enabled: true,
                                           fillColor: Colors.white,
                                           tooltipMessage: 'Delete videos',
@@ -889,8 +893,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                         ),
                                                       ]);
                                                 });
-                                          }),
-                                      FlutterFlowIconButton(
+                                          }),*/
+                                     /* FlutterFlowIconButton(
                                           enabled: true,
                                           fillColor: Colors.white,
                                           tooltipMessage: 'Delete app dir',
@@ -929,7 +933,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                       ]);
                                                 });
                                           }),
-                                      Padding(
+                                     */ Padding(
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(0.0, 0.0, 0.0, 12.0),
                                         child: FFButtonWidget(

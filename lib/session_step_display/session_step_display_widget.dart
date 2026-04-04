@@ -71,8 +71,7 @@ class SessionStepDisplayWidget extends StatefulWidget {
   const SessionStepDisplayWidget({super.key});
 
   @override
-  _SessionStepDisplayWidgetState createState() =>
-      _SessionStepDisplayWidgetState();
+  _SessionStepDisplayWidgetState createState() => _SessionStepDisplayWidgetState();
 }
 
 class _SessionStepDisplayWidgetState
@@ -142,17 +141,13 @@ class _SessionStepDisplayWidgetState
   //int? maxVersion;
 
   Widget displayThumbnail(SessionStepsRecord sessionStep) {
-    print(
-        '(DE410A)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
+    print('(DE410A)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
     if (sessionStep!.photoFileValid ?? false) {
-      print(
-          '(DE410B)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
+      print('(DE410B)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
 
       return Image.file(
         File(appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg'),
-        width: (MediaQuery.sizeOf(context).width * 0.9) -
-            kIconButtonWidth -
-            kIconButtonGap,
+        width: (MediaQuery.sizeOf(context).width * 0.9) - kIconButtonWidth - kIconButtonGap,
         height: (kIconButtonHeight * 2) + kIconButtonGap,
         fit: BoxFit.contain,
       );
@@ -175,8 +170,7 @@ class _SessionStepDisplayWidgetState
         icon: Icon(Icons.edit_note),
         onPressed: () async {
           currentSessionStep = sessionStep;
-          final String filePath =
-              getFilePath(FileKind.aac, sessionStep.reference!.path!);
+          final String filePath = getFilePath(FileKind.aac, sessionStep.reference!.path!);
           // await setMaxVersionNumbersCurrentSessionStep();
           // int maxVersion = currentSessionStep!.maxAudioVersion!;
           if (!(await isFileInAppDir(filePath))) {
@@ -217,8 +211,7 @@ class _SessionStepDisplayWidgetState
                               filePath: filePath,
                               dirPath: appDirPath!,
                               maxVersion: 0,
-                              sessionStepId: sessionStep
-                                  .reference!.path!), //AudioTrimmerPopup()),
+                              sessionStepId: sessionStep.reference!.path!), //AudioTrimmerPopup()),
                         ));
                   });
                 });
@@ -226,8 +219,7 @@ class _SessionStepDisplayWidgetState
         });
   }
 
-  Widget displaySessionStep(
-      {required SessionStepsRecord sessionStep, required int index
+  Widget displaySessionStep({required SessionStepsRecord sessionStep, required int index
       // int maxVersion,
       }) {
     print('(ss111)${index}');
@@ -449,10 +441,8 @@ class _SessionStepDisplayWidgetState
                       onPressed: () async {
                         await storeStorageFile(
                             bucketId: artTheopyAIRaudiosRef.path!,
-                            storageFileId:
-                                'aac' + sessionStep.reference!.path! + '.aac',
-                            localFilePath: getFilePath(
-                                FileKind.aac, sessionStep.reference!.path!),
+                            storageFileId: 'aac' + sessionStep.reference!.path! + '.aac',
+                            localFilePath: getFilePath(FileKind.aac, sessionStep.reference!.path!),
                             deleteIfNecessary: true);
 
                         currentSessionStep = sessionStep;
@@ -479,8 +469,7 @@ class _SessionStepDisplayWidgetState
 
                         print(respAccessToken.body);
                         var respDynamic = jsonDecode(respAccessToken.body);
-                        Map<String, dynamic> respObject =
-                            respDynamic as Map<String, dynamic>;
+                        Map<String, dynamic> respObject = respDynamic as Map<String, dynamic>;
 
                         showDialog<bool>(
                             context: context,
@@ -488,20 +477,14 @@ class _SessionStepDisplayWidgetState
                               // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
                               //>print('(UM6)${message}')
                               currentSessionStep = sessionStep;
-                              return StatefulBuilder(
-                                  builder: (context, setState) {
+                              return StatefulBuilder(builder: (context, setState) {
                                 return AlertDialog(
                                   title: Text('Transcription'),
                                   content: SingleChildScrollView(
                                     child: Container(
-                                        width:
-                                            MediaQuery.sizeOf(context).width *
-                                                0.85,
-                                        child: Text(
-                                            respObject['transcription']!
-                                                as String,
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium)),
+                                        width: MediaQuery.sizeOf(context).width * 0.85,
+                                        child: Text(respObject['transcription']! as String,
+                                            style: FlutterFlowTheme.of(context).bodyMedium)),
                                   ),
                                 );
                               });
@@ -510,8 +493,7 @@ class _SessionStepDisplayWidgetState
                         print(
                           '(PQ4)${index}~~~~${respDynamic}....${respObject},,,,${transcriptionList[index]}',
                         );
-                        if (respAccessToken.statusCode < 200 ||
-                            respAccessToken.statusCode >= 300) {
+                        if (respAccessToken.statusCode < 200 || respAccessToken.statusCode >= 300) {
                           toast(
                             context,
                             'Error in transcription',
@@ -529,8 +511,7 @@ class _SessionStepDisplayWidgetState
             SizedBox(
               width: MediaQuery.sizeOf(context).width * 0.9,
               child: Text(transcriptionList[index],
-                  style: TextStyle(
-                      fontSize: basicFontSize, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: basicFontSize, fontWeight: FontWeight.bold)),
             ),
 
             ////////////////////
@@ -551,8 +532,7 @@ class _SessionStepDisplayWidgetState
   void loadImageLocalPath(
     SessionStepsRecord sessionStep,
   ) {
-    localImagePath =
-        appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
+    localImagePath = appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
     print('(SS212)${localImagePath}');
   }
 
@@ -572,12 +552,8 @@ class _SessionStepDisplayWidgetState
       PickedFile pickedFile;
 
       XFile? imageFile = await picker.pickImage(
-          source: ImageSource.gallery,
-          maxWidth: 500,
-          maxHeight: 500,
-          imageQuality: 50);
-      final String savedFilePath =
-          appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
+          source: ImageSource.gallery, maxWidth: 500, maxHeight: 500, imageQuality: 50);
+      final String savedFilePath = appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg';
       await deleteFile(savedFilePath);
       await printAppDirListing();
       File savedFile = File(savedFilePath);
@@ -702,35 +678,6 @@ class _SessionStepDisplayWidgetState
                 actions: [
                   // insertOutstandingRequestsButton(context),
                   insertMenu(context, hyperbookDisplayMenuDetails, setState),
-                  GestureDetector(
-                    onTap: () async {
-                      //# await loadCachedChaptersReadReferencesCachedHyperbookIndex(
-                      //#     hyperbook: tutorialHyperbook, user: currentUser);
-                      // localDB.setTutorialAsWorkingHyperbook();
-                      toast(
-                        context,
-                        'Please wait while Hyperbook Tutorial loads',
-                        ToastKind.success,
-                      );
-
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: kStandardPageTransitionType,
-                          duration: kStandardTransitionTime,
-                          reverseDuration: kStandardReverseTransitionTime,
-                          child: LoginWidget(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                        'XXX16') /*SvgPicture.asset(
-                            'assets/images/hyperbooklogosvg10.svg',
-                            width: 40,
-                            height: 40,
-                          ),*/
-                    ,
-                  ),
                 ],
                 centerTitle: false,
                 elevation: 2.0,
@@ -765,8 +712,7 @@ class _SessionStepDisplayWidgetState
                                 child: Text(
                                   'Client: ${sessions![currentSessionIndex].clientDisplayName}',
                                   softWrap: false,
-                                  style:
-                                      FlutterFlowTheme.of(context).bodyMedium,
+                                  style: FlutterFlowTheme.of(context).bodyMedium,
                                 ),
                               )),
                           Padding(
@@ -784,8 +730,7 @@ class _SessionStepDisplayWidgetState
                                 child: Text(
                                   softWrap: false,
                                   'Date: ${(DateFormat.yMMMd().format(sessions![currentSessionIndex].$createdAt!))}',
-                                  style:
-                                      FlutterFlowTheme.of(context).bodyMedium,
+                                  style: FlutterFlowTheme.of(context).bodyMedium,
                                 ),
                               )),
                           Padding(
@@ -802,8 +747,7 @@ class _SessionStepDisplayWidgetState
                                 shrinkWrap: true,
                                 itemCount: sessionSteps!.length,
                                 //#cachedHyperbookList.length,
-                                itemBuilder:
-                                    (BuildContext context, int listViewIndex) {
+                                itemBuilder: (BuildContext context, int listViewIndex) {
                                   return displaySessionStep(
                                       sessionStep: sessionSteps![listViewIndex],
                                       index: listViewIndex);
@@ -849,8 +793,7 @@ class CP {
 
 void findAndIncrementCP(String hyperbook, String parent) {
   for (int i = 0; i < cpList.length; i++) {
-    if ((hyperbook == cpList[i].chapterPath) &&
-        (parent == cpList[i].parentPath)) {
+    if ((hyperbook == cpList[i].chapterPath) && (parent == cpList[i].parentPath)) {
       cpList[i].count++;
       return;
     }
@@ -884,7 +827,7 @@ class _RecordPlayState extends State<RecordPlay> {
   final AudioPlayer audioPlayer = AudioPlayer();
   String? _recordedFilePath;
   bool _playAudio = false;
-  String _timerText = '00:00:00';
+  String _timerText = '00:00';
   StreamSubscription? _recorderSubscription;
   bool _isRecording = false;
 
@@ -904,15 +847,13 @@ class _RecordPlayState extends State<RecordPlay> {
 
   void initializer() async {
     if (widget.sessionStep.audioFileValid ?? false) {
-      _recordedFilePath =
-          getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
+      _recordedFilePath = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
     }
     print(
         '(IF40)${widget.sessionStep.reference!.path}....${widget.sessionStep.audioFileValid},,,,${_recordedFilePath}');
     _recordingSession = FlutterSoundRecorder();
     await _recordingSession.openRecorder();
-    await _recordingSession
-        .setSubscriptionDuration(const Duration(milliseconds: 10));
+    await _recordingSession.setSubscriptionDuration(const Duration(milliseconds: 10));
 
     // await [Permission.microphone, Permission.storage].request();
   }
@@ -956,8 +897,7 @@ class _RecordPlayState extends State<RecordPlay> {
                   ),*/
               // const SizedBox(width: 30),
               ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                    elevation: 9.0, backgroundColor: Colors.black),
+                style: ElevatedButton.styleFrom(elevation: 9.0, backgroundColor: Colors.black),
                 onPressed: _recordedFilePath == null
                     ? null
                     : () {
@@ -1015,64 +955,21 @@ class _RecordPlayState extends State<RecordPlay> {
     );
   }
 
-  Future<void> startRecording() async {
+  Future<void> goRecording(String path) async {
     try {
-      // var appDir = await getApplicationDocumentsDirectory();
-      var path = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
-      bool carryOn = false;
-      if (await isFileInAppDir(path)) {
-        showDialog<bool>(
-            context: context,
-            builder: (BuildContext context) {
-              // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
-              return StatefulBuilder(builder: (context, setState) {
-                return AlertDialog(
-                  title: Text('Overwrite recording?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        carryOn = false;
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Cancel',
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        carryOn = true;
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Confirm',
-                      ),
-                    ),
-                  ],
-                );
-              });
-            });
-      }
-
-      // String path = '${appDir.path}/airStudio/$fileName';
-      print('(IF20)${path}');
-
       await _recordingSession.startRecorder(
         toFile: path,
         codec: Codec.aacMP4,
       );
-
       setState(() {
         _isRecording = true;
       });
-
       _recorderSubscription?.cancel();
       _recorderSubscription = _recordingSession.onProgress?.listen((e) {
-        var date = DateTime.fromMillisecondsSinceEpoch(
-            e.duration.inMilliseconds,
-            isUtc: true);
-        var timeText = DateFormat('mm:ss:SS', 'en_GB').format(date);
+        var date = DateTime.fromMillisecondsSinceEpoch(e.duration.inMilliseconds, isUtc: true);
+        var timeText = DateFormat('mm:ss', 'en_GB').format(date);
         setState(() {
-          _timerText = timeText.substring(0, 8);
+          _timerText = timeText.substring(0, 5);
         });
       });
     } catch (e) {
@@ -1080,15 +977,62 @@ class _RecordPlayState extends State<RecordPlay> {
     }
   }
 
+  Future<void> startRecording() async {
+    // var appDir = await getApplicationDocumentsDirectory();
+    var path = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
+    if (await isFileInAppDir(path)) {
+      showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: Text('Overwrite recording?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      await goRecording(path);
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Confirm',
+                    ),
+                  ),
+                ],
+              );
+            });
+          });
+    } else {
+      await goRecording(path);
+    }
+
+    // String path = '${appDir.path}/airStudio/$fileName';
+
+    print('(IF20)${path}');
+
+  }
+
   Future<void> stopRecording() async {
     try {
       _recordedFilePath = await _recordingSession.stopRecorder();
       _recorderSubscription?.cancel();
+      final String path = getFilePath(FileKind.aac, widget.sessionStep.reference!.path!);
+      final String backupPath = path.replaceAll('/aac', '/BACKUPaac');
+      File backupFile = await File(path).copy(backupPath);
+
       setState(() {
         _isRecording = false;
-        _timerText = '00:00:00';
+        _timerText = '00:00';
       });
-      print('(IF10)${_recordingSession.recorderState}');
+      print('(IF10)${_recordingSession.recorderState}....${backupPath},,,,${await backupFile.length()}');
       printAppDirListing();
     } catch (e) {
       print('(IF2)Error stopping recording: $e');

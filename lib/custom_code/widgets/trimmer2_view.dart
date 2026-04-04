@@ -56,14 +56,14 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
 
   _saveAudio(
   {bool saveNotCut = true}
-      ) {
+      ) async {
     setState(() {
       _progressVisibility = true;
     });
     final String newFileName =
         'aac' +
         widget.sessionStepId + '.aac';
-    print('(EAT30)${widget.dirPath}++++${newFileName}');
+    print('(EAT30)${widget.dirPath}!!!!${await widget.file.length()}++++${newFileName}....${_startValue},,,,${_endValue}');
     _trimmer.saveTrimmedAudio(
       // audioFolderName: appDirPath,
       // audioFileName: newFileName,
@@ -76,7 +76,8 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
         setState(() {
           _progressVisibility = false;
         });
-        debugPrint('(EAT31)${newFileName}....${outputPath}');
+
+        debugPrint('(EAT31)${newFileName}....${outputPath}!!!!${await widget.file.length()}');
         return newFileName;
       },
     );
@@ -102,6 +103,29 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
+
+                FlutterFlowIconButton(
+                    showLoadingIndicator: true,
+                    caption: 'Restore original',
+                    // captionFontSize: basicFontSize,
+                    tooltipMessage: 'Restore original recording',
+                    borderColor: Colors.transparent,
+                    borderRadius: 0.0,
+                    borderWidth: 1.0,
+                    buttonSize: 40.0,
+                    buttonWidth: kIconButtonWidth,
+                    icon: Icon(Icons.save),
+                    onPressed:
+                    //(_progressVisibility ? null : () => _saveAudio),
+                        () async {
+                          debugPrint("(AC40)¢${await widget.file.length()}");
+                          final String backupPath = widget.file.path.replaceAll('/aac', '/BACKUPaac');
+                          File trimmedFile = await File(backupPath!).copy(widget.file.path);
+                          debugPrint("(AC41)${backupPath}....${await widget.file.length()}");
+                    }),
+                SizedBox(height: kIconButtonGap),
+
+
                 Visibility(
                   visible: _progressVisibility,
                   child: LinearProgressIndicator(
