@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../appwrite_interface.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '../../localDB.dart';
+import '/../custom_code/widgets/toast.dart';
 
 class AudioTrimmerView extends StatefulWidget {
   final File file;
@@ -45,10 +46,15 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
     setState(() {
       isLoading = true;
     });
-    print('(EAT9A)${widget.file}');
-    printAppDirListing();
-    await _trimmer.loadAudio(audioFile: widget.file);
-    print('(EAT9B)${_trimmer.currentAudioFile}....${_trimmer}');
+    int fileLength = await widget.file.length();
+    print('(EAT9A)${widget.file},,,,${fileLength}');
+    if (fileLength > 0) {
+      printAppDirListing();
+      await _trimmer.loadAudio(audioFile: widget.file);
+      print('(EAT9B)${_trimmer.currentAudioFile}....${_trimmer}');
+    } else {
+      toast(context, 'No audio to edit', ToastKind.warning);
+    }
     setState(() {
       isLoading = false;
     });
@@ -147,7 +153,7 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                         TextStyle(color: Theme.of(context).primaryColor),
                     allowAudioSelection: true,
                     editorProperties: TrimEditorProperties(
-                      circleSize: 10,
+                      circleSize: 20,
                       borderPaintColor: Colors.black,
                       borderWidth: 4,
                       borderRadius: 5,

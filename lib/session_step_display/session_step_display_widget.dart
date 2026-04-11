@@ -145,7 +145,7 @@ class _SessionStepDisplayWidgetState
     if (sessionStep!.photoFileValid ?? false) {
       print('(DE410B)${sessionStep.reference!.path}....${sessionStep.photoFileValid}');
 
-      return Image.file(
+      return Image.file(key: UniqueKey(),
         File(appDirPath! + '/photo' + sessionStep.reference!.path! + '.jpg'),
         width: (MediaQuery.sizeOf(context).width * 0.9) - kIconButtonWidth - kIconButtonGap,
         height: (kIconButtonHeight * 2) + kIconButtonGap,
@@ -180,23 +180,7 @@ class _SessionStepDisplayWidgetState
               ToastKind.warning,
             );
           } else {
-            /* String localPath = await getPath(
-                sessionStepId: currentSessionStep!.reference!.path!,
-                fileKind: FileKind.wav,
-                version: currentSessionStep!.maxAudioVersion!);
-
-            bool ok = await copyStorageFiletoLocal(
-              bucketId: artTheopyAIRaudiosRef.path,
-              fileId: generateAudioStorageFilenameWav(
-                currentSessionStep!,
-                currentSessionStep!.maxAudioVersion!,
-              ),
-              localPath: localPath,
-              fileKind: FileKind.mp3,
-            );*/
-
             print('(DE101)${filePath}');
-
             showDialog<bool>(
                 context: context,
                 builder: (BuildContext context) {
@@ -206,7 +190,7 @@ class _SessionStepDisplayWidgetState
                     return AlertDialog(
                         title: Text('Edit Recording'),
                         content: Container(
-                          width: MediaQuery.sizeOf(context).width * 0.85,
+                          width: MediaQuery.sizeOf(context).width * 0.95,
                           child: FileSelectorWidget(
                               filePath: filePath,
                               dirPath: appDirPath!,
@@ -424,6 +408,10 @@ class _SessionStepDisplayWidgetState
                             collection: sessionsRef,
                             document: sessions![currentSessionIndex].reference,
                             data: {kSessionSessionModified: true});
+                        print('(DE444)');
+                        imageCache.clear();
+                        imageCache.clearLiveImages();
+                        enclosingSetState();
                       },
                     ),
                     SizedBox(height: kIconButtonGap),
@@ -610,6 +598,11 @@ class _SessionStepDisplayWidgetState
     }
   }
 
+  void enclosingSetState(){
+    setState(() {
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print('(SS2)${sessions![currentSessionIndex]}`}');
@@ -637,7 +630,7 @@ class _SessionStepDisplayWidgetState
     print('(SS5)${sessions![currentSessionIndex]!.clientDisplayName}');
 
     return FutureBuilder<List<SessionStepsRecord>>(
-      future: listSessionStepList(justCurrentSession: true),
+      future: listSessionStepList(thisSession: sessions![currentSessionIndex]),
       builder: (BuildContext context, snapshot) {
         if (!snapshot.hasData) {
           // while data is loading:
@@ -1017,7 +1010,6 @@ class _RecordPlayState extends State<RecordPlay> {
     // String path = '${appDir.path}/airStudio/$fileName';
 
     print('(IF20)${path}');
-
   }
 
   Future<void> stopRecording() async {
@@ -1032,7 +1024,8 @@ class _RecordPlayState extends State<RecordPlay> {
         _isRecording = false;
         _timerText = '00:00';
       });
-      print('(IF10)${_recordingSession.recorderState}....${backupPath},,,,${await backupFile.length()}');
+      print(
+          '(IF10)${_recordingSession.recorderState}....${backupPath},,,,${await backupFile.length()}');
       printAppDirListing();
     } catch (e) {
       print('(IF2)Error stopping recording: $e');

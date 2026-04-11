@@ -27,8 +27,7 @@ enum TrimmerEvent { initialized }
 class Trimmer {
   // final FlutterFFmpeg _flutterFFmpeg = FFmpegKit();
 
-  final StreamController<TrimmerEvent> _controller =
-      StreamController<TrimmerEvent>.broadcast();
+  final StreamController<TrimmerEvent> _controller = StreamController<TrimmerEvent>.broadcast();
 
   ap.AudioPlayer? _audioPlayer;
 
@@ -81,8 +80,7 @@ class Trimmer {
     }
 
     // Directory + folder name
-    final Directory directoryFolder =
-        Directory('${directory!.path}/$folderName/');
+    final Directory directoryFolder = Directory('${directory!.path}/$folderName/');
 
     if (await directoryFolder.exists()) {
       // If folder already exists return path
@@ -91,8 +89,7 @@ class Trimmer {
     } else {
       debugPrint('Creating');
       // If folder does not exists create folder and then return its path
-      final Directory directoryNewFolder =
-          await directoryFolder.create(recursive: true);
+      final Directory directoryNewFolder = await directoryFolder.create(recursive: true);
       return directoryNewFolder.path;
     }
   }
@@ -274,18 +271,16 @@ class Trimmer {
   }
 */
 
-  Future<FFmpegSession> extractAudio({String? sourcePath, String? targetPath, Duration? startPoint, Duration? endPoint}) async {
-  String command = '';
-    if (endPoint == null){
-      command =
-      '-y -ss $startPoint -i "$sourcePath"  -c copy ${targetPath}';
+  Future<FFmpegSession> extractAudio(
+      {String? sourcePath, String? targetPath, Duration? startPoint, Duration? endPoint}) async {
+    String command = '';
+    if (endPoint == null) {
+      command = '-y -ss $startPoint -i "$sourcePath"  -c copy ${targetPath}';
     } else {
-      command =
-      '-y -ss $startPoint -t ${endPoint} -i "$sourcePath"  -c copy ${targetPath}';
+      command = '-y -ss $startPoint -t ${endPoint} -i "$sourcePath"  -c copy ${targetPath}';
     }
     FFmpegSession ffmpegSession = await FFmpegKit.executeAsync(command, (session) async {
-      final state =
-      FFmpegKitConfig.sessionStateToString(await session.getState());
+      final state = FFmpegKitConfig.sessionStateToString(await session.getState());
       final returnCode = await session.getReturnCode();
       final output = await session.getOutput();
       final duration = await session.getDuration();
@@ -295,7 +290,7 @@ class Trimmer {
       print(
           '(AC2B)${returnCode},,,,${output!.length}----${output.characters.length}>>>>${duration}<<<<${logs.length}');
       String logString = '';
-      for(int i = 0; i < logs.length; i++){
+      for (int i = 0; i < logs.length; i++) {
         print('(AC2C)${i}....${logs[i].getMessage()}');
         // logString = logString + logs[i].getMessage() + '££££';
       }
@@ -305,13 +300,12 @@ class Trimmer {
         File trimmedFile = await File(targetPath!).copy(sourcePath);
 
         debugPrint("(AC4)${sourcePath}....${await File(sourcePath!).length()}");
-
       } else {
         debugPrint("(AC5)FFmpeg processing failed.");
-        }
+      }
       //await copyFiletoAppDir(sourcePath: '${tempDirPath}/trimmed.aac', targetPath: audioPath);
     });
-   return ffmpegSession;
+    return ffmpegSession;
   }
 
   Future<void> saveTrimmedAudio({
@@ -324,7 +318,7 @@ class Trimmer {
     // final String audioPath = currentAudioFile!.path;
     // final String audioName = basename(audioPath).split('.')[0];
 
-      // String _resultString;
+    // String _resultString;
 
     Duration startPoint = Duration(milliseconds: startValue.toInt());
     Duration endPoint = Duration(milliseconds: endValue.toInt());
@@ -332,33 +326,48 @@ class Trimmer {
     // Checking the start and end point strings
     debugPrint("(AC3)Start: ${startPoint.toString()} & End: ${endPoint.toString()}");
 
-
     String outputPath = '${tempDirPath}/trimmed.aac';
 
     String command = '';
-    if(saveNotCut) {
-      await extractAudio(sourcePath: audioPath, targetPath: outputPath, startPoint: startPoint, endPoint: endPoint);
+    if (saveNotCut) {
+      print('(EAT500)${audioPath}....${outputPath},,,,${startPoint}++++${endPoint}');
+      await extractAudio(
+          sourcePath: audioPath,
+          targetPath: outputPath,
+          startPoint: startPoint,
+          endPoint: endPoint);
+      var deleteResponse;
+      File audioFile = File(audioPath);
+      try {
+        deleteResponse = await audioFile.delete();
+      } on Exception catch (e){
+        print('(EAT501)${e}....${deleteResponse}');
+      }
+      print('(EAT502)${deleteResponse}');
+      File outputFile = File(outputPath);
+      print('(EAT503)${outputFile.path}');
+      File targetFile = await outputFile.copy(audioPath);
+      print('(EAT504)${targetFile.path}');
     } else {
       String beforePath = '${tempDirPath}/before.aac';
       String afterPath = '${tempDirPath}/after.aac';
-      await extractAudio(sourcePath: audioPath, targetPath: beforePath, startPoint: Duration(microseconds: 0), endPoint: startPoint);
-      await extractAudio(sourcePath: audioPath, targetPath: afterPath, startPoint: endPoint, endPoint: null);
+      await extractAudio(
+          sourcePath: audioPath,
+          targetPath: beforePath,
+          startPoint: Duration(microseconds: 0),
+          endPoint: startPoint);
+      await extractAudio(
+          sourcePath: audioPath, targetPath: afterPath, startPoint: endPoint, endPoint: null);
       String concatList = 'file ${beforePath}\nfile ${afterPath}';
-      final File concatFile =
-      await File("${tempDirPath}/concat.txt")
-          .writeAsString(concatList);
+      final File concatFile = await File("${tempDirPath}/concat.txt").writeAsString(concatList);
       final String concatCommand =
           "-y -f concat -safe 0 -i ${tempDirPath}/concat.txt -c copy ${audioPath}";
       print('(EV1)${audioPath}....${concatCommand}');
-      FFmpegSession ffmpegSession2 =
-      await FFmpegKit.execute(concatCommand);
+      FFmpegSession ffmpegSession2 = await FFmpegKit.execute(concatCommand);
       print('(EV2)${ffmpegSession2}');
     }
-   // return _outputPath;
+    // return _outputPath;
   }
-
-
-
 
   /// For getting the audio controller state, to know whether the
   /// audio is playing or paused currently.
@@ -405,8 +414,6 @@ class Trimmer {
   AudioContext? ctx,
       Duration? position,
   PlayerMode? mode,*/
-
-
 
   /// Clean up
   void dispose() {

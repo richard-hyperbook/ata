@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../appwrite_interface.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
+import '../localDB.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '../../app_state.dart';
 
@@ -320,6 +321,24 @@ class _QuestionsEditPageState extends State<QuestionsEditPage> {
         backgroundColor: FlutterFlowTheme.of(context).primary,
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
+
+          FlutterFlowIconButton(
+            enabled: true,
+            fillColor: Colors.white,
+            tooltipMessage: 'Add Question',
+            borderColor: FlutterFlowTheme.of(context).primary,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 40,
+            onPressed: () {
+              _addQuestion();
+
+            },
+            icon: kIconAdd,
+          ),
+
+/*
+
           if (canEdit)
             IconButton(
               icon: Icon(Icons.save),
@@ -328,6 +347,26 @@ class _QuestionsEditPageState extends State<QuestionsEditPage> {
                 Navigator.pop(context);
               },
             ),
+*/
+          SizedBox(width: kIconButtonGap),
+
+          if (canEdit)
+            FlutterFlowIconButton(
+            enabled: true,
+            fillColor: Colors.white,
+            tooltipMessage: 'Add Question',
+            borderColor: FlutterFlowTheme.of(context).primary,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 40,
+            onPressed: () {
+              widget.onSave(_questions);
+              Navigator.pop(context);
+
+            },
+            icon: Icon(Icons.save),
+          ),
+
 
         ],
       ),
@@ -357,14 +396,14 @@ class _QuestionsEditPageState extends State<QuestionsEditPage> {
           );
         },
       ),
-      floatingActionButton: canEdit
+      /*floatingActionButton: canEdit
           ? FloatingActionButton(
         foregroundColor: Colors.white,
               onPressed: _addQuestion,
               child: Icon(Icons.add),
               backgroundColor: FlutterFlowTheme.of(context).primary,
             )
-          : null,
+          : null,*/
     );
   }
 }

@@ -84,7 +84,8 @@ late Timer timer;
 const kEndpoint = 'https://fra.cloud.appwrite.io/v1';
 const kProjectID = '696ddda6001b28f2352e';
 const kDevKey =
-    '4de99514ee3d5a8fb3cdf236ba66a91e9bdb37c8397f9f98542530bd2f6a71797d93b068276fc23c0aba27cbd1e41912d4362456a9a167150bc5a2d66265b86a94229cfaf7d63181b173898e5f322b28f4d1c9a6c3470fa129f933062428ceb4806c26ca5bfa8e91d7e88f8dcbc430d1eb864016906a31d0dd78bf6a9450794d';
+    // '4de99514ee3d5a8fb3cdf236ba66a91e9bdb37c8397f9f98542530bd2f6a71797d93b068276fc23c0aba27cbd1e41912d4362456a9a167150bc5a2d66265b86a94229cfaf7d63181b173898e5f322b28f4d1c9a6c3470fa129f933062428ceb4806c26ca5bfa8e91d7e88f8dcbc430d1eb864016906a31d0dd78bf6a9450794d';
+'208620233cb2c5e9b25390faaf083a63e134e35af4909eca15b6e4ff70a25f3c76c43dcc258f18683a5f5adc222804a3b13f2508b40a6e60c11c9c8f00e3829870e4a66b296e838ecfcea659170c3870d20ba82f86216fe55ac4db3f0cf72c3b8ffa8e1774186657e1f9bfa1929853a9d04b4350bdff1f919199e4e5a7eea31a';
 const imageFilenameHead = kEndpoint + '/storage/buckets';
 
 final DocumentReference databaseRef = DocumentReference(
@@ -111,6 +112,11 @@ final DocumentReference artTheopyAIRvideosRef = DocumentReference(
 final DocumentReference templatesRef = DocumentReference(
   path: 'templates',
 );
+final DocumentReference airsRef = DocumentReference(
+  path: '69d229dd000910a8aad9',
+);
+
+
 
 final DocumentReference constraintsRef = DocumentReference(path: '');
 
@@ -1244,15 +1250,15 @@ Future<int> getMaxVersionNumber({
 */
 
 Future<List<SessionStepsRecord>> listSessionStepList({
-  bool justCurrentSession = true,
+  required SessionsRecord? thisSession,
 }) async {
-  print('(DE410D)${sessionStepsRef.path}....${sessions![currentSessionIndex].reference!.path}');
+  print('(DE410D)${sessionStepsRef.path}....${thisSession}');
   models.DocumentList docs;
-  if (justCurrentSession) {
+  if (thisSession != null) {
     docs = await listDocumentsWithOneQueryDocumentReference(
       collection: sessionStepsRef,
       attribute: kSessionStepSessionId,
-      value: sessions![currentSessionIndex].reference,
+      value: thisSession!.reference,
       orderByAttribute: kSessionStepIndex,
     );
   } else {
@@ -1681,6 +1687,7 @@ Future<String?> storeStorageFile({
   return url;
 }
 
+/*
 Future<String?> getStorageFileDownload({
   String? bucketId,
   models.File? file,
@@ -1697,6 +1704,7 @@ Future<String?> getStorageFileDownload({
   //>print('(XY30)${file!.$id}++++${bytes.length}****${s}');
   return s;
 }
+*/
 
 Future<void> deleteFile(String path) async {
   dartio.File file = dartio.File(path);
@@ -1739,7 +1747,7 @@ String getFilePath(FileKind fileKind, String item) {
   return appDirPath! + '/' + prefix + item + suffix;
 }
 
-Future<bool> copyStorageFiletoLocal({
+Future<bool> copySessionStepStorageFiletoLocal({
   required String? bucketId,
   required String? fileId,
   required String? localPath,
@@ -1798,6 +1806,73 @@ Future<bool> copyStorageFiletoLocal({
 
   return true;
 }
+/*
+
+Future<bool> copyAnyStorageFiletoLocal({
+  required String? bucketId,
+  required String? fileId,
+  required String? localPath,
+}) async {
+  await deleteFile(localPath!);
+  String? localBucketId = bucketId;
+  if (bucketId == null) {
+    localBucketId = backupStorageRef.path!;
+  }
+  final utf8Encoder = utf8.encoder;
+  final List<String> dirPathSplit = localPath.split('/');
+  // final localFilename = dirPathSplit.last;
+  //print('(DE70B)${dirPath[0]}');
+  final String dirPath = localPath.replaceFirst(dirPathSplit.last, '');
+  var dir = Directory.fromRawPath(utf8Encoder.convert(dirPath));
+  print('(DE70AA)${fileId}....${localPath},,,,${dirPath}++++${dir.path}');
+  await for (var entity in dir.list(recursive: true, followLinks: false)) {
+    print('(DE71)${entity.path}....${fileId}');
+    if (entity.path.contains(fileId!)) {
+      File file = File(entity.path);
+      print('(DE72)${entity.path}');
+      await file.delete();
+    }
+  }
+  print('(DE73)${localBucketId},,,,${fileId}----${dirPathSplit[0]}...${dirPathSplit[1]}');
+  await storage.getFileDownload(bucketId: localBucketId!, fileId: fileId!).then((bytes) {
+    print('(DE74)${bytes.length}....${localPath}');
+    final file = File(localPath);
+    file.writeAsBytesSync(bytes);
+  }).catchError((error) {
+    print('(DE75)${error.response}');
+  });
+  print('(DE76)');
+  printAppDirListing();
+  return true;
+}
+*/
+
+Future<bool> copyAnyStorageFiletoLocal({
+  required String? bucketId,
+  required String? fileId,
+  required String? localPath,
+}) async {
+  await deleteFile(localPath!);
+  String? localBucketId = bucketId;
+  if (bucketId == null) {
+    localBucketId = backupStorageRef.path!;
+  }
+  print('(DE172)${localPath}');
+  final File localFile = File(localPath);
+  var deleteResponse;
+  try {
+    var deleteResponse = await localFile.delete();
+  } on Exception catch (e){
+    print('(DE179)${e}....${deleteResponse}');
+  }
+  print('(DE173)${deleteResponse}>>>>${localBucketId},,,,${fileId}');
+  Uint8List bytes = await storage.getFileDownload(bucketId: localBucketId!, fileId: fileId!);
+  print('(DE174)${bytes.length}....${localPath}');
+  localFile.writeAsBytesSync(bytes);
+  print('(DE176)');
+  printAppDirListing();
+  return true;
+}
 
 Future<void> printTempDirListing() async {
   final utf8Encoder = utf8.encoder;
@@ -1817,9 +1892,10 @@ Future<void> printAppDirListing() async {
 
 Future<void> emptyAppDir() async {
   final utf8Encoder = utf8.encoder;
+  print('(AD9A)${appDirPath}');
   var dir = Directory.fromRawPath(utf8Encoder.convert(appDirPath!));
   await for (var entity in dir.list(recursive: true, followLinks: false)) {
-    print('(AD9)${entity.path}');
+    print('(AD9B)${entity.path}');
     await entity.delete(recursive: false);
   }
 }
@@ -1931,6 +2007,28 @@ Future<models.FileList> listStorageFiles({String? bucketId}) async {
   return fileList;
 }
 
+/*
+Future<models.FileList> listStorageFilesOfSessionStep({String? bucketId, String? sessionStepId}) async {
+  print(
+    '(XY6)${bucketId}....${kAttrStorageName}',
+  );
+  models.FileList fileList = models.FileList(total: 0, files: []);
+  try {
+    fileList = await storage.listFiles(
+      bucketId: bucketId!,
+      queries: [
+        Query.limit(kLimitStorageListDocuments),
+        Query.contains(fileId, sessionStepId)
+      ],
+    );
+    print('(XY7A)${fileList.files.length}');
+  } catch (e) {
+    //>print('(XY9)${e.toString()}');
+  }
+  return fileList;
+}
+*/
+
 Future<bool> doesStorageFileExist({String? bucketId, String? fileId}) async {
   print('(XY60)${bucketId}....${fileId}');
   models.FileList fileList = models.FileList(total: 0, files: []);
@@ -1948,16 +2046,16 @@ Future<bool> doesStorageFileExist({String? bucketId, String? fileId}) async {
   return (fileList.files.length > 0);
 }
 
-Future<models.FileList> listStorageFilesOfCurrentStorageStep({String? bucketId}) async {
+Future<models.FileList> listStorageFilesOfStorageStep({required String? bucketId, required String? sessionStepId}) async {
   print(
-    '(XY6)${bucketId}....${kAttrStorageName}----${currentSessionStep!.reference!.path}',
+    '(XY6)${bucketId}....${kAttrStorageName}----${sessionStepId}',
   );
   models.FileList fileList = models.FileList(total: 0, files: []);
   try {
     fileList = await storage.listFiles(
       bucketId: bucketId!,
       queries: [
-        Query.contains(kAttrStorageId, currentSessionStep!.reference!.path),
+        Query.contains(kAttrStorageId, sessionStepId),
         Query.limit(kLimitStorageListDocuments),
       ],
     );

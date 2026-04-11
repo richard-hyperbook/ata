@@ -65,8 +65,7 @@ class SessionDisplayWidget extends StatefulWidget {
   _SessionDisplayWidgetState createState() => _SessionDisplayWidgetState();
 }
 
-class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
-    /*with AudioRecorderMixin*/ {
+class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with AudioRecorderMixin*/ {
   late SessionDisplayModel _model;
 
   TextEditingController? enteredHyperbookTitleController;
@@ -111,8 +110,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
       content: new Row(
         children: [
           CircularProgressIndicator(),
-          Container(
-              margin: EdgeInsets.only(left: 5), child: Text("   Loading")),
+          Container(margin: EdgeInsets.only(left: 5), child: Text("   Loading")),
         ],
       ),
     );
@@ -131,31 +129,29 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
   Directory? dir;
 
   Future<bool> executeFFmpeg(String command) async {
-  print('(FF1)${command}');
-  String logString = '(FF2)';
-  Session ffmpegSession = await FFmpegKit.execute(command);
+    print('(FF1)${command}');
+    String logString = '(FF2)';
+    Session ffmpegSession = await FFmpegKit.execute(command);
     final output = await ffmpegSession.getOutput();
-  final returnCode = await ffmpegSession.getReturnCode();
-  final duration = await ffmpegSession.getDuration();
-  print(
-  '(FF3)${returnCode!.toString()}....${returnCode.getValue()},,,,${output!.length}----${output.characters.length}>>>>${duration}');
-  logString += '\n✅ Processing completed!\n';
-  logString += 'Return code: $returnCode\n';
-  logString += 'Duration: ${duration}ms\n';
-  logString += 'Output: $output\n';
-  debugPrint('session: $output');
-  print('>>>>>>>>(FF4)FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}');
-  if ((returnCode == 0) || (returnCode == '0')) {
-    return true;
-  } else {
-   // toast(context, 'FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}', ToastKind.error);
-    return false;
+    final returnCode = await ffmpegSession.getReturnCode();
+    final duration = await ffmpegSession.getDuration();
+    print(
+        '(FF3)${returnCode!.toString()}....${returnCode.getValue()},,,,${output!.length}----${output.characters.length}>>>>${duration}');
+    logString += '\n✅ Processing completed!\n';
+    logString += 'Return code: $returnCode\n';
+    logString += 'Duration: ${duration}ms\n';
+    logString += 'Output: $output\n';
+    debugPrint('session: $output');
+    print('>>>>>>>>(FF4)FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}');
+    if ((returnCode == 0) || (returnCode == '0')) {
+      return true;
+    } else {
+      // toast(context, 'FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}', ToastKind.error);
+      return false;
+    }
   }
-  }
 
-
-
-
+  String lastPhotoPath = '';
 
   Future<bool> generateStepVideo(int step) async {
     SessionStepsRecord sessionStep = sessionStepsList![step];
@@ -167,30 +163,33 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
         // await setMaxVersionNumbersCurrentSessionStep();
         // final int maxAudioVersion = currentSessionStep!.maxAudioVersion!;
         // final int maxPhotoVersion = currentSessionStep!.maxPhotoVersion!;
-       
-        final String tempPhotoPath =
-            '${tempDirPath}/photo_${(step).toString()}.jpg';
-        final String tempVideoPath =
-            '${tempDirPath}/video_${(step).toString()}.mp4';
+
+        final String tempPhotoPath = '${tempDirPath}/photo_${(step).toString()}.jpg';
+        final String tempVideoPath = '${tempDirPath}/video_${(step).toString()}.mp4';
         print('(VA11)${tempPhotoPath}....${tempVideoPath}');
         String audioPath = getFilePath(FileKind.aac, sessionStepsList![step].reference!.path!);
         String tempAudioPath = '${tempDirPath}/audio_${(step).toString()}.wav';
         final String audioConvertCommand = '-y -i "${audioPath}" "${tempAudioPath}"';
         await executeFFmpeg(audioConvertCommand);
-        print(
-            '(VA12)${step}~~~${audioPath}====${generateAudioStorageFilenameMp3(sessionStep)}');
+        print('(VA12)${step}~~~${audioPath}====${generateAudioStorageFilenameMp3(sessionStep)}');
         print(
             '(VA13)${step}~~~~${generatePhotoStorageFilename(sessionStep)},,,,${tempPhotoPath}====');
-        String sourcePhotoFilePath = getFilePath(FileKind.photo, sessionStepsList![step].reference!.path!);
-        if (!(await isFileInAppDir(sourcePhotoFilePath))){
-          toast(context, 'Photo missing from Step ${step.toString()}', ToastKind.error);
-          print('(VA14A)');
-          return false;
+        String sourcePhotoFilePath =
+            getFilePath(FileKind.photo, sessionStepsList![step].reference!.path!);
+        if (!(await isFileInAppDir(sourcePhotoFilePath))) {
+          if (lastPhotoPath == '') {
+            toast(context, 'Photo missing from Step ${step.toString()}', ToastKind.error);
+            print('(VA14A)');
+            return false;
+          } else {
+            sourcePhotoFilePath = lastPhotoPath;
+          }
+        } else {
+          lastPhotoPath = sourcePhotoFilePath;
         }
         superImage.Image? image =
             superImage.decodeImage(File(sourcePhotoFilePath).readAsBytesSync());
-        superImage.Image? resizedImage =
-            superImage.copyResize(image!, width: 500, height: 500);
+        superImage.Image? resizedImage = superImage.copyResize(image!, width: 500, height: 500);
         File(tempPhotoPath).writeAsBytesSync(superImage.encodeJpg(resizedImage));
         print('(VA14B)${resizedImage.frameType}');
         Image modifiedImage = Image(
@@ -201,8 +200,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
           ),
         );
 
-        print(
-            '(VA15)${step},,,,${tempPhotoPath}<');
+        print('(VA15)${step},,,,${tempPhotoPath}<');
         dir = Directory.fromRawPath(utf8Encoder!.convert(tempDirPath!));
         await printTempDirListing();
         final String command =
@@ -230,11 +228,10 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
         print('(VA20)${logString}');
 
         //  print('(VC5A)${ffMpegResponse.getReturnCode()}....${ffMpegResponse.getState()},,,,${videoPath}');
-       /* int maxVideoVersion = await getMaxVersionNumber(
+        /* int maxVideoVersion = await getMaxVersionNumber(
             bucketId: artTheopyAIRvideosRef.path!,
             fileId: sessions![currentSessionIndex].reference!.path!);*/
-        String videoStorageId = generateVideoStorageFilename(
-            sessions![currentSessionIndex]);
+        String videoStorageId = generateVideoStorageFilename(sessions![currentSessionIndex]);
         print('(VA21)${videoStorageId},,,,${tempVideoPath}');
         // await storeStorageFile(
         //   bucketId: artTheopyAIRvideosRef.path,
@@ -272,17 +269,17 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
 
   Future<void> loadVideo(int index) async {
     currentSessionIndex = index;
-    final String videoStorageId =
-        'video${sessions![currentSessionIndex].reference!.path}.mp4';
+    final String videoStorageId = 'video${sessions![currentSessionIndex].reference!.path}.mp4';
     final String videoPlayPath = '${tempDirPath}/video.mp4';
     print('(VA200)${videoStorageId}....${videoPlayPath}');
-    bool okVideo = await copyStorageFiletoLocal(
+    bool okVideo = await copySessionStepStorageFiletoLocal(
       bucketId: artTheopyAIRvideosRef.path,
       fileId: videoStorageId,
       localPath: videoPlayPath,
       fileKind: FileKind.video,
     );
-    print('(VA201A)${okVideo}....${videoStorageId},,,,${videoPlayPath}++++${sessions![index].videoController}');
+    print(
+        '(VA201A)${okVideo}....${videoStorageId},,,,${videoPlayPath}++++${sessions![index].videoController}');
 /*    sessions![index].videoController =
         VideoPlayerController.file(File(videoPlayPath),)
           ..initialize().then((_) {
@@ -304,10 +301,263 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
     dumpVC();
   }
 
+  Widget showAIRDeleteButton(int index) {
+    return FlutterFlowIconButton(
+        showLoadingIndicator: true,
+        caption: 'Delete AIR',
+        tooltipMessage: 'Remove all stored data',
+        borderColor: Colors.transparent,
+        borderRadius: 0.0,
+        borderWidth: 1.0,
+        buttonSize: 40.0,
+        buttonWidth: kSessionIconButtonWidth,
+        icon: kIconDelete,
+        onPressed: /*(!session.videoCreated!) ? null :*/
+            () async {
+          BuildContext enclosingContext = context;
+          print('(DA22)${context}');
+          showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return StatefulBuilder(builder: (context, setState) {
+                  return AlertDialog(
+                    title: Text('Delete AIR'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [Text('Deleting an AIR Cannot be undone')],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          print('(DA23)');
+
+                          currentSessionIndex = index;
+                          SessionsRecord session = sessions![currentSessionIndex];
+                          List<SessionStepsRecord> sessionSteps =
+                              await listSessionStepList(thisSession: session);
+                          utf8Encoder = utf8.encoder;
+                          Directory appDir =
+                              Directory.fromRawPath(utf8Encoder!.convert(appDirPath!));
+                          List<String> appDirPathList = await getAppDirListing();
+                          for (int j = 0; j < sessionSteps.length; j++) {
+                            await deleteDocument(
+                                collection: sessionStepsRef, document: sessionSteps[j].reference);
+                            print('(DA2)${j}....${sessionSteps[j].reference!.path}');
+                            for (int k = 0; k < appDirPathList.length; k++) {
+                              print(
+                                  '(DA3)${k}....${appDirPathList[k]},,,,${sessionSteps[j].reference!.path}');
+                              if ((appDirPathList[k]).contains(sessionSteps[j].reference!.path!)) {
+                                await deleteFile(appDirPathList[k]);
+                                print('(DA4)${k}....${appDirPathList[k]}');
+                              }
+                            }
+                          }
+                          await deleteDocument(
+                              collection: sessionsRef,
+                              document: sessions![currentSessionIndex].reference);
+                          print('(DA5)${sessions![currentSessionIndex].reference!.path}');
+
+                          context.pop();
+                        },
+                        child: const Text('Confirm'),
+                      )
+                    ],
+                  );
+                });
+              });
+        });
+  }
+
+  Widget showCreateArchiveButton(int index) {
+    return FlutterFlowIconButton(
+        showLoadingIndicator: true,
+        caption: 'Save AIR in cloud',
+        tooltipMessage: 'Archive complete AIR',
+        borderColor: Colors.transparent,
+        borderRadius: 0.0,
+        borderWidth: 1.0,
+        buttonSize: 40.0,
+        buttonWidth: kSessionIconButtonWidth,
+        icon: Icon(Icons.archive_outlined),
+        onPressed: /*(!session.videoCreated!) ? null :*/
+            () async {
+          SessionStepsRecord firstSessionStep =
+              (await listSessionStepList(thisSession: sessions![index])).first;
+          bool archiveExists = await doesStorageFileExist(
+              bucketId: airsRef.path, fileId: 'aac' + firstSessionStep.reference!.path! + '.aac');
+          print('(DA40)${'aac' + firstSessionStep.reference!.path! + '.aac'}....${archiveExists}');
+          showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return StatefulBuilder(builder: (context, setState) {
+                  return AlertDialog(
+                      title: Text('Store AIR in cloud'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [Text(archiveExists ? 'Overwrite existing archive' : '')],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                            child: const Text('Confirm'),
+                            onPressed: () async {
+                              print('(DA50)');
+                              SessionsRecord session = sessions![index];
+                              List<SessionStepsRecord> sessionSteps =
+                                  await listSessionStepList(thisSession: session);
+                              utf8Encoder = utf8.encoder;
+                              List<String> appDirPathList = await getAppDirListing();
+                              for (int j = 0; j < sessionSteps.length; j++) {
+                                print('(DA51)${j}....${sessionSteps[j].reference!.path}');
+                                for (int k = 0; k < appDirPathList.length; k++) {
+                                  print(
+                                      '(DA52)${k}....${appDirPathList[k]},,,,${sessionSteps[j].reference!.path}');
+                                  if ((appDirPathList[k])
+                                      .contains(sessionSteps[j].reference!.path!)) {
+                                    final String storageFileId = appDirPathList[k].split('/').last;
+                                    print('(DA53)${storageFileId}');
+                                    if (archiveExists) {
+                                      await deleteStorageFile(
+                                          bucketId: airsRef.path, fileId: storageFileId);
+                                      print('(DA54)');
+                                    }
+                                    var response = await storeStorageFile(
+                                      bucketId: airsRef.path!,
+                                      storageFileId: storageFileId,
+                                      localFilePath: appDirPathList[k],
+                                    );
+                                    print('(DA55)${k}....${appDirPathList[k]},,,,${response}');
+                                  }
+                                }
+                              }
+                              await printAppDirListing();
+                              context.pop();
+                            })
+                      ]);
+                });
+              });
+        });
+  }
+
+  Widget showArchiveRestoreButton(int index) {
+    return FlutterFlowIconButton(
+        showLoadingIndicator: true,
+        caption: 'Restore AIR from cloud',
+        tooltipMessage: 'Restore complete AIR',
+        borderColor: Colors.transparent,
+        borderRadius: 0.0,
+        borderWidth: 1.0,
+        buttonSize: 40.0,
+        buttonWidth: kSessionIconButtonWidth,
+        icon: Icon(Icons.archive_outlined),
+        onPressed: /*(!session.videoCreated!) ? null :*/
+            () async {
+          SessionStepsRecord firstSessionStep =
+              (await listSessionStepList(thisSession: sessions![index])).first;
+          bool archiveExists = await doesStorageFileExist(
+              bucketId: airsRef.path, fileId: 'aac' + firstSessionStep.reference!.path! + '.aac');
+          print('(DA60)${'aac' + firstSessionStep.reference!.path! + '.aac'}....${archiveExists}');
+          showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return StatefulBuilder(builder: (context, setState) {
+                  return AlertDialog(
+                      title: Text('Restore AIR from cloud'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(archiveExists ? 'Restore from cloud' : 'No archive exists')
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                            child: const Text('Confirm'),
+                            onPressed: () async {
+                              print('(DA50)');
+                              SessionsRecord session = sessions![index];
+                              List<SessionStepsRecord> sessionSteps =
+                                  await listSessionStepList(thisSession: session);
+                              utf8Encoder = utf8.encoder;
+                              List<String> appDirPathList = await getAppDirListing();
+                              for (int j = 0; j < sessionSteps.length; j++) {
+                                print('(DA51)${j}....${sessionSteps[j].reference!.path}');
+                                models.FileList filesOfStorageStep =
+                                    await listStorageFilesOfStorageStep(
+                                        bucketId: airsRef.path,
+                                        sessionStepId: sessionSteps[j].reference!.path);
+                                for (int k = 0; k < filesOfStorageStep.files.length; k++) {
+                                  print(
+                                      '(DA52)${k}....${filesOfStorageStep.files[k]},,,,${sessionSteps[j].reference!.path}');
+                                  for (int l = 0; l < appDirPathList.length; l++) {
+                                    // if (appDirPathList[l]
+                                    //     .contains(filesOfStorageStep.files[k].$id)) {x
+                                    final String filePath =
+                                        appDirPath! + '/' + filesOfStorageStep.files[k].$id;
+                                    await copyAnyStorageFiletoLocal(
+                                      bucketId: airsRef.path,
+                                      fileId: filesOfStorageStep.files[k].$id,
+                                      localPath: filePath,
+                                      // storageFileId: filesOfStorageStep.files[k].$id,
+                                      // localFilePath:
+                                      //     appDirPath! + '/' + filesOfStorageStep.files[k].$id,
+                                      // deleteIfNecessary: true
+                                    );
+                                    print(
+                                        '(DA53)${k}....${l},,,,${filesOfStorageStep.files[k].$id}++++${filePath}');
+                                    // }
+                                  }
+
+                                  /*if ((appDirPathList[k])
+                                      .contains(sessionSteps[j].reference!.path!)) {
+                                    final String storageFileId = appDirPathList[k].split('/').last;
+                                    print('(DA53)${storageFileId}');
+                                    if (archiveExists) {
+                                      await deleteStorageFile(
+                                          bucketId: airsRef.path, fileId: storageFileId);
+                                      print('(DA54)');
+                                    }
+                                    var response = await storeStorageFile(
+                                      bucketId: airsRef.path!,
+                                      storageFileId: storageFileId,
+                                      localFilePath: appDirPathList[k],
+                                    );
+                                    print('(DA55)${k}....${appDirPathList[k]},,,,${response}');
+                                  }*/
+                                }
+                              }
+                              context.pop();
+                            })
+                      ]);
+                });
+              });
+        });
+  }
+
   Widget displaySession(SessionsRecord session, int index) {
     print('(VC50A)${index}....${session}');
-    if(session.videoCreated == null) {session.videoCreated = false;}
-    if(session.sessionModified == null) {session.sessionModified = false;}
+    if (session.videoCreated == null) {
+      session.videoCreated = false;
+    }
+    if (session.sessionModified == null) {
+      session.sessionModified = false;
+    }
     print(
         '(VC50B)${session.videoCreated}....${session.sessionModified},,,,${((session.videoCreated!) && (!session.sessionModified!))}');
     print('(MV99)${sessions![index].videoCreated!}');
@@ -318,7 +568,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
         margin: EdgeInsets.all(5),
         padding: EdgeInsets.all(5),
         width: MediaQuery.sizeOf(context).width * 1.0,
-        height: 350.0,
+        // height: 350.0,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(16)),
           color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -334,126 +584,117 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
             width: 1.0,
           ),
         ),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                // key: infoCount == 1
-                // ? intro!.keys[2]
-                // : UniqueKey(),
-                child: Text(
-                  'Client: ${session.clientDisplayName}',
-                  softWrap: false,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            // key: infoCount == 1
+            // ? intro!.keys[2]
+            // : UniqueKey(),
+            child: Text(
+              'Client: ${session.clientDisplayName}',
+              softWrap: false,
+              style: FlutterFlowTheme.of(context).bodyMedium,
+            ),
+          ),
+          SingleChildScrollView(
+            // key: infoCount == 1
+            //     ? intro!.keys[3]
+            //     : UniqueKey(),
+            scrollDirection: Axis.horizontal,
+            child: Text(
+              softWrap: false,
+              'Date: ${(DateFormat.yMMMd().format(session.$createdAt!))}',
+              style: FlutterFlowTheme.of(context).bodyMedium,
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              // key: infoCount == 1
+              //     ? intro!.keys[4]
+              //     : UniqueKey(),
+              children: <Widget>[
+                Text(
+                  '',
                   style: FlutterFlowTheme.of(context).bodyMedium,
                 ),
-              ),
-              SingleChildScrollView(
-                // key: infoCount == 1
-                //     ? intro!.keys[3]
-                //     : UniqueKey(),
-                scrollDirection: Axis.horizontal,
-                child: Text(
-                  softWrap: false,
-                  'Date: ${(DateFormat.yMMMd().format(session.$createdAt!))}',
-                  style: FlutterFlowTheme.of(context).bodyMedium,
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  // key: infoCount == 1
-                  //     ? intro!.keys[4]
-                  //     : UniqueKey(),
-                  children: <Widget>[
-                    Text(
-                      '',
-                      style: FlutterFlowTheme.of(context).bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-              Row(children: [
-                FlutterFlowIconButton(
-                  caption: 'Edit',
-                  tooltipMessage: 'Edit session',
-                  borderColor: Colors.transparent,
-                  borderRadius: 0.0,
-                  borderWidth: 1.0,
-                  buttonSize: 40.0,
-                  buttonWidth: kSessionIconButtonWidth,
-                  icon: Icon(Icons.edit),
-                  onPressed: () async {
-                    FFAppState().update(() {});
-                    // currentSession = session;
+              ],
+            ),
+          ),
+          Row(children: [
+            FlutterFlowIconButton(
+              caption: 'Edit',
+              tooltipMessage: 'Edit session',
+              borderColor: Colors.transparent,
+              borderRadius: 0.0,
+              borderWidth: 1.0,
+              buttonSize: 40.0,
+              buttonWidth: kSessionIconButtonWidth,
+              icon: Icon(Icons.edit),
+              onPressed: () async {
+                FFAppState().update(() {});
+                // currentSession = session;
+                currentSessionIndex = index;
+                currentTherapist = await getUser(document: session.therapistId);
+                currentClient = await getUser(document: session.clientId);
+                await updateDocument(
+                    collection: sessionsRef,
+                    document: sessions![currentSessionIndex].reference,
+                    data: {
+                      kSessionSessionModified: true,
+                    });
+
+                print('(S1)${session.clientId}');
+                Navigator.push(
+                    context,
+                    PageTransition(
+                      type: kStandardPageTransitionType,
+                      duration: kStandardTransitionTime,
+                      reverseDuration: kStandardReverseTransitionTime,
+                      child: SessionStepDisplayWidget(),
+                    )).then((_) => setState(() {}));
+              },
+            ),
+          ]),
+          SizedBox(height: kIconButtonGap),
+          FlutterFlowIconButton(
+            // showLoadingIndicator: true,
+            caption: ((session.videoCreated!) && (!session.sessionModified!))
+                ? 'Video available'
+                : 'Make video',
+            tooltipMessage: 'Speech to text',
+            borderColor: Colors.transparent,
+            borderRadius: 0.0,
+            borderWidth: 1.0,
+            buttonSize: 40.0,
+            buttonWidth: kSessionIconButtonWidth,
+            icon: Icon(Icons.movie),
+
+            onPressed: ((sessions![index].videoCreated!) && (!session.sessionModified!))
+                ? null
+                : () async {
+                    //currentSession = sessions![index];
                     currentSessionIndex = index;
-                    currentTherapist =
-                        await getUser(document: session.therapistId);
-                    currentClient = await getUser(document: session.clientId);
-                    await updateDocument(
-                        collection: sessionsRef,
-                        document: sessions![currentSessionIndex].reference,
-                        data: {
-                          kSessionSessionModified: true,
-                        });
-
-
-                    print('(S1)${session.clientId}');
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                          type: kStandardPageTransitionType,
-                          duration: kStandardTransitionTime,
-                          reverseDuration: kStandardReverseTransitionTime,
-                          child: SessionStepDisplayWidget(),
-                        )).then((_) => setState(() {}));
-                  },
-                ),
-              ]),
-              SizedBox(height: kIconButtonGap),
-              FlutterFlowIconButton(
-                // showLoadingIndicator: true,
-                caption:
-                    ((session.videoCreated!) && (!session.sessionModified!))
-                        ? 'Video available'
-                        : 'Make video',
-                tooltipMessage: 'Speech to text',
-                borderColor: Colors.transparent,
-                borderRadius: 0.0,
-                borderWidth: 1.0,
-                buttonSize: 40.0,
-                buttonWidth: kSessionIconButtonWidth,
-                icon: Icon(Icons.movie),
-
-                onPressed: ((sessions![index].videoCreated!) &&
-                        (!session.sessionModified!))
-                    ? null
-                                      : () async {
-                        //currentSession = sessions![index];
-                        currentSessionIndex = index;
-                        showAlertDialog(context);
-                        sessionStepsList =
-                            await listSessionStepList(justCurrentSession: true);
-                        // tempDirPath = await getTempDir
-                        await emptyTempDirOFPhotosVideosConcat();
-                        print(
-                            '(VA1)${tempDirPath}....${sessionStepsList!.length}');
-                        await printTempDirListing();
-                        utf8Encoder = utf8.encoder;
-                        dir = Directory.fromRawPath(
-                            utf8Encoder!.convert(tempDirPath!));
-                        String concatList = '';
-                        for (int i = 0; i < sessionStepsList!.length; i++) {
-                          print('(VA6A)${sessionStepsList!.length}....${i}');
-                          bool ok = await generateStepVideo(i);
-                          if(!ok){
-                            print('(VA6B)${sessionStepsList!.length}....${i}');
-                            Navigator.pop(context);
-                            return;
-                          }
-                          concatList = concatList + 'file ${tempDirPath}/video_${i.toString()}.mp4\n';
-                        }
-                 /*       final String videoPath = tempDirPath!;
+                    showAlertDialog(context);
+                    sessionStepsList = await listSessionStepList(thisSession: sessions![index]);
+                    // tempDirPath = await getTempDir
+                    await emptyTempDirOFPhotosVideosConcat();
+                    print('(VA1)${tempDirPath}....${sessionStepsList!.length}');
+                    await printTempDirListing();
+                    utf8Encoder = utf8.encoder;
+                    dir = Directory.fromRawPath(utf8Encoder!.convert(tempDirPath!));
+                    String concatList = '';
+                    for (int i = 0; i < sessionStepsList!.length; i++) {
+                      print('(VA6A)${sessionStepsList!.length}....${i}');
+                      bool ok = await generateStepVideo(i);
+                      if (!ok) {
+                        print('(VA6B)${sessionStepsList!.length}....${i}');
+                        Navigator.pop(context);
+                        return;
+                      }
+                      concatList = concatList + 'file ${tempDirPath}/video_${i.toString()}.mp4\n';
+                    }
+                    /*       final String videoPath = tempDirPath!;
                         Directory videoDir = Directory(videoPath);
                         int directoryLength = await videoDir.list().length;
                         int fileIndex = 0;
@@ -466,18 +707,16 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                           }
                         });
                  */
-                        print('(VA31)${concatList}');
-                        final File concatFile =
-                            await File("${tempDirPath}/concat.txt")
-                                .writeAsString(concatList);
-                        final String concatedVideo =
-                            "${tempDirPath}/video.mp4";
-                        final String concatCommand =
-                            '-y -f concat -safe 0 -i "${tempDirPath}/concat.txt" -c copy "${concatedVideo}"';
-                        print('(VA32)${concatedVideo}....${concatCommand}');
+                    print('(VA31)${concatList}');
+                    final File concatFile =
+                        await File("${tempDirPath}/concat.txt").writeAsString(concatList);
+                    final String concatedVideo = "${tempDirPath}/video.mp4";
+                    final String concatCommand =
+                        '-y -f concat -safe 0 -i "${tempDirPath}/concat.txt" -c copy "${concatedVideo}"';
+                    print('(VA32)${concatedVideo}....${concatCommand}');
 
-                        await executeFFmpeg(concatCommand);
-                        /*Session ffmpegSession2 =
+                    await executeFFmpeg(concatCommand);
+                    /*Session ffmpegSession2 =
                             await FFmpegKit.execute(concatCommand);
                         print('(VA33)${concatCommand}');
 
@@ -487,224 +726,263 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                         print(
                             '(VA34)${returnCode!.toString()}....${returnCode},,,,${output!.length}----${output.characters.length}>>>>${duration}');
                        */
-                        models.FileList fileList = await listStorageFiles(
-                            bucketId: artTheopyAIRvideosRef.path);
-                        String fileId = '';
-                        for (int i = 0; i < fileList.files.length; i++) {
-                          if ((fileList.files[i].$id).contains(
-                              sessions![currentSessionIndex]
-                                  .reference!
-                                  .path!)) {
-                            fileId = fileList.files[i].$id;
-                            break;
-                          }
-                        }
-                        print('(VA36A)${fileId}');
-                        if (fileId.length > 0) {
-                          await deleteStorageFile(
-                              bucketId: artTheopyAIRvideosRef.path,
-                              fileId: fileId);
-                        }
-                        print('(VA36B)${concatedVideo}....${generateVideoStorageFilename(session,)}');
-                        var response = await storeStorageFile(
-                          bucketId: artTheopyAIRvideosRef.path!,
-                          storageFileId: generateVideoStorageFilename(session,),
-                          localFilePath: concatedVideo,
-                        );
-                        print(
-                            '(VA37)${concatedVideo}....${response}~~~~${currentSessionIndex}****${sessions!.length}');
-                        await updateDocument(
-                            collection: sessionsRef,
-                            document: sessions![currentSessionIndex].reference,
-                            data: {
-                              kSessionSessionModified: false,
-                              kSessionVideoCreated: true
-                            });
-                        setState(() {
-                          sessions![currentSessionIndex].videoCreated = true;
-                          sessions![currentSessionIndex].sessionModified =
-                              false;
-                        });
-                        print(
-                            '(VA38)${sessions![currentSessionIndex].videoCreated}++++${sessions![currentSessionIndex].sessionModified}----${concatedVideo}....${currentSessionIndex}****${sessions!.length}');
-                        Navigator.pop(context);
-                        // String  command =
-                        // " -y -framerate 1 -pattern_type sequence -i $pictureFilenames -c:v libx264 -r 30 -pix_fmt yuv420p ${generatedFile.path}";
-                      },
-              ),
-              SizedBox(height: kIconButtonGap),
-              FlutterFlowIconButton(
-                  showLoadingIndicator: true,
-                  caption: (sessions![index].videoCreated!)
-                      ? 'Load video'
-                      : 'Video not available',
-                  tooltipMessage: 'Load video',
-                  borderColor: Colors.transparent,
-                  borderRadius: 0.0,
-                  borderWidth: 1.0,
-                  buttonSize: 40.0,
-                  buttonWidth: kSessionIconButtonWidth,
-                  icon: (sessions![index].videoController == null)
-                      ? Icon(Icons.local_movies)
-                      : (sessions![index].videoController!.value.isPlaying
-                          ? Icon(Icons.pause)
-                          : Icon(Icons.slow_motion_video)),
-                  onPressed: /*(!session.videoCreated!) ? null :*/
-                      () async {
-                        print(
-                            '(VA203A)${index},,,,${sessions![index].videoController}');
-                    await loadVideo(index);
-                    print(
-                        '(VA203B)${index},,,,${sessions![index].videoController}');
-                    showDialog<bool>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return StatefulBuilder(builder: (context, setState) {
-                            return AlertDialog(
-                              title: Text('Video'),
-                              content: Container(
-                                width: 400,
-                                height: 400,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 1, color: Colors.black)),
-                                child: sessions![currentSessionIndex]
-                                        .videoController!
-                                        .value
-                                        .isInitialized
-                                    ? AspectRatio(
-                                        aspectRatio:
-                                            sessions![currentSessionIndex]
-                                                .videoController!
-                                                .value
-                                                .aspectRatio,
-                                        child: VideoPlayer(
-                                            sessions![currentSessionIndex]
-                                                .videoController!),
-                                      )
-                                    : Container(color: Colors.amber),
-                              ),
-                              actions: [
-                                FlutterFlowIconButton(
-                                  showLoadingIndicator: true,
-                                  caption: (sessions![index].videoCreated!)
-                                      ? 'Play video'
-                                      : 'Video not available',
-                                  tooltipMessage: 'Load video',
-                                  borderColor: Colors.transparent,
-                                  borderRadius: 0.0,
-                                  borderWidth: 1.0,
-                                  buttonSize: 40.0,
-                                  buttonWidth: kSessionIconButtonWidth,
-                                  icon:
-                                      (sessions![index].videoController == null)
-                                          ? Icon(Icons.local_movies)
-                                          : (sessions![index]
-                                                  .videoController!
-                                                  .value
-                                                  .isPlaying
-                                              ? Icon(Icons.pause)
-                                              : Icon(Icons.play_arrow)),
-                                  onPressed: /*(!session.videoCreated!) ? null :*/
-                                      () async {
-                                    sessions![currentSessionIndex]
-                                        .videoController!
-                                        .play();
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                        });
-                  }),
-              SizedBox(height: kIconButtonGap),
-              FlutterFlowIconButton(
-                  showLoadingIndicator: true,
-                  caption: 'Send email',
-                  tooltipMessage: 'Send email with link to video',
-                  borderColor: Colors.transparent,
-                  borderRadius: 0.0,
-                  borderWidth: 1.0,
-                  buttonSize: 40.0,
-                  buttonWidth: kSessionIconButtonWidth,
-                  icon: Icon(Icons.email_outlined),
-                  onPressed: () async {
-                    // currentSession = session;
-                    currentSessionIndex = index;
-                    String videoURL = '';
-                    models.FileList fileList = await listStorageFiles(
-                        bucketId: artTheopyAIRvideosRef.path);
-                    bool videoAvailable = false;
-                    if (fileList.files.length > 0) {
-                      for (int i = 0; i < fileList.files.length; i++) {
-                        String fileId = fileList.files[i].$id;
-                        if ((fileId.contains('video')) &&
-                            (fileId.contains(sessions![currentSessionIndex]
-                                .reference!
-                                .path!))) {
-                          videoAvailable = true;
-                          final String BUCKET_ID = artTheopyAIRvideosRef.path!;
-                          final String FILE_ID = fileId;
-                          final String PROJECT_ID = kProjectID;
-                          if (FILE_ID.length > 0) {
-                            videoURL =
-                                'https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${FILE_ID}/view?project=${PROJECT_ID}';
-                          }
-                        }
+                    models.FileList fileList =
+                        await listStorageFiles(bucketId: artTheopyAIRvideosRef.path);
+                    String fileId = '';
+                    for (int i = 0; i < fileList.files.length; i++) {
+                      if ((fileList.files[i].$id)
+                          .contains(sessions![currentSessionIndex].reference!.path!)) {
+                        fileId = fileList.files[i].$id;
+                        break;
                       }
                     }
-                    print('(ES1)${videoURL}');
-                    BuildContext enclosingContext = context;
-                    showDialog<bool>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return StatefulBuilder(builder: (context, setState) {
-                            return AlertDialog(
-                              title: Text('Send Email'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  videoAvailable
-                                      ? Text(
-                                          'Send Email with link to the created Video?')
-                                      : Text('No video avialable')
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                videoAvailable
-                                    ? TextButton(
-                                        onPressed: () async {
-                                          print(
-                                              '(ES2)${currentUser!.displayName}....${currentUser!.email!}====${videoURL}');
-                                          sendEmail(
-                                              context: enclosingContext,
-                                              emailType: EmailType.customBody,
-                                              senderDisplayName:
-                                                  currentUser!.displayName!,
-                                              senderEmail: currentUser!.email!,
-                                              receiverEmail:
-                                                  currentUser!.email!,
-                                              hyperbookName: '',
-                                              body:
-                                                  'Video available here: ${videoURL}');
-                                          context.pop();
-                                        },
-                                        child: const Text('Confirm'),
+                    print('(VA36A)${fileId}');
+                    if (fileId.length > 0) {
+                      await deleteStorageFile(bucketId: artTheopyAIRvideosRef.path, fileId: fileId);
+                    }
+                    print('(VA36B)${concatedVideo}....${generateVideoStorageFilename(
+                      session,
+                    )}');
+                    var response = await storeStorageFile(
+                      bucketId: artTheopyAIRvideosRef.path!,
+                      storageFileId: generateVideoStorageFilename(
+                        session,
+                      ),
+                      localFilePath: concatedVideo,
+                    );
+                    print(
+                        '(VA37)${concatedVideo}....${response}~~~~${currentSessionIndex}****${sessions!.length}');
+                    await updateDocument(
+                        collection: sessionsRef,
+                        document: sessions![currentSessionIndex].reference,
+                        data: {kSessionSessionModified: false, kSessionVideoCreated: true});
+                    setState(() {
+                      sessions![currentSessionIndex].videoCreated = true;
+                      sessions![currentSessionIndex].sessionModified = false;
+                    });
+                    print(
+                        '(VA38)${sessions![currentSessionIndex].videoCreated}++++${sessions![currentSessionIndex].sessionModified}----${concatedVideo}....${currentSessionIndex}****${sessions!.length}');
+                    Navigator.pop(context);
+                    // String  command =
+                    // " -y -framerate 1 -pattern_type sequence -i $pictureFilenames -c:v libx264 -r 30 -pix_fmt yuv420p ${generatedFile.path}";
+                  },
+          ),
+          SizedBox(height: kIconButtonGap),
+          FlutterFlowIconButton(
+              showLoadingIndicator: true,
+              caption: (sessions![index].videoCreated!) ? 'Load video' : 'Video not available',
+              tooltipMessage: 'Load video',
+              borderColor: Colors.transparent,
+              borderRadius: 0.0,
+              borderWidth: 1.0,
+              buttonSize: 40.0,
+              buttonWidth: kSessionIconButtonWidth,
+              icon: (sessions![index].videoController == null)
+                  ? Icon(Icons.local_movies)
+                  : (sessions![index].videoController!.value.isPlaying
+                      ? Icon(Icons.pause)
+                      : Icon(Icons.slow_motion_video)),
+              onPressed: /*(!session.videoCreated!) ? null :*/
+                  () async {
+                print('(VA203A)${index},,,,${sessions![index].videoController}');
+                await loadVideo(index);
+                print('(VA203B)${index},,,,${sessions![index].videoController}');
+                showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text('Video'),
+                          content: Container(
+                            width: 400,
+                            height: 400,
+                            decoration:
+                                BoxDecoration(border: Border.all(width: 1, color: Colors.black)),
+                            child:
+                                sessions![currentSessionIndex].videoController!.value.isInitialized
+                                    ? AspectRatio(
+                                        aspectRatio: sessions![currentSessionIndex]
+                                            .videoController!
+                                            .value
+                                            .aspectRatio,
+                                        child: VideoPlayer(
+                                            sessions![currentSessionIndex].videoController!),
                                       )
-                                    : Container(),
-                              ],
-                            );
-                          });
-                        });
-                  }),
+                                    : Container(color: Colors.amber),
+                          ),
+                          actions: [
+                            FlutterFlowIconButton(
+                              showLoadingIndicator: true,
+                              caption: (sessions![index].videoCreated!)
+                                  ? 'Play video'
+                                  : 'Video not available',
+                              tooltipMessage: 'Load video',
+                              borderColor: Colors.transparent,
+                              borderRadius: 0.0,
+                              borderWidth: 1.0,
+                              buttonSize: 40.0,
+                              buttonWidth: kSessionIconButtonWidth,
+                              icon: (sessions![index].videoController == null)
+                                  ? Icon(Icons.local_movies)
+                                  : (sessions![index].videoController!.value.isPlaying
+                                      ? Icon(Icons.pause)
+                                      : Icon(Icons.play_arrow)),
+                              onPressed: /*(!session.videoCreated!) ? null :*/
+                                  () async {
+                                sessions![currentSessionIndex].videoController!.play();
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                    });
+              }),
+          SizedBox(height: kIconButtonGap),
+          FlutterFlowIconButton(
+              showLoadingIndicator: true,
+              caption: 'Send email',
+              tooltipMessage: 'Send email with link to video',
+              borderColor: Colors.transparent,
+              borderRadius: 0.0,
+              borderWidth: 1.0,
+              buttonSize: 40.0,
+              buttonWidth: kSessionIconButtonWidth,
+              icon: Icon(Icons.email_outlined),
+              onPressed: () async {
+                // currentSession = session;
+                currentSessionIndex = index;
+                String videoURL = '';
+                models.FileList fileList =
+                    await listStorageFiles(bucketId: artTheopyAIRvideosRef.path);
+                bool videoAvailable = false;
+                if (fileList.files.length > 0) {
+                  for (int i = 0; i < fileList.files.length; i++) {
+                    String fileId = fileList.files[i].$id;
+                    if ((fileId.contains('video')) &&
+                        (fileId.contains(sessions![currentSessionIndex].reference!.path!))) {
+                      videoAvailable = true;
+                      final String BUCKET_ID = artTheopyAIRvideosRef.path!;
+                      final String FILE_ID = fileId;
+                      final String PROJECT_ID = kProjectID;
+                      if (FILE_ID.length > 0) {
+                        videoURL =
+                            'https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${FILE_ID}/view?project=${PROJECT_ID}';
+                      }
+                    }
+                  }
+                }
+                print('(ES1)${videoURL}');
+                BuildContext enclosingContext = context;
+                showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text('Send Email'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              videoAvailable
+                                  ? Text('Send Email with link to the created Video?')
+                                  : Text('No video avialable')
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                context.pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            videoAvailable
+                                ? TextButton(
+                                    onPressed: () async {
+                                      print(
+                                          '(ES2)${currentUser!.displayName}....${currentUser!.email!}====${videoURL}');
+                                      sendEmail(
+                                          context: enclosingContext,
+                                          emailType: EmailType.customBody,
+                                          senderDisplayName: currentUser!.displayName!,
+                                          senderEmail: currentUser!.email!,
+                                          receiverEmail: currentUser!.email!,
+                                          hyperbookName: '',
+                                          body: 'Video available here: ${videoURL}');
+                                      context.pop();
+                                    },
+                                    child: const Text('Confirm'),
+                                  )
+                                : Container(),
+                          ],
+                        );
+                      });
+                    });
+              }),
+          SizedBox(height: kIconButtonGap),
+          FlutterFlowIconButton(
+              showLoadingIndicator: true,
+              caption: 'Archive',
+              tooltipMessage: 'Archive functions',
+              borderColor: Colors.transparent,
+              borderRadius: 0.0,
+              borderWidth: 1.0,
+              buttonSize: 40.0,
+              buttonWidth: kSessionIconButtonWidth,
+              icon: Icon(Icons.archive),
+              onPressed: () async {
+                // currentSession = session;
+                currentSessionIndex = index;
+                String videoURL = '';
+                models.FileList fileList =
+                    await listStorageFiles(bucketId: artTheopyAIRvideosRef.path);
+                bool videoAvailable = false;
+                if (fileList.files.length > 0) {
+                  for (int i = 0; i < fileList.files.length; i++) {
+                    String fileId = fileList.files[i].$id;
+                    if ((fileId.contains('video')) &&
+                        (fileId.contains(sessions![currentSessionIndex].reference!.path!))) {
+                      videoAvailable = true;
+                      final String BUCKET_ID = artTheopyAIRvideosRef.path!;
+                      final String FILE_ID = fileId;
+                      final String PROJECT_ID = kProjectID;
+                      if (FILE_ID.length > 0) {
+                        videoURL =
+                            'https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${FILE_ID}/view?project=${PROJECT_ID}';
+                      }
+                    }
+                  }
+                }
+                print('(ES1)${videoURL}');
+                BuildContext enclosingContext = context;
+                showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text('Archive Functions'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              showCreateArchiveButton(index),
+                              SizedBox(height: kIconButtonGap),
+                              showArchiveRestoreButton(index),
+                              SizedBox(height: kIconButtonGap),
+                              showAIRDeleteButton(index),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                context.pop();
+                              },
+                              child: const Text('Return'),
+                            ),
+                          ],
+                        );
+                      });
+                    });
+              }),
 
-              /*        Container(
+          /*        Container(
                 //color: Colors.amber,
                 child: SizedBox(
                   width: MediaQuery.sizeOf(context).width * 0.9,
@@ -726,7 +1004,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                   ),
                 ),
               ),*/
-            ]),
+        ]),
       ),
     );
   }
@@ -741,15 +1019,13 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
   TemplatesRecord? chosenTemplate;
   UsersRecord? chosenClient;
 
-  void createSessionPopUp() async {
+  void createSessionPopUp(Function enclosingSetState) async {
     TextEditingController clientController = TextEditingController();
-    List<TemplatesRecord> templatesList =
-        await listOwnedPlusMasterTemplateList();
+    List<TemplatesRecord> templatesList = await listOwnedPlusMasterTemplateList();
     if ((templatesList.length ?? 0) > 0) {
       chosenTemplate = templatesList.first;
     }
-    List<UsersRecord> clientsList =
-        await listUsersClientsOfUser(therapist: currentUser!.reference);
+    List<UsersRecord> clientsList = await listUsersClientsOfUser(therapist: currentUser!.reference);
     if ((clientsList.length ?? 0) > 0) {
       chosenClient = clientsList.first;
     }
@@ -771,9 +1047,8 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                           //   key: ValueKey(widget),
                           value: chosenClient,
                           hint: const Text('Please select client'),
-                          items: clientsList!
-                              .map<DropdownMenuItem<UsersRecord>>(
-                                  (UsersRecord item) {
+                          items:
+                              clientsList!.map<DropdownMenuItem<UsersRecord>>((UsersRecord item) {
                             return DropdownMenuItem<UsersRecord>(
                               value: item,
                               child: Text(
@@ -802,8 +1077,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                           value: chosenTemplate,
                           hint: const Text('Please select template'),
                           items: templatesList!
-                              .map<DropdownMenuItem<TemplatesRecord>>(
-                                  (TemplatesRecord item) {
+                              .map<DropdownMenuItem<TemplatesRecord>>((TemplatesRecord item) {
                             return DropdownMenuItem<TemplatesRecord>(
                               value: item,
                               child: Text(
@@ -838,8 +1112,9 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                         therapistId: currentUser!.reference,
                         templateId: chosenTemplate!.reference);
                     print('(CC12)${session.reference}');
-
-                    toast(context, 'Created session', ToastKind.success);
+                    enclosingSetState();
+                    setState((){});
+                    toast(context, 'Created AIR', ToastKind.success);
                     context.pop();
                   },
                   child: const Text('Confirm'),
@@ -851,10 +1126,8 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
   }
 
   Future<List<SessionsRecord>> loadSessions() async {
-    List<SessionsRecord> sessionList =
-        await listSessionList(justCurrentUserAsTherapist: true);
-    models.FileList videoFileList =
-        await listStorageFiles(bucketId: artTheopyAIRvideosRef.path);
+    List<SessionsRecord> sessionList = await listSessionList(justCurrentUserAsTherapist: true);
+    models.FileList videoFileList = await listStorageFiles(bucketId: artTheopyAIRvideosRef.path);
     for (int i = 0; i < sessionList.length; i++) {
       //sessionList[i].videoCreated = false;
       for (int j = 0; j < videoFileList.files.length; j++) {
@@ -874,6 +1147,11 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
       }
     }
     return sessionList;
+  }
+
+  void enclosingSetState(){
+    setState(() {
+    });
   }
 
   @override
@@ -950,8 +1228,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
               for (int i = 0; i < oldSessions!.length; i++) {
                 print('(VA403`)${i}....${oldSessions![i].videoController}');
                 if (oldSessions![i].videoController != null) {
-                  sessions![i].videoController =
-                      oldSessions![i].videoController;
+                  sessions![i].videoController = oldSessions![i].videoController;
                 }
               }
             }
@@ -997,9 +1274,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                       automaticallyImplyLeading: false,
                       title: Text(
                         'AIRs',
-                        style: FlutterFlowTheme.of(context)
-                            .headlineMedium
-                            .override(
+                        style: FlutterFlowTheme.of(context).headlineMedium.override(
                               fontFamily: 'Rubik',
                               color: Colors.white,
                               fontSize: 22.0,
@@ -1017,13 +1292,12 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                           borderWidth: 1,
                           buttonSize: 40,
                           onPressed: () {
-                            createSessionPopUp();
+                            createSessionPopUp(enclosingSetState);
                           },
                           icon: kIconAdd,
                         ),
                         SizedBox(width: kIconButtonGap),
-                        insertMenu(
-                            context, sessionDisplayMenuDetails, setState),
+                        insertMenu(context, sessionDisplayMenuDetails, setState),
                       ],
                       centerTitle: false,
                       elevation: 2.0,
@@ -1033,8 +1307,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                         width: MediaQuery.sizeOf(context).width * 1.0,
                         height: MediaQuery.sizeOf(context).height,
                         decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: SingleChildScrollView(
                           // controller: hyperbookDisplayscrollController,
@@ -1097,53 +1370,36 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                                             child: FFButtonWidget(
                                               text: 'check',
                                               onPressed: () async {
-                                                String? message =
-                                                    currentUser!.userMessage;
+                                                String? message = currentUser!.userMessage;
                                                 //>print('(UM4)${message}');
-                                                if ((message != null) &&
-                                                    (message != '')) {
+                                                if ((message != null) && (message != '')) {
                                                   //>print('(UM5)${message}');
                                                   showDialog<bool>(
                                                       context: context,
-                                                      builder: (BuildContext
-                                                          context) {
+                                                      builder: (BuildContext context) {
                                                         // currentCachedHyperbookIndex = getCurrentHyperbookIndex(widget.hyperbook!);
                                                         //>print('(UM6)${message}');
                                                         return StatefulBuilder(
-                                                            builder: (context,
-                                                                setState) {
+                                                            builder: (context, setState) {
                                                           return AlertDialog(
-                                                            title:
-                                                                Text('Message'),
+                                                            title: Text('Message'),
                                                             content: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: [
-                                                                Text(message)
-                                                              ],
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [Text(message)],
                                                             ),
                                                             actions: [
                                                               TextButton(
                                                                 onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        context,
-                                                                        false),
-                                                                child: const Text(
-                                                                    'Cancel'),
+                                                                    Navigator.pop(context, false),
+                                                                child: const Text('Cancel'),
                                                               ),
                                                               TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  toast(
-                                                                      context,
-                                                                      '',
-                                                                      ToastKind
-                                                                          .success);
+                                                                onPressed: () async {
+                                                                  toast(context, '',
+                                                                      ToastKind.success);
                                                                   context.pop();
                                                                 },
-                                                                child: const Text(
-                                                                    'Confirm'),
+                                                                child: const Text('Confirm'),
                                                               ),
                                                             ],
                                                           );
@@ -1154,33 +1410,24 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                                               options: FFButtonOptions(
                                                 //width: 200.0,
                                                 height: 30.0,
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        10.0, 0.0, 10.0, 0.0),
-                                                iconPadding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        0.0, 0.0, 0.0, 0.0),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .titleSmall
-                                                        .override(
-                                                          fontFamily: 'Rubik',
-                                                          color: Colors.white,
-                                                          fontSize: 12.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                    10.0, 0.0, 10.0, 0.0),
+                                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                                                    0.0, 0.0, 0.0, 0.0),
+                                                color: FlutterFlowTheme.of(context).primary,
+                                                textStyle: FlutterFlowTheme.of(context)
+                                                    .titleSmall
+                                                    .override(
+                                                      fontFamily: 'Rubik',
+                                                      color: Colors.white,
+                                                      fontSize: 12.0,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                 elevation: 2.0,
                                                 borderSide: const BorderSide(
                                                   color: Colors.transparent,
                                                 ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
                                             ),
                                           )
@@ -1194,33 +1441,24 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                                               options: FFButtonOptions(
                                                 //width: 200.0,
                                                 height: 30.0,
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        10.0, 0.0, 10.0, 0.0),
-                                                iconPadding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        0.0, 0.0, 0.0, 0.0),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .titleSmall
-                                                        .override(
-                                                          fontFamily: 'Rubik',
-                                                          color: Colors.white,
-                                                          fontSize: 12.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                    10.0, 0.0, 10.0, 0.0),
+                                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                                                    0.0, 0.0, 0.0, 0.0),
+                                                color: FlutterFlowTheme.of(context).primary,
+                                                textStyle: FlutterFlowTheme.of(context)
+                                                    .titleSmall
+                                                    .override(
+                                                      fontFamily: 'Rubik',
+                                                      color: Colors.white,
+                                                      fontSize: 12.0,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                 elevation: 2.0,
                                                 borderSide: const BorderSide(
                                                   color: Colors.transparent,
                                                 ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
                                             ),
                                           )
@@ -1229,27 +1467,22 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget>
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    20.0, 0.0, 20.0, 0.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
                                 child: Container(
                                   child: (sessions!.length < 1)
-                                      ? Text('No sessions available',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium)
+                                      ? Text('No AIRs available',
+                                          style: FlutterFlowTheme.of(context).bodyMedium)
                                       : ListView.builder(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
+                                          physics: NeverScrollableScrollPhysics(),
                                           padding: EdgeInsets.zero,
                                           shrinkWrap: true,
                                           itemCount: sessions!.length,
                                           //#cachedHyperbookList.length,
-                                          itemBuilder: (BuildContext context,
-                                              int listViewIndex) {
+                                          itemBuilder: (BuildContext context, int listViewIndex) {
                                             print(
                                                 '(VC101)${sessions![listViewIndex].reference!.path}....${sessions![listViewIndex].videoCreated}');
                                             return displaySession(
-                                                sessions![listViewIndex],
-                                                listViewIndex);
+                                                sessions![listViewIndex], listViewIndex);
                                           }),
                                 ),
                               ),
@@ -1268,8 +1501,7 @@ class BackupFileDetail {
   int? versionNumber;
   DocumentReference hyperbookReference;
   models.File? file;
-  BackupFileDetail(this.hyperbookName, this.versionNumber,
-      this.hyperbookReference, this.file);
+  BackupFileDetail(this.hyperbookName, this.versionNumber, this.hyperbookReference, this.file);
 }
 
 List<CP> cpList = [];
@@ -1283,8 +1515,7 @@ class CP {
 
 void findAndIncrementCP(String hyperbook, String parent) {
   for (int i = 0; i < cpList.length; i++) {
-    if ((hyperbook == cpList[i].chapterPath) &&
-        (parent == cpList[i].parentPath)) {
+    if ((hyperbook == cpList[i].chapterPath) && (parent == cpList[i].parentPath)) {
       cpList[i].count++;
       return;
     }
@@ -1296,8 +1527,7 @@ void listCP() {
   //>print('(CP1)${cpList.length}');
   for (int i = 0; i < cpList.length; i++) {
     if (cpList[i].count > 1) {
-      print(
-          '(CP2)${cpList[i].count}>>>>${cpList[i].chapterPath}<<<<<${cpList[i].parentPath}');
+      print('(CP2)${cpList[i].count}>>>>${cpList[i].chapterPath}<<<<<${cpList[i].parentPath}');
     }
   }
 }
