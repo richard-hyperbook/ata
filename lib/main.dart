@@ -376,10 +376,5 @@ class _NavBarPageState extends State<NavBarPage> {
   }
 }
 /*
-Personal access token for Github
-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
-
-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
-
 
  */
