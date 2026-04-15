@@ -135,7 +135,10 @@ class _LoginWidgetState extends State<LoginWidget> {
             ));
       },
     ]);
-
+    bool isSupervisor = false;
+    if((currentUser != null) && (currentUser!.role == kRoleSupervisor)){
+      isSupervisor = true;
+    }
     return Title(
         title: 'login',
         color: FlutterFlowTheme.of(context).primary.withAlpha(0XFF),
@@ -699,7 +702,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Container(),
+                                      isSupervisor ?
                                       FlutterFlowIconButton(
                                           enabled: true,
                                           fillColor: Colors.white,
@@ -770,7 +773,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                         ),
                                                       ]);
                                                 });
-                                          }),
+                                          }) : Container(),
                                       /*FlutterFlowIconButton(
                                           enabled: true,
                                           fillColor: Colors.white,

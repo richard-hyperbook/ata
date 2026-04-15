@@ -43,7 +43,10 @@ import 'package:video_player/video_player.dart';
 // import '../platform/audio_recorder_platform.dart';
 
 // part 'appwrite_interface.g.dart';
-
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/log.dart';
+import 'package:ffmpeg_kit_flutter_new/session.dart';
+import 'package:ffmpeg_kit_flutter_new/statistics.dart';
 enum FileKind { /*audio,*/ photo, video, wav, mp3, aac }
 
 const String _numericChars = '1234567890';
@@ -423,7 +426,7 @@ Future<models.Document> createDocument({
     documentId: id,
     data: data!,
   );
-  print('(N100B)${doc}');
+  print('(N100B)${doc.data}....${collection.path}');
   return doc;
 }
 
@@ -1568,7 +1571,7 @@ Future<UsersRecord> appwriteCreateAccount(String email, String password) async {
     password: password,
     name: 'Unknown',
   );
-  print('(N5000)${user}&&&&${user.email}');
+  print('(N5000)${user}&&&&${user.email}....${id}');
   UsersRecord userRecord = await createUser(
     reference: DocumentReference(path: id),
     email: email,
@@ -2126,5 +2129,28 @@ setupTutorialUser(BuildContext context) async {
         }
       }
     }
+  }
+}
+
+Future<bool> executeFFmpeg(String command) async {
+  print('(FF1)${command}');
+  String logString = '(FF2)';
+  Session ffmpegSession = await FFmpegKit.execute(command);
+  final output = await ffmpegSession.getOutput();
+  final returnCode = await ffmpegSession.getReturnCode();
+  final duration = await ffmpegSession.getDuration();
+  print(
+      '(FF3)${returnCode!.toString()}....${returnCode.getValue()},,,,${output!.length}----${output.characters.length}>>>>${duration}');
+  logString += '\n✅ Processing completed!\n';
+  logString += 'Return code: $returnCode\n';
+  logString += 'Duration: ${duration}ms\n';
+  logString += 'Output: $output\n';
+  debugPrint('session: $output');
+  print('>>>>>>>>(FF4)FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}');
+  if ((returnCode == 0) || (returnCode == '0')) {
+    return true;
+  } else {
+    // toast(context, 'FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}', ToastKind.error);
+    return false;
   }
 }

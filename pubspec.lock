@@ -1344,6 +1344,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.15.0"
+  native_audio_trimmer:
+    dependency: "direct main"
+    description:
+      name: native_audio_trimmer
+      sha256: d52946a0f1640e2c40194f78ae885578799bc2aa3bcec934f89861ea2a03ac87
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   nested:
     dependency: transitive
     description:

@@ -128,28 +128,6 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
   Utf8Encoder? utf8Encoder;
   Directory? dir;
 
-  Future<bool> executeFFmpeg(String command) async {
-    print('(FF1)${command}');
-    String logString = '(FF2)';
-    Session ffmpegSession = await FFmpegKit.execute(command);
-    final output = await ffmpegSession.getOutput();
-    final returnCode = await ffmpegSession.getReturnCode();
-    final duration = await ffmpegSession.getDuration();
-    print(
-        '(FF3)${returnCode!.toString()}....${returnCode.getValue()},,,,${output!.length}----${output.characters.length}>>>>${duration}');
-    logString += '\n✅ Processing completed!\n';
-    logString += 'Return code: $returnCode\n';
-    logString += 'Duration: ${duration}ms\n';
-    logString += 'Output: $output\n';
-    debugPrint('session: $output');
-    print('>>>>>>>>(FF4)FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}');
-    if ((returnCode == 0) || (returnCode == '0')) {
-      return true;
-    } else {
-      // toast(context, 'FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}', ToastKind.error);
-      return false;
-    }
-  }
 
   String lastPhotoPath = '';
 

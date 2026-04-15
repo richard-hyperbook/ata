@@ -365,7 +365,9 @@ class Trimmer {
       print('(EV1)${audioPath}....${concatCommand}');
       FFmpegSession ffmpegSession2 = await FFmpegKit.execute(concatCommand);
       print('(EV2)${ffmpegSession2}');
+
     }
+    onSave(audioPath);
     // return _outputPath;
   }
 

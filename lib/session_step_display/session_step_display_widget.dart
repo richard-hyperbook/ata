@@ -56,16 +56,29 @@ import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/log.dart';
 import 'package:ffmpeg_kit_flutter_new/session.dart';
 import 'package:ffmpeg_kit_flutter_new/statistics.dart';
+import 'package:ffmpeg_kit_flutter_new/ffprobe_kit.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
 import 'package:intl/intl.dart' show DateFormat;
+import '../../custom_code/widgets/trimmer3.dart';
 
 http.Client _http = http.Client();
 
 int _count = 0;
 bool _iHaveRequests = false;
 List<DocumentReference?> _hyperbookListRequesting = [];
+
+
+Future<double> getFileDuration(String mediaPath) async {
+  final mediaInfoSession = await FFprobeKit.getMediaInformation(mediaPath);
+  final mediaInfo = mediaInfoSession.getMediaInformation()!;
+
+  // the given duration is in fractional seconds
+  final duration = double.parse(mediaInfo.getDuration()!);
+  print('(EP10)Duration: $duration');
+  return duration;
+}
 
 class SessionStepDisplayWidget extends StatefulWidget {
   const SessionStepDisplayWidget({super.key});
@@ -180,7 +193,9 @@ class _SessionStepDisplayWidgetState
               ToastKind.warning,
             );
           } else {
-            print('(DE101)${filePath}');
+            double duration = await getFileDuration(filePath);
+
+            print('(DE101)${filePath}....${duration}');
             showDialog<bool>(
                 context: context,
                 builder: (BuildContext context) {
@@ -191,11 +206,12 @@ class _SessionStepDisplayWidgetState
                         title: Text('Edit Recording'),
                         content: Container(
                           width: MediaQuery.sizeOf(context).width * 0.95,
-                          child: FileSelectorWidget(
-                              filePath: filePath,
-                              dirPath: appDirPath!,
-                              maxVersion: 0,
-                              sessionStepId: sessionStep.reference!.path!), //AudioTrimmerPopup()),
+                          child: Trimmer3(sessionStepId: sessionStep.reference!.path, duration: duration),
+                          // FileSelectorWidget(
+                          //     filePath: filePath,
+                          //     dirPath: appDirPath!,
+                          //     maxVersion: 0,
+                          //     sessionStepId: sessionStep.reference!.path!), //AudioTrimmerPopup()),
                         ));
                   });
                 });
