@@ -1546,7 +1546,8 @@ class _HtmlEditorClassState extends State<HtmlEditorClass> {
             currentCachedChapterList[currentCachedChapterIndex!].title!),
         // insertImageEditorButton(),
 */
-        insertMenu(context, chapterEditMenuDetails, setState),
+
+        insertMenu(context: context, menuDetails: chapterEditMenuDetails, externalSetState: setState),
         //insertSaveButton(),
         /*        InkWell(
           onTap: () async {

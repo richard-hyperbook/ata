@@ -33,6 +33,7 @@ const kUserPhoneNumber = 'phoneNumber';
 const kUserUserMessage = 'userMessage';
 const kUserRole = 'role';
 const kUserTherapistId = 'therapistId';
+const kUserOriginalAppUserId = 'originalAppUserId';
 const kTemplateName = 'name';
 const kTemplateQuestions = 'questions';
 const kTemplateIsMater = 'isMaster';

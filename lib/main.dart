@@ -31,6 +31,8 @@ import 'appwrite_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'conditional.dart';
 import 'app_state.dart';
+import '/custom_code/widgets/revenue_cat.dart';
+
 
 appwrite.Client? client;
 appwrite.Databases? databases;
@@ -83,6 +85,10 @@ void main() async {
     create: (BuildContext context) => appState,
     child: MyApp(),
   ));
+  print('(RC30)');
+  await initializeRevenueCat();
+  print('(RC31)');
+
 }
 
 

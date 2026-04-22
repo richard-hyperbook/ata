@@ -686,7 +686,9 @@ class _SessionStepDisplayWidgetState
                 ),
                 actions: [
                   // insertOutstandingRequestsButton(context),
-                  insertMenu(context, hyperbookDisplayMenuDetails, setState),
+
+                  insertMenu(context: context, menuDetails: hyperbookDisplayMenuDetails, externalSetState: setState),
+
                 ],
                 centerTitle: false,
                 elevation: 2.0,

@@ -142,9 +142,10 @@ class _ClientsPageWidgetState extends State<ClientsPageWidget> {
           iconTheme: IconThemeData(color: Colors.white),
           actions:[
             FlutterFlowIconButton(
+              caption: 'Add client',
               enabled: true,
               fillColor: Colors.white,
-              tooltipMessage: 'Create Session',
+              tooltipMessage: 'Add client',
               borderColor: FlutterFlowTheme.of(context).primary,
               borderRadius: 30,
               borderWidth: 1,

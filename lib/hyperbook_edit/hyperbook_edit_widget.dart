@@ -656,7 +656,7 @@ class _HyperbookEditWidgetState extends State<HyperbookEditWidget> {
                   ),
             ),
             actions: [
-              insertMenu(context, hyperbookEditMenuDetails, setState),
+              insertMenu(context: context, menuDetails: hyperbookEditMenuDetails, externalSetState: setState),
               /*InkWell(
                 onTap: () async {
                   intro!.start(context);

@@ -6,8 +6,10 @@ import '/flutter_flow/form_field_controller.dart';
 class ProfilePageModel extends FlutterFlowModel {
   /// Initialization and disposal methods.
 
-  TextEditingController? textController;
-  String? Function(BuildContext, String?)? textControllerValidator;
+  TextEditingController? textControllerFullName;
+  String? Function(BuildContext, String?)? textControllerValidatorFullName;
+  TextEditingController? textControllerConfirmationDeleteAccount;
+  String? Function(BuildContext, String?)? textControllerValidatorConfirmationDeleteAccount;
   // State field(s) for DropDown widget.
   String? dropDownValue;
   FormFieldController<String>? dropDownValueController;

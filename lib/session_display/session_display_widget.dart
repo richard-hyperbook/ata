@@ -314,33 +314,8 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
                       TextButton(
                         onPressed: () async {
                           print('(DA23)');
-
-                          currentSessionIndex = index;
-                          SessionsRecord session = sessions![currentSessionIndex];
-                          List<SessionStepsRecord> sessionSteps =
-                              await listSessionStepList(thisSession: session);
-                          utf8Encoder = utf8.encoder;
-                          Directory appDir =
-                              Directory.fromRawPath(utf8Encoder!.convert(appDirPath!));
-                          List<String> appDirPathList = await getAppDirListing();
-                          for (int j = 0; j < sessionSteps.length; j++) {
-                            await deleteDocument(
-                                collection: sessionStepsRef, document: sessionSteps[j].reference);
-                            print('(DA2)${j}....${sessionSteps[j].reference!.path}');
-                            for (int k = 0; k < appDirPathList.length; k++) {
-                              print(
-                                  '(DA3)${k}....${appDirPathList[k]},,,,${sessionSteps[j].reference!.path}');
-                              if ((appDirPathList[k]).contains(sessionSteps[j].reference!.path!)) {
-                                await deleteFile(appDirPathList[k]);
-                                print('(DA4)${k}....${appDirPathList[k]}');
-                              }
-                            }
-                          }
-                          await deleteDocument(
-                              collection: sessionsRef,
-                              document: sessions![currentSessionIndex].reference);
-                          print('(DA5)${sessions![currentSessionIndex].reference!.path}');
-
+                          SessionsRecord session = sessions![index];
+                          await deleteAIR(session);
                           context.pop();
                         },
                         child: const Text('Confirm'),
@@ -1262,9 +1237,10 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
                         // insertOutstandingRequestsButton(context),
 
                         FlutterFlowIconButton(
+                          caption: 'Create AIR',
                           enabled: true,
                           fillColor: Colors.white,
-                          tooltipMessage: 'Create Session',
+                          tooltipMessage: 'Create AIR',
                           borderColor: FlutterFlowTheme.of(context).primary,
                           borderRadius: 30,
                           borderWidth: 1,
@@ -1275,7 +1251,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
                           icon: kIconAdd,
                         ),
                         SizedBox(width: kIconButtonGap),
-                        insertMenu(context, sessionDisplayMenuDetails, setState),
+                        insertMenu(context: context, menuDetails: sessionDisplayMenuDetails, externalSetState: setState),
                       ],
                       centerTitle: false,
                       elevation: 2.0,
@@ -1508,4 +1484,34 @@ void listCP() {
       print('(CP2)${cpList[i].count}>>>>${cpList[i].chapterPath}<<<<<${cpList[i].parentPath}');
     }
   }
+}
+
+Future<void> deleteAIR(SessionsRecord session) async {
+  Utf8Encoder? utf8Encoder = utf8.encoder;
+  List<SessionStepsRecord> sessionSteps =
+  await listSessionStepList(thisSession: session);
+  utf8Encoder = utf8.encoder;
+  Directory appDir =
+  Directory.fromRawPath(utf8Encoder!.convert(appDirPath!));
+  List<String> appDirPathList = await getAppDirListing();
+  for (int j = 0; j < sessionSteps.length; j++) {
+    await deleteDocument(
+        collection: sessionStepsRef, document: sessionSteps[j].reference);
+    print('(DA2)${j}....${sessionSteps[j].reference!.path}');
+    for (int k = 0; k < appDirPathList.length; k++) {
+      print(
+          '(DA3)${k}....${appDirPathList[k]},,,,${sessionSteps[j].reference!.path}');
+      if ((appDirPathList[k]).contains(sessionSteps[j].reference!.path!)) {
+        await deleteFile(appDirPathList[k]);
+        print('(DA4)${k}....${appDirPathList[k]}');
+      }
+    }
+  }
+  await deleteDocument(
+      collection: sessionsRef,
+      document: sessions![currentSessionIndex].reference);
+  print('(DA5)${sessions![currentSessionIndex].reference!.path}');
+
+
+
 }

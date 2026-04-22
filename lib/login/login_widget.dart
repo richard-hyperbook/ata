@@ -32,6 +32,7 @@ import '../../conditional.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // import '../../platform/audio_recorder_platform.dart';
 import '../../create_account/create_account_widget.dart';
+import 'package:AIRStudio/custom_code/widgets/revenue_cat.dart';
 
 export 'login_model.dart';
 
@@ -89,18 +90,14 @@ class _LoginWidgetState extends State<LoginWidget> {
       kDefaultColor,
       kDefaultColor,
     ], menuTargets: [
-      (context) {
-        //>print('<ME100>');
-        Navigator.push(
-            context!,
-            PageTransition(
-              type: kStandardPageTransitionType,
-              duration: kStandardTransitionTime,
-              reverseDuration: kStandardReverseTransitionTime,
-              child: SessionDisplayWidget(),
-            ));
-        // context.goNamedAuth('hyperbook_display', context.mounted);
-      },
+      (context) async
+    {
+      print('<ME100>');
+      await initPlatformState();
+      await showCustomerInfo();
+      await getPackages();
+      await presentPaywall();
+    },
       (context) {
         // context.goNamedAuth('profilePage', context.mounted);
         Navigator.push(
@@ -136,7 +133,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       },
     ]);
     bool isSupervisor = false;
-    if((currentUser != null) && (currentUser!.role == kRoleSupervisor)){
+    if ((currentUser != null) && (currentUser!.role == kRoleSupervisor)) {
       isSupervisor = true;
     }
     return Title(
@@ -213,7 +210,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             //   style: FlutterFlowTheme.of(context)
                                             //      .headlineMedium,),
                                           ))),
-                                  insertMenu(context, loginMenuDetails, setState),
+                                  insertMenu(context: context, menuDetails: loginMenuDetails, externalSetState: setState, caption: 'Menu'),
                                 ],
                               ),
                             ])),
@@ -702,78 +699,99 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      isSupervisor ?
                                       FlutterFlowIconButton(
+                                          caption: 'Upgrade to Pro',
                                           enabled: true,
                                           fillColor: Colors.white,
-                                          tooltipMessage: 'Delete AIRs',
+                                          tooltipMessage: 'Upgrade to Pro',
                                           borderColor: FlutterFlowTheme.of(context).primary,
                                           borderRadius: 30,
                                           borderWidth: 1,
                                           buttonSize: 40,
-                                          icon: kIconDelete, onPressed: () {
-                                            showDialog<bool>(
-                                                context: context,
-                                                builder: (BuildContext alertDialogContext) {
-                                                  return AlertDialog(
-                                                      title: const Text('Delete AIRs?'),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () => Navigator.pop(
-                                                              alertDialogContext, false),
-                                                          child: const Text('Cancel'),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () async {
-                                                            await emptyAppDir();
-                                                            List<SessionsRecord> sessions =
-                                                                await listSessionList(
-                                                                    justCurrentUserAsTherapist:
-                                                                        false);
-                                                            for (int i = 0;
-                                                                i < sessions.length;
-                                                                i++) {
-                                                              List<SessionStepsRecord>
-                                                                  sessionsSteps =
-                                                                  await listSessionStepList(
-                                                                      thisSession: sessions[i]);
-                                                              for (int j = 0;
-                                                                  j < sessionsSteps.length;
-                                                                  j++) {
-                                                                await deleteDocument(
-                                                                    collection: sessionStepsRef,
-                                                                    document:
-                                                                        sessionsSteps[j].reference);
-                                                                await deleteDocument(
-                                                                    collection: sessionsRef,
-                                                                    document:
-                                                                        sessions[i].reference);
-                                                              }
-                                                            }
-                                                            models.FileList fileList =
-                                                                await listStorageFiles(
-                                                                    bucketId: airsRef.path);
-                                                            if (fileList.files.length > 0) {
-                                                              for (int i = 0;
-                                                                  i < fileList.files.length;
-                                                                  i++) {
-                                                                print(
-                                                                    '(DF1)${fileList.files[i].$id}');
+                                          icon: Icon(Icons.upgrade),
+                                          onPressed: () async {
+                                            await initPlatformState();
+                                            await showCustomerInfo();
+                                            await getPackages();
+                                            await presentPaywall();
+                                          }),
+                                      SizedBox(width: kIconButtonGap),
+                                      isSupervisor
+                                          ? FlutterFlowIconButton(
+                                              enabled: true,
+                                              fillColor: Colors.white,
+                                              tooltipMessage: 'Delete AIRs',
+                                              borderColor: FlutterFlowTheme.of(context).primary,
+                                              borderRadius: 30,
+                                              borderWidth: 1,
+                                              buttonSize: 40,
+                                              icon: kIconDelete,
+                                              onPressed: () {
+                                                showDialog<bool>(
+                                                    context: context,
+                                                    builder: (BuildContext alertDialogContext) {
+                                                      return AlertDialog(
+                                                          title: const Text('Delete AIRs?'),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              onPressed: () async {
+                                                                Navigator.pop(
+                                                                    alertDialogContext, false);
+                                                              },
+                                                              child: const Text('Cancel'),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () async {
+                                                                await emptyAppDir();
+                                                                List<SessionsRecord> sessions =
+                                                                    await listSessionList(
+                                                                        justCurrentUserAsTherapist:
+                                                                            false);
+                                                                for (int i = 0;
+                                                                    i < sessions.length;
+                                                                    i++) {
+                                                                  List<SessionStepsRecord>
+                                                                      sessionsSteps =
+                                                                      await listSessionStepList(
+                                                                          thisSession: sessions[i]);
+                                                                  for (int j = 0;
+                                                                      j < sessionsSteps.length;
+                                                                      j++) {
+                                                                    await deleteDocument(
+                                                                        collection: sessionStepsRef,
+                                                                        document: sessionsSteps[j]
+                                                                            .reference);
+                                                                    await deleteDocument(
+                                                                        collection: sessionsRef,
+                                                                        document:
+                                                                            sessions[i].reference);
+                                                                  }
+                                                                }
+                                                                models.FileList fileList =
+                                                                    await listStorageFiles(
+                                                                        bucketId: airsRef.path);
+                                                                if (fileList.files.length > 0) {
+                                                                  for (int i = 0;
+                                                                      i < fileList.files.length;
+                                                                      i++) {
+                                                                    print(
+                                                                        '(DF1)${fileList.files[i].$id}');
 
-                                                                await storage.deleteFile(
-                                                                    bucketId: airsRef.path!,
-                                                                    fileId: fileList.files[i].$id);
-
-                                                              }
-                                                            }
-                                                            print('(DD1)');
-                                                            await printAppDirListing();
-                                                          },
-                                                          child: const Text('Confirm'),
-                                                        ),
-                                                      ]);
-                                                });
-                                          }) : Container(),
+                                                                    await storage.deleteFile(
+                                                                        bucketId: airsRef.path!,
+                                                                        fileId:
+                                                                            fileList.files[i].$id);
+                                                                  }
+                                                                }
+                                                                print('(DD1)');
+                                                                await printAppDirListing();
+                                                              },
+                                                              child: const Text('Confirm'),
+                                                            ),
+                                                          ]);
+                                                    });
+                                              })
+                                          : Container(),
                                       /*FlutterFlowIconButton(
                                           enabled: true,
                                           fillColor: Colors.white,
@@ -818,7 +836,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             0.0, 0.0, 0.0, 12.0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
-                                            *//*        GoRouter.of(context).prepareAuthEvent();
+                                            */ /*        GoRouter.of(context).prepareAuthEvent();
                                             // final BaseAuthUser? user = await authManager
                                             // .signInAnonymously(context);
                                             //>print('(CA1)${loggedInUser}');
@@ -845,13 +863,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                                               await loadCachedHyperbookLists(
                                                   DocumentReference(
                                                       path:
-                                                          'Guest') *//* *//*, fromCache: false*//* *//*);
+                                                          'Guest') */ /* */ /*, fromCache: false*/ /* */ /*);
                                               // await setCurrentReadReferences();
 
                                               print(
                                                   '(CA5)${guestUser.clientName}++++${cachedHyperbookList.length}');
                                             }
-                                                                    *//*
+                                                                    */ /*
                                             // context.goNamedAuth(
                                             //     'hyperbook_display',
                                             //     context.mounted);
@@ -919,6 +937,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                         ),*/
 
                         SizedBox(height: 50),
+                        // PaywallScreen(),
                       ],
                     ),
                   ),

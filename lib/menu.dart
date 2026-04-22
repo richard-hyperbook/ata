@@ -19,6 +19,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dotted_border/dotted_border.dart';
 import '../../custom_code/widgets/toast.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
+import 'localDB.dart';
 
 ///import 'package:gap/gap.dart';
 
@@ -52,17 +53,19 @@ const List<Color> kDefautltColorList = [
 
 
 Widget insertMenu(
-    BuildContext context, MenuDetails menuDetails, Function externalSetState) {
+{required BuildContext context, required MenuDetails? menuDetails, required Function? externalSetState, String? caption}) {
   return MenuAnchor(
     builder: (BuildContext context, MenuController controller, Widget? child) {
       return FlutterFlowIconButton(
         enabled: true,
         fillColor: Colors.white,
         tooltipMessage: 'Menu',
-        borderColor: FlutterFlowTheme.of(context).primary,
-        borderRadius: 30,
+        borderColor: (caption == null) ? FlutterFlowTheme.of(context).primary : Colors.transparent,
+        buttonWidth: kIconButtonWidth - 50,
+        borderRadius: (caption == null) ? 30 : 0,
         borderWidth: 1,
         buttonSize: 40,
+        caption: caption,
         onPressed: () {
           if (controller.isOpen) {
             controller.close();
@@ -75,14 +78,14 @@ Widget insertMenu(
       );
     },
     menuChildren: List<MenuItemButton>.generate(
-      menuDetails.menuLabelList.length,
+      menuDetails!.menuLabelList.length,
       (int index) => MenuItemButton(
         leadingIcon: menuDetails.menuIconList[index],
         style: ButtonStyle(
             backgroundColor:
                 WidgetStateProperty.all(menuDetails.menuColorList[index])),
         onPressed: () {
-          externalSetState(() {
+          externalSetState!(() {
             //>print('(ME1)${index}++++${menuDetails.menuLabelList[index]}');
             menuDetails.menuTargets[index](context);
           });

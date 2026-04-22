@@ -18,6 +18,7 @@ import '../../phone_sign_in/phone_sign_in_widget.dart';
 import '../../profile_page/profile_page_widget.dart';
 import '../../edit_profile/edit_profile_widget.dart';
 import '../../login/login_widget.dart';
+import '../../custom_code/widgets/toast.dart';
 
 export 'create_account_model.dart';
 
@@ -406,7 +407,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                         _model.passwordController.text,
                                       );
                                     } on AppwriteException catch(e) {
-                                      print('(N91Z)${e.message}');
+                                      print('(N91Z)${_model.emailAddressController.text}....${_model.passwordController.text},,,,${e.message}');
+                                      toast(context, e.message?? 'Error in creating account', ToastKind.warning);
                                     }
                                     // loggedInUser = user!;
                                     currentUser = await getUser(

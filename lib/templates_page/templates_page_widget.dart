@@ -163,6 +163,7 @@ class _TemplatesPageWidgetState extends State<TemplatesPageWidget> {
         iconTheme: IconThemeData(color: Colors.white),
         actions:[
           FlutterFlowIconButton(
+            caption: 'Create template',
             enabled: true,
             fillColor: Colors.white,
             tooltipMessage: 'Create Session',

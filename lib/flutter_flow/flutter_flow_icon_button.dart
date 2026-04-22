@@ -105,7 +105,7 @@ class _FlutterFlowIconButtonState extends State<FlutterFlowIconButton> {
           ? widget.onPressed == null
               ? null
               : () async {
-                  //>print('(NN10)${loading}++++${widget.tooltipMessage}');
+        print('(NN11I)${loading}++++${widget.tooltipMessage}');
                   if (loading) {
                     return;
                   }
@@ -179,7 +179,29 @@ class _FlutterFlowIconButtonState extends State<FlutterFlowIconButton> {
             ignoring: widget.showLoadingIndicator && loading,
             child: (widget.caption == null)
                 ? smartIconButton(style)
-                : Container(
+                :
+            GestureDetector(
+                onTap: widget.enabled
+                    ? widget.onPressed == null
+                    ? null
+                    : () async {
+                  print('(NN11C)${loading}++++${widget.tooltipMessage}');
+                  if (loading) {
+                    return;
+                  }
+                  setState(() => loading = true);
+                  try {
+                    await widget.onPressed!();
+                  } finally {
+                    if (mounted) {
+                      setState(() => loading = false);
+                    }
+                  }
+                }
+                    : null,
+                child:
+
+                Container(
                     width: 99,
                     height: 30,
                     decoration: BoxDecoration(
@@ -189,39 +211,20 @@ class _FlutterFlowIconButtonState extends State<FlutterFlowIconButton> {
                         color: ((widget.colorIfEnabled != null) &&
                                 (widget.enabled))
                             ? widget.colorIfEnabled
-                            : Colors.transparent),
+                            : Colors.white),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           smartIconButton(style),
-                          GestureDetector(
-                            onTap: widget.enabled
-                                ? widget.onPressed == null
-                                ? null
-                                : () async {
-                              //>print('(NN11)${loading}++++${widget.tooltipMessage}');
-                              if (loading) {
-                                return;
-                              }
-                              setState(() => loading = true);
-                              try {
-                                await widget.onPressed!();
-                              } finally {
-                                if (mounted) {
-                                  setState(() => loading = false);
-                                }
-                              }
-                            }
-                                : null,
-                            child: Text(widget.caption!,
+                          Text(widget.caption!,
                                 style: TextStyle(
                                     fontSize: widget.captionFontSize?? 15,
                                     fontWeight: FontWeight.bold,
                                     color: widget.enabled
                                         ? Colors.black
                                         : Colors.grey)),
-                          )
-                        ])),
+                          ])
+                        )),
           ),
         ),
       ),

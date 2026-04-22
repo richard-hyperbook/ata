@@ -363,6 +363,7 @@ class UsersRecord {
   String? userMessage;
   String? role;
   String? therapistId;
+  String? originalAppUserId;
   DateTime? $createdAt;
   DateTime? $updatedAt;
 
@@ -378,6 +379,7 @@ class UsersRecord {
     this.userMessage,
     this.role,
     this.therapistId,
+    this.originalAppUserId,
     this.$createdAt,
     this.$updatedAt,
   });
@@ -1529,7 +1531,7 @@ Future<UsersRecord?> appwriteLogin(
   }
 
   if (user == null) {
-    toast(context, 'Error on logging in 4', ToastKind.error);
+    toast(context, 'No account or wrong password', ToastKind.error);
   }
 
   print('(N91G)${user}');
@@ -1593,6 +1595,20 @@ Future<UsersRecord> appwriteCreateAccount(String email, String password) async {
   print('(N5002)${userRecord}****${currentUser}');
   return userRecord;
 }
+
+Future<void> deleteUser() async {
+  print('(DD100)${currentUser!.reference!.path}');
+  try {
+    models.User user = await account!.get();
+    //The following blocks the current logged on user -- Appwrite has no delete user function
+    models.User result = await account!.updateStatus();
+  } on Exception catch (e) {
+    print('(DD101)${e}');
+  }
+  print('(DD102)${result}');
+}
+
+
 
 bool canUserSeeSession(DocumentReference? user, SessionsRecord? session) {
   //>print('(N404A)${Session!.title}####${user}&&&&${Session!.nonMemberRole}');
