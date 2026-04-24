@@ -8,7 +8,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 // Automatic FlutterFlow imports
-import '../../chapter_read/chapter_read_widget.dart';
+// import '../../chapter_read/chapter_read_widget.dart';
 import '../../flutter_flow/flutter_flow_icon_button.dart';
 import 'permissions.dart';
 import '../../appwrite_interface.dart';

@@ -27,12 +27,13 @@ import '../../profile_page/profile_page_widget.dart';
 // import '../../map_display/map_display_widget.dart';
 import '../../change_password/change_password_widget.dart';
 import '../../paypal/paypal_widget.dart';
-import '../../sales/sales_widget.dart';
+import '../../help/help_widget.dart';
 import '../../conditional.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // import '../../platform/audio_recorder_platform.dart';
 import '../../create_account/create_account_widget.dart';
 import 'package:AIRStudio/custom_code/widgets/revenue_cat.dart';
+// import '../../chapter_read/chapter_read_widget.dart';
 
 export 'login_model.dart';
 
@@ -77,14 +78,17 @@ class _LoginWidgetState extends State<LoginWidget> {
       'AIRs',
       'Profile',
       'Upgrade',
-      'Sales'
+      'Help',
+      'Help2'
     ], menuIconList: [
       kIconHyperbooks,
       kIconProfile,
       kIconUpgrade,
-      kIconRequestsOutstanding
+      kIconInfoStart,
+      kIconInfoStart,
       // kIconChooseChapterState,
     ], menuColorList: [
+      kDefaultColor,
       kDefaultColor,
       kDefaultColor,
       kDefaultColor,
@@ -92,11 +96,15 @@ class _LoginWidgetState extends State<LoginWidget> {
     ], menuTargets: [
       (context) async
     {
-      print('<ME100>');
-      await initPlatformState();
-      await showCustomerInfo();
-      await getPackages();
-      await presentPaywall();
+      Navigator.push(
+          context,
+          PageTransition(
+            type: kStandardPageTransitionType,
+            duration: kStandardTransitionTime,
+            reverseDuration: kStandardReverseTransitionTime,
+            child: SessionDisplayWidget(),
+          ));
+
     },
       (context) {
         // context.goNamedAuth('profilePage', context.mounted);
@@ -109,16 +117,13 @@ class _LoginWidgetState extends State<LoginWidget> {
               child: ProfilePageWidget(),
             ));
       },
-      (context) {
+      (context) async {
         // context.goNamedAuth('profilePage', context.mounted);
-        Navigator.push(
-            context,
-            PageTransition(
-              type: kStandardPageTransitionType,
-              duration: kStandardTransitionTime,
-              reverseDuration: kStandardReverseTransitionTime,
-              child: PayPalWidget(),
-            ));
+        print('<ME100>');
+        await initPlatformState();
+        await showCustomerInfo();
+        await getPackages();
+        await presentPaywall();
       },
       (context) {
         // context.goNamedAuth('profilePage', context.mounted);
@@ -128,9 +133,21 @@ class _LoginWidgetState extends State<LoginWidget> {
               type: kStandardPageTransitionType,
               duration: kStandardTransitionTime,
               reverseDuration: kStandardReverseTransitionTime,
-              child: SalesWidget(),
+              child: HelpWidget(),
             ));
       },
+      /*    (context) {
+            Navigator.push(
+                context,
+                PageTransition(
+                  type: kStandardPageTransitionType,
+                  duration: kStandardTransitionTime,
+                  reverseDuration: kStandardReverseTransitionTime,
+                  child: ChapterReadWidget(),
+                ));    // context.goNamedAuth('profilePage', context.mounted);
+
+      },*/
+
     ]);
     bool isSupervisor = false;
     if ((currentUser != null) && (currentUser!.role == kRoleSupervisor)) {
@@ -699,7 +716,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      FlutterFlowIconButton(
+                                      /*FlutterFlowIconButton(
                                           caption: 'Upgrade to Pro',
                                           enabled: true,
                                           fillColor: Colors.white,
@@ -715,7 +732,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             await getPackages();
                                             await presentPaywall();
                                           }),
-                                      SizedBox(width: kIconButtonGap),
+                                      SizedBox(width: kIconButtonGap),*/
                                       isSupervisor
                                           ? FlutterFlowIconButton(
                                               enabled: true,
@@ -792,123 +809,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                     });
                                               })
                                           : Container(),
-                                      /*FlutterFlowIconButton(
-                                          enabled: true,
-                                          fillColor: Colors.white,
-                                          tooltipMessage: 'Delete app dir',
-                                          borderColor: Colors.red,
-                                          borderRadius: 30,
-                                          borderWidth: 1,
-                                          buttonSize: 40,
-                                          icon: kIconDepreciated,
-                                          onPressed: () {
-                                            showDialog<bool>(
-                                                context: context,
-                                                builder: (BuildContext
-                                                    alertDialogContext) {
-                                                  return AlertDialog(
-                                                      title: const Text(
-                                                          'Delete all session files?'),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext,
-                                                                  false),
-                                                          child: const Text(
-                                                              'Cancel'),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () async {
-                                                            await emptyAppDir();
-                                                            Navigator.pop(
-                                                                alertDialogContext,
-                                                                false);
-                                                          },
-                                                          child: const Text(
-                                                              'Confirm'),
-                                                        ),
-                                                      ]);
-                                                });
-                                          }),*/
-                                      /*Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 0.0, 0.0, 12.0),
-                                        child: FFButtonWidget(
-                                          onPressed: () async {
-                                            */ /*        GoRouter.of(context).prepareAuthEvent();
-                                            // final BaseAuthUser? user = await authManager
-                                            // .signInAnonymously(context);
-                                            //>print('(CA1)${loggedInUser}');
-                                            try {
-                                              await appwriteLogout();
-                                            } on AppwriteException catch (e) {
-                                              //>print('(CA1E)${e}');
-                                            }
-                                            //>print('(CA2)${loggedInUser}');
-                                            final guestUser =
-                                                await account!.createAnonymousSession();
-                                            loggedInUser = await account!.get();
-                                            //>print('(CA3)${guestUser}****${loggedInUser}');
-                                            toast(context, 'Please create account',
-                                                ToastKind.warning);
-                                            if (guestUser == null) {
-                                              return;
-                                            } else {
-                                              print(
-                                                  '(CA4)${guestUser.clientName}%%%%${guestUser.clientType}');
-                                              loggedIn = true;
-                                              hyperbookCacheValid = false;
-                                              coonectedUsersCacheValid = false;
-                                              await loadCachedHyperbookLists(
-                                                  DocumentReference(
-                                                      path:
-                                                          'Guest') */ /* */ /*, fromCache: false*/ /* */ /*);
-                                              // await setCurrentReadReferences();
-
-                                              print(
-                                                  '(CA5)${guestUser.clientName}++++${cachedHyperbookList.length}');
-                                            }
-                                                                    */ /*
-                                            // context.goNamedAuth(
-                                            //     'hyperbook_display',
-                                            //     context.mounted);
-                                            Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                  type: kStandardPageTransitionType,
-                                                  duration: kStandardTransitionTime,
-                                                  reverseDuration: kStandardReverseTransitionTime,
-                                                  child: SessionDisplayWidget(),
-                                                ));
-                                          },
-                                          text: 'Continue as Guest',
-                                          icon: const Icon(
-                                            Icons.person_outline,
-                                            size: 15.0,
-                                          ),
-                                          options: FFButtonOptions(
-                                            width: 220.0,
-                                            height: 40.0,
-                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                0.0, 0.0, 0.0, 0.0),
-                                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                                                0.0, 0.0, 0.0, 0.0),
-                                            color: FlutterFlowTheme.of(context).white,
-                                            textStyle:
-                                                FlutterFlowTheme.of(context).titleSmall.override(
-                                                      fontFamily: 'Rubik',
-                                                      color: FlutterFlowTheme.of(context).primary,
-                                                    ),
-                                            elevation: 0.0,
-                                            borderSide: const BorderSide(
-                                              color: Colors.transparent,
-                                            ),
-                                            borderRadius: BorderRadius.circular(12.0),
-                                          ),
-                                        ),
-                                      ),*/
-                                    ],
+                                                                          ],
                                   ),
                                   Align(
                                     alignment: const AlignmentDirectional(0.95, 0.0),

@@ -159,30 +159,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) {
             builder: (context, params) => VerifyPhoneWidget(),
           ),
           FFRoute(
-            name: 'chapterEdit',
-            path: 'chapterEdit',
-            builder: (context, params) => ChapterEditWidget(
-              chapter: params.getParam('chapter', ParamType.DocumentReference,
-                  false, ['hyperbooks', 'chapters']) as DocumentReference?,
-              title: params.getParam('title', ParamType.String) as String?,
-              body: params.getParam('body', ParamType.String) as String?,
-              hyperbookTitle: params.getParam(
-                  'hyperbookTitle', ParamType.String) as String?,
-              hyperbook: params.getParam(
-                  'hyperbook',
-                  ParamType.DocumentReference,
-                  false,
-                  ['hyperbooks']) as DocumentReference?,
-              user: params.getParam(
-                      'user', ParamType.DocumentReference, false, ['users'])
-                  as DocumentReference?,
-              authorDisplayName: params.getParam(
-                  'authorDisplayName', ParamType.String) as String?,
-              hyperbookBlurb: params.getParam(
-                  'hyperbookBlurb', ParamType.String) as String?,
-            ),
-          ),
-          FFRoute(
             name: 'settings',
             path: 'settings',
             builder: (context, params) => SettingsWidget(),
@@ -230,92 +206,10 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) {
             builder: (context, params) => NavBarPage(
               initialPage: '',
               page: TutorialWidget(),
-            ),
-          ),
-          FFRoute(
-            name: 'chapterRead',
-            path: 'chapterRead',
-            builder: (context, params) => ChapterReadWidget(
-              chapterReference: params.getParam(
-                  'chapterReference',
-                  ParamType.DocumentReference,
-                  false,
-                  ['hyperbooks', 'chapters']) as DocumentReference?,
-              title: params.getParam('title', ParamType.String) as String,
-              body: params.getParam('body', ParamType.String) as String,
-              hyperbookTitle:
-                  params.getParam('hyperbookTitle', ParamType.String) as String,
-              hyperbook: params.getParam(
-                  'hyperbook',
-                  ParamType.DocumentReference,
-                  false,
-                  ['hyperbooks']) as DocumentReference?,
-              chapterState:
-                  params.getParam('chapterState', ParamType.int) as int,
-              chosenColors: params.getParam<Color>(
-                  'chosenColors', ParamType.Color, true) as List<Color>,
-              chapterReaderIndex:
-                  params.getParam('chapterReaderIndex', ParamType.int) as int,
-              readReference: params.getParam(
-                  'readReference',
-                  ParamType.DocumentReference,
-                  false,
-                  ['users', 'readReferences']) as DocumentReference?,
-              hyperbookBlurb:
-                  params.getParam('hyperbookBlurb', ParamType.String) as String,
-              //  chapter: params.getParam(
-              //      'chapter',
-              //      ParamType.ChaptersRecord,
-              //      false,
-              //      ['hyperbooks', 'chapters']) as ChaptersRecord<Object?>?,
-            ),
+
           ),
 
-          /* builder: (context, params) => ChapterReadWidget(
-            chapterReference: params.getParam(
-                'chapterReference',
-                ParamType.DocumentReference,
-                false,
-                ['hyperbooks', 'chapters']) as DocumentReference?,
-            title: params.getParam('title', ParamType.String) as String,
-            body: params.getParam('body', ParamType.String) as String,
-            hyperbookTitle: params.getParam(
-                'hyperbookTitle', ParamType.String) as String,
-            hyperbook: params.getParam(
-                'hyperbook',
-                ParamType.DocumentReference,
-                false,
-                ['hyperbooks']) as DocumentReference?,
-         ~   chapterState:
-         ~   params.getParam('chapterState', ParamType.int) as int,
-         ~   chosenColors: params.getParam<Color>(
-         ~       'chosenColors', ParamType.Color, true) as List<Color>,
-            chapterReaderIndex:
-            params.getParam('chapterReaderIndex', ParamType.int) as int,
-            readReference: params.getParam(
-                'readReference',
-                ParamType.DocumentReference,
-                false,
-                ['users', 'readReferences']) as DocumentReference?,
-          //  chapter: params.getParam(
-          //      'chapter',
-          //      ParamType.ChaptersRecord,
-          //      false,
-          //      ['hyperbooks', 'chapters']) as ChaptersRecord<Object?>?,
-          ),
-        ),*/
-          FFRoute(
-            name: 'chapter_display',
-            path: 'chapterDisplay',
-            builder: (context, params) => ChapterDisplayWidget(
-              hyperbook: params.getParam(
-                  'hyperbook',
-                  ParamType.DocumentReference,
-                  false,
-                  ['hyperbooks']) as DocumentReference?,
-              hyperbookTitle:
-                  params.getParam('hyperbookTitle', ParamType.String) as String,
-            ),
+
           ),
           FFRoute(
             name: 'introduction',

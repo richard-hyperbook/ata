@@ -56,6 +56,7 @@ class _FlutterFlowIconButtonState extends State<FlutterFlowIconButton> {
   @override
   void initState() {
     super.initState();
+    print('(CD1)${widget.icon}');
     _updateIcon();
   }
 

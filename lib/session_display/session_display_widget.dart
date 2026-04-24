@@ -34,7 +34,7 @@ import '../../localDB.dart';
 import '../../login/login_widget.dart';
 // import '../../map_display/map_display_widget.dart';
 import '../../hyperbook_edit/hyperbook_edit_widget.dart';
-import '../../chapter_display/chapter_display_widget.dart';
+// import '../../chapter_display/chapter_display_widget.dart';
 import '../../paypal/paypal_widget.dart';
 import '../../session_step_display/session_step_display_widget.dart';
 import '../../templates_page/templates_page_widget.dart';
@@ -1237,21 +1237,22 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
                         // insertOutstandingRequestsButton(context),
 
                         FlutterFlowIconButton(
-                          caption: 'Create AIR',
+                          caption: 'Add\nAIR',
                           enabled: true,
                           fillColor: Colors.white,
                           tooltipMessage: 'Create AIR',
                           borderColor: FlutterFlowTheme.of(context).primary,
                           borderRadius: 30,
                           borderWidth: 1,
-                          buttonSize: 40,
+                          buttonSize: 50,
+                          buttonWidth: 85,
                           onPressed: () {
                             createSessionPopUp(enclosingSetState);
                           },
                           icon: kIconAdd,
                         ),
                         SizedBox(width: kIconButtonGap),
-                        insertMenu(context: context, menuDetails: sessionDisplayMenuDetails, externalSetState: setState),
+                        insertMenu(context: context, menuDetails: sessionDisplayMenuDetails, externalSetState: setState, caption: 'Menu', width: 100, height: 50),
                       ],
                       centerTitle: false,
                       elevation: 2.0,

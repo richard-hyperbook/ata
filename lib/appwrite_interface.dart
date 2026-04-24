@@ -6,6 +6,8 @@
 
 // import 'dart:js_interop';
 
+// import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
@@ -597,10 +599,6 @@ Future<models.DocumentList> listDocumentsWithOneQueryDocumentReference({
 }) async {
   appwriteDatabases = Databases(client!);
   models.DocumentList docs = models.DocumentList(total: 0, documents: []);
-  //>  print(
-  //>   '(N7A)${attribute}&&&&${value!.path}////${databaseRef.path}ÅÅÅÅ${collection!.path}',
-  // );
-  //>print('(N7ZA)${appwriteDatabases}>>>>${collection}<<<<${value}');
   try {
     if (orderByAttribute == null) {
       docs = await appwriteDatabases!.listDocuments(
@@ -612,24 +610,56 @@ Future<models.DocumentList> listDocumentsWithOneQueryDocumentReference({
         ],
       );
     } else {
+      print('(TTP9A)${collection!.path}<<<<${attribute}....${value!.path}++++${orderByAttribute}');
       docs = await appwriteDatabases!.listDocuments(
         databaseId: databaseRef.path!,
         collectionId: collection!.path!,
         queries: [
           Query.equal(attribute, value!.path),
           Query.limit(kLimitDatabaseListDocuments),
-          Query.orderAsc(orderByAttribute),
+           Query.orderDesc(orderByAttribute),
+        ],
+      );
+      print('(TTP9B)${docs.documents.length}....${docs.total}++++${docs}');
+    }
+  } on AppwriteException  catch (e) {
+    print('(N8B)${e}');
+  }
+  return docs;
+}
+
+Future<models.DocumentList> listDocumentsWithOneQueryBool({
+  DocumentReference? collection,
+  String attribute = '',
+  bool? value,
+  String? orderByAttribute,
+}) async {
+  appwriteDatabases = Databases(client!);
+  models.DocumentList docs = models.DocumentList(total: 0, documents: []);
+  try {
+    if (orderByAttribute == null) {
+      docs = await appwriteDatabases!.listDocuments(
+        databaseId: databaseRef.path!,
+        collectionId: collection!.path!,
+        queries: [
+          Query.equal(attribute, value!),
+          Query.limit(kLimitDatabaseListDocuments),
+        ],
+      );
+    } else {
+      docs = await appwriteDatabases!.listDocuments(
+        databaseId: databaseRef.path!,
+        collectionId: collection!.path!,
+        queries: [
+          Query.equal(attribute, value!),
+          Query.limit(kLimitDatabaseListDocuments),
+          Query.orderDesc(orderByAttribute),
         ],
       );
     }
-  } /*on AppwriteException */ catch (e) {
-    //  //>print('(N8A)${e.message}&&&&${e.code}====${e.code}');
-    //>print('(N8B)${e}');
+  } on AppwriteException  catch (e) {
+    print('(N8G)${e}');
   }
-  // //>print('(N9A)${docs.documents.length}');
-  // if(docs.documents.length > 0) {
-  //   //>print('(N9)${docs.documents.length}>>>>${docs.documents.first.$id}<<<<${docs.documents.first.data.entries}');
-  // }
   return docs;
 }
 
@@ -767,7 +797,7 @@ Future<models.DocumentList> listDocumentsWithOneQueryString({
   //>     '(N2009)${appwriteDatabases!.client.endPoint}>>>>${collection.path}<<<<${value}');
   return docs!;
 }
-
+/*
 Future<models.DocumentList> listDocumentsWithOneQueryBool({
   DocumentReference? collection,
   String attribute = '',
@@ -795,7 +825,7 @@ Future<models.DocumentList> listDocumentsWithOneQueryBool({
   //> print(
   //>     '(N2009)${appwriteDatabases!.client.endPoint}>>>>${collection.path}<<<<${value}');
   return docs!;
-}
+}*/
 
 Future<SessionsRecord> createSession({
   required DocumentReference? clientId,
@@ -1008,16 +1038,36 @@ List<String> extractQuestions(dynamic q) {
   return qqq;
 }
 
-Future<List<TemplatesRecord>> listTemplateList() async {
-  models.DocumentList docs = await listDocuments(
+Future<List<TemplatesRecord>> listTemplateList(DocumentReference? creatorId) async {
+  // models.DocumentList docs = await listDocuments(
+  //   collection: templatesRef,
+  // );
+
+
+  models.DocumentList docsMaster = await listDocumentsWithOneQueryBool(
     collection: templatesRef,
+    attribute: kTemplateIsMater,
+    value: true,
+    orderByAttribute: kTemplateName,
   );
-  print('(TP2)${docs.documents.length}');
+  models.DocumentList docsMine = models.DocumentList(total: 0, documents: []);
+  if(creatorId != null) {
+    docsMine = await listDocumentsWithOneQueryDocumentReference(
+      collection: templatesRef,
+      attribute: kTemplateCreatorId,
+      value: creatorId,
+      orderByAttribute: kTemplateName,
+    );
+  }
+  print('(TTP1A)${templatesRef.path}<<<<${creatorId!.path}....${kTemplateCreatorId},,,,${docsMine.documents.length}');
+
+
+  print('(TTP2)${docsMaster.documents.length}....${docsMine.documents.length}');
   List<TemplatesRecord> items = [];
-  for (models.Document doc in docs.documents) {
-    print('(TP4)${doc.$id}');
-    print('(TP5)${doc.data['questions']}');
-    print('(TP6)${doc.data['name']}');
+  for (models.Document doc in docsMaster.documents) {
+    print('(TTP4A)${doc.$id}');
+    print('(TTP5A)${doc.data['questions']}');
+    print('(TTP6A)${doc.data['name']}');
     // List<String>? q = doc.data['questions'] as List<dynamic>;
     List<String> qqq = extractQuestions(doc.data['questions']);
     items.add(TemplatesRecord(
@@ -1027,8 +1077,24 @@ Future<List<TemplatesRecord>> listTemplateList() async {
       isMaster: (doc.data['isMaster'] as bool?) ?? false,
       creatorId: DocumentReference(path: (doc.data['creatorId'] as String)),
     ));
-    print('(TP3)${doc.$id}');
+    print('(TTP3A)${doc.$id}');
   }
+  for (models.Document doc in docsMine.documents) {
+    print('(TTP4B)${doc.$id}');
+    print('(TTP5B)${doc.data['questions']}');
+    print('(TTP6B)${doc.data['name']}');
+    // List<String>? q = doc.data['questions'] as List<dynamic>;
+    List<String> qqq = extractQuestions(doc.data['questions']);
+    items.add(TemplatesRecord(
+      reference: DocumentReference(path: doc.$id),
+      name: doc.data['name'] as String,
+      questions: qqq, //q?.map((e) => e.toString()).toList() ?? [],
+      isMaster: (doc.data['isMaster'] as bool?) ?? false,
+      creatorId: DocumentReference(path: (doc.data['creatorId'] as String)),
+    ));
+    print('(TTP3B)${doc.$id}');
+  }
+  print('(TTP7)${items.length}');
   return items;
 }
 

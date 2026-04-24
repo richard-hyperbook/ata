@@ -28,7 +28,7 @@ class _TemplatesPageWidgetState extends State<TemplatesPageWidget> {
       _isLoading = true;
     });
     try {
-      List<TemplatesRecord> templates = await listTemplateList();
+      List<TemplatesRecord> templates = await listTemplateList(currentUser!.reference);
       setState(() {
         _allTemplates = templates
             .where((t) =>
@@ -163,14 +163,15 @@ class _TemplatesPageWidgetState extends State<TemplatesPageWidget> {
         iconTheme: IconThemeData(color: Colors.white),
         actions:[
           FlutterFlowIconButton(
-            caption: 'Create template',
+            caption: 'Create\ntemplate',
+            buttonWidth: 120,
             enabled: true,
             fillColor: Colors.white,
             tooltipMessage: 'Create Session',
             borderColor: FlutterFlowTheme.of(context).primary,
             borderRadius: 30,
             borderWidth: 1,
-            buttonSize: 40,
+            buttonSize: 50,
             onPressed: () {
               _addTemplate(null);
             },

@@ -8,7 +8,7 @@ import '../../flutter_flow/flutter_flow_theme.dart';
 
 ///import 'flutter_flow_widgets.dart';
 import '../../appwrite_interface.dart';
-import '../../chapter_read/chapter_read_widget.dart';
+// import '../../chapter_read/chapter_read_widget.dart';
 import 'package:infinity_view/infinity_view.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -53,7 +53,7 @@ const List<Color> kDefautltColorList = [
 
 
 Widget insertMenu(
-{required BuildContext context, required MenuDetails? menuDetails, required Function? externalSetState, String? caption}) {
+{required BuildContext context, required MenuDetails? menuDetails, required Function? externalSetState, String? caption, double? width, double? height}) {
   return MenuAnchor(
     builder: (BuildContext context, MenuController controller, Widget? child) {
       return FlutterFlowIconButton(
@@ -61,10 +61,10 @@ Widget insertMenu(
         fillColor: Colors.white,
         tooltipMessage: 'Menu',
         borderColor: (caption == null) ? FlutterFlowTheme.of(context).primary : Colors.transparent,
-        buttonWidth: kIconButtonWidth - 50,
+        buttonWidth: width ?? kIconButtonWidth - 50,
         borderRadius: (caption == null) ? 30 : 0,
         borderWidth: 1,
-        buttonSize: 40,
+        buttonSize: height?? 40,
         caption: caption,
         onPressed: () {
           if (controller.isOpen) {
