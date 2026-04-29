@@ -210,12 +210,19 @@ class _TemplatesPageWidgetState extends State<TemplatesPageWidget> {
                           onPressed: () => _editQuestions(template),
                           tooltip: 'View/Edit Questions',
                         ),
-                        if (isOwner)
+                        (isOwner) ?
                           IconButton(
                             icon: Icon(Icons.delete, color: Colors.red),
                             onPressed: () => _deleteTemplate(template),
                             tooltip: 'Delete',
-                          ),
+                          ) :
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.grey),
+                          onPressed: () {},
+                          tooltip: 'Delete',
+                        )
+
+                        ,
                       ],
                     ),
                   ),

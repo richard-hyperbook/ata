@@ -34,6 +34,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../create_account/create_account_widget.dart';
 import 'package:AIRStudio/custom_code/widgets/revenue_cat.dart';
 // import '../../chapter_read/chapter_read_widget.dart';
+import 'package:permission_handler/permission_handler.dart' as permissionHandler;
 
 export 'login_model.dart';
 
@@ -79,16 +80,13 @@ class _LoginWidgetState extends State<LoginWidget> {
       'Profile',
       'Upgrade',
       'Help',
-      'Help2'
     ], menuIconList: [
       kIconHyperbooks,
       kIconProfile,
       kIconUpgrade,
       kIconInfoStart,
-      kIconInfoStart,
       // kIconChooseChapterState,
     ], menuColorList: [
-      kDefaultColor,
       kDefaultColor,
       kDefaultColor,
       kDefaultColor,
@@ -136,19 +134,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               child: HelpWidget(),
             ));
       },
-      /*    (context) {
-            Navigator.push(
-                context,
-                PageTransition(
-                  type: kStandardPageTransitionType,
-                  duration: kStandardTransitionTime,
-                  reverseDuration: kStandardReverseTransitionTime,
-                  child: ChapterReadWidget(),
-                ));    // context.goNamedAuth('profilePage', context.mounted);
-
-      },*/
-
-    ]);
+         ]);
     bool isSupervisor = false;
     if ((currentUser != null) && (currentUser!.role == kRoleSupervisor)) {
       isSupervisor = true;
@@ -556,6 +542,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                                               // attribute2: 'user',
                                               // value2: DocumentReference(path: ''),
                                             );*/
+                                            permissionHandler.Permission permission = permissionHandler.Permission.microphone;
+                                            permissionHandler.PermissionStatus status = await permission.request();
+                                            if (status.isGranted){
+                                             // toast(context, 'Mic OK', ToastKind.success);
+                                            } else {
+                                              toast(context, 'Mic not available', ToastKind.warning);
+                                            }
+
                                             Navigator.push(
                                                 context,
                                                 PageTransition(

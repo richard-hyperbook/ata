@@ -128,7 +128,6 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
   Utf8Encoder? utf8Encoder;
   Directory? dir;
 
-
   String lastPhotoPath = '';
 
   Future<bool> generateStepVideo(int step) async {
@@ -1066,7 +1065,7 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
                         templateId: chosenTemplate!.reference);
                     print('(CC12)${session.reference}');
                     enclosingSetState();
-                    setState((){});
+                    setState(() {});
                     toast(context, 'Created AIR', ToastKind.success);
                     context.pop();
                   },
@@ -1102,9 +1101,8 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
     return sessionList;
   }
 
-  void enclosingSetState(){
-    setState(() {
-    });
+  void enclosingSetState() {
+    setState(() {});
   }
 
   @override
@@ -1180,7 +1178,9 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
             if ((oldSessions != null) && (oldSessions!.length > 0)) {
               for (int i = 0; i < oldSessions!.length; i++) {
                 print('(VA403`)${i}....${oldSessions![i].videoController}');
-                if (oldSessions![i].videoController != null) {
+                if ((oldSessions![i].videoController != null) &&
+                    (sessions != null) &&
+                    (sessions!.length > 0)) {
                   sessions![i].videoController = oldSessions![i].videoController;
                 }
               }
@@ -1252,7 +1252,13 @@ class _SessionDisplayWidgetState extends State<SessionDisplayWidget> /*with Audi
                           icon: kIconAdd,
                         ),
                         SizedBox(width: kIconButtonGap),
-                        insertMenu(context: context, menuDetails: sessionDisplayMenuDetails, externalSetState: setState, caption: 'Menu', width: 100, height: 50),
+                        insertMenu(
+                            context: context,
+                            menuDetails: sessionDisplayMenuDetails,
+                            externalSetState: setState,
+                            caption: 'Menu',
+                            width: 100,
+                            height: 50),
                       ],
                       centerTitle: false,
                       elevation: 2.0,
@@ -1489,30 +1495,21 @@ void listCP() {
 
 Future<void> deleteAIR(SessionsRecord session) async {
   Utf8Encoder? utf8Encoder = utf8.encoder;
-  List<SessionStepsRecord> sessionSteps =
-  await listSessionStepList(thisSession: session);
+  List<SessionStepsRecord> sessionSteps = await listSessionStepList(thisSession: session);
   utf8Encoder = utf8.encoder;
-  Directory appDir =
-  Directory.fromRawPath(utf8Encoder!.convert(appDirPath!));
+  Directory appDir = Directory.fromRawPath(utf8Encoder!.convert(appDirPath!));
   List<String> appDirPathList = await getAppDirListing();
   for (int j = 0; j < sessionSteps.length; j++) {
-    await deleteDocument(
-        collection: sessionStepsRef, document: sessionSteps[j].reference);
+    await deleteDocument(collection: sessionStepsRef, document: sessionSteps[j].reference);
     print('(DA2)${j}....${sessionSteps[j].reference!.path}');
     for (int k = 0; k < appDirPathList.length; k++) {
-      print(
-          '(DA3)${k}....${appDirPathList[k]},,,,${sessionSteps[j].reference!.path}');
+      print('(DA3)${k}....${appDirPathList[k]},,,,${sessionSteps[j].reference!.path}');
       if ((appDirPathList[k]).contains(sessionSteps[j].reference!.path!)) {
         await deleteFile(appDirPathList[k]);
         print('(DA4)${k}....${appDirPathList[k]}');
       }
     }
   }
-  await deleteDocument(
-      collection: sessionsRef,
-      document: sessions![currentSessionIndex].reference);
+  await deleteDocument(collection: sessionsRef, document: sessions![currentSessionIndex].reference);
   print('(DA5)${sessions![currentSessionIndex].reference!.path}');
-
-
-
 }

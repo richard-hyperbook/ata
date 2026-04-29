@@ -49,6 +49,29 @@ import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/log.dart';
 import 'package:ffmpeg_kit_flutter_new/session.dart';
 import 'package:ffmpeg_kit_flutter_new/statistics.dart';
+import 'package:permission_handler/permission_handler.dart' as permissionHandler;
+
+/*
+
+Future<void> handlePermission(permissionHandler.Permission permission, String name) async {
+  var status = await permission.request();
+
+  if (status.isGranted) {
+    Fluttertoast.showToast(msg: '$name permission granted');
+  } else if (status.isPermanentlyDenied) {
+    Fluttertoast.showToast(msg: '$name permission permanently denied. Enable it in settings.');
+    openAppSettings();
+  } else if (status.isRestricted) {
+    Fluttertoast.showToast(msg: '$name permission restricted by system.');
+  } else if (status.isLimited) {
+    Fluttertoast.showToast(msg: '$name permission limited access granted.');
+  } else {
+    Fluttertoast.showToast(msg: '$name permission denied');
+  }
+}
+*/
+
+
 enum FileKind { /*audio,*/ photo, video, wav, mp3, aac }
 
 const String _numericChars = '1234567890';

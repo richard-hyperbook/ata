@@ -28,6 +28,7 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 import '/../custom_code/widgets/toast.dart';
 // import '../../map_display/map_display_widget.dart';
@@ -159,31 +160,35 @@ class _HelpWidgetState extends State<HelpWidget> {
     const String helpAirStudio =
 
     '''An AIR (Art Intervention Recording) is a video of the artwork created by an Art Therapist's client together withv their responses to a series of questions.  AIR Studio is an app developed to allow Art Therapists to produce AIRs with the minimum of effort, handling all aspects of the creation of the desired video.
-1. Start on the 'Login' page: click on 'Create account', enter your email address and a password.  You will be directed to the 'Profile' page where you should enter name (as you wish it to be displayed in the app).
-2. On returning to the 'Login' page, enter your email adress and password, and click 'Login'.
-3. You will enter the 'AIRs' page which will list all the AIRs you have worked on, with the most recent at the head of the list.
-4. Before creating a new AIR, you will need to ensure that you have entered your client's name in the Client list.  Click on the 'Menu' button on the 'AIRs' page and select 'Clients'.
-5. The 'Clients' page will show a list of your clients.  Additions can me made by clicking the 'Add client' button.  
-6. To create a new AIR, click the 'Create AIR' button at the top of the page.  You will be asked to select a Template and a Client for this new AIR.  The template can either be predefined or user-generated (please see Step 16).
-7. To start or continue the editin of an AIR, click on the 'Edit' button,  Which will take you to the 'Edit AIR' page.
-8. Each AIR is composed of a series of steps, each step is labeled with a question (defined in the template chosen in the creation of the AIR)
-9. For each step, take a photo of the client's artwork, ask the client the question amd click on the microphone icon to record their response.
-10. Click the 'Select photo' button and choose the image from the phone's photo gallery.
-11. You can click the 'Transcribe' button to see your client's words as text.  Please be aware that this may take some time.
-12. You can also click the 'Edit recording' button if you wish to trim the audio recording.
-13. On returning to the 'AIRs' page, you can click the 'Make video' button which will create a video from the recordings and images (this can take several minutes).
-14. If the next button is labled 'Load video', then clicking it will show the created video in a pop-up window.
-15. Clicking the final button in this list will result in an email being sent to your email address.  The video will include a link which, when click, will download the created video.
-16. To create your own template, click on the 'Menu' button on the 'AIRs' page.  This will take you to the 'Templates' page which lists all the templates 
+<br><br>1. Start on the 'Login' page: click on 'Create account', enter your email address and a password.  You will be directed to the 'Profile' page where you should enter name (as you wish it to be displayed in the app).
+<img style="width: 50%; height: 50%; float:right" src="https://fra.cloud.appwrite.io/v1/storage/buckets/680cd737001f208054fb/files/69ec6dac000f48c271f1/view?project=696ddda6001b28f2352e&mode=admin">
+<br><br>2. On returning to the 'Login' page, enter your email adress and password, and click 'Login'.
+<br><br>3. You will enter the 'AIRs' page which will list all the AIRs you have worked on, with the most recent at the head of the list.
+<br><br>4. Before creating a new AIR, you will need to ensure that you have entered your client's name in the Client list.  Click on the 'Menu' button on the 'AIRs' page and select 'Clients'.
+<br><br>5. The 'Clients' page will show a list of your clients.  Additions can me made by clicking the 'Add client' button.  
+<br><br>6. To create a new AIR, click the 'Create AIR' button at the top of the page.  You will be asked to select a Template and a Client for this new AIR.  The template can either be predefined or user-generated (please see Step 16).
+<br><br>7. To start or continue the editin of an AIR, click on the 'Edit' button,  Which will take you to the 'Edit AIR' page.
+<br><br>8. Each AIR is composed of a series of steps, each step is labeled with a question (defined in the template chosen in the creation of the AIR)
+<br><br>9. For each step, take a photo of the client's artwork, ask the client the question amd click on the microphone icon to record their response.
+<br><br>10. Click the 'Select photo' button and choose the image from the phone's photo gallery.
+<br><br>11. You can click the 'Transcribe' button to see your client's words as text.  Please be aware that this may take some time.
+<br><br>12. You can also click the 'Edit recording' button if you wish to trim the audio recording.
+<br><br>13. On returning to the 'AIRs' page, you can click the 'Make video' button which will create a video from the recordings and images (this can take several minutes).
+<br><br>14. If the next button is labled 'Load video', then clicking it will show the created video in a pop-up window.
+<br><br>15. Clicking the final button in this list will result in an email being sent to your email address.  The video will include a link which, when click, will download the created video.
+<br><br>16. To create your own template, click on the 'Menu' button on the 'AIRs' page.  This will take you to the 'Templates' page which lists all the templates 
 
 
         ''';
 
     Widget showHelpTextWidget() {
-      return Text(helpAirStudio,
-        softWrap: true,
-        style: kPanelTextStyleSmaller,
-      );
+      // return Text(helpAirStudio,
+      //   softWrap: true,
+      //   style: kPanelTextStyleSmaller,
+      // );
+      return HtmlWidget(helpAirStudio,textStyle: TextStyle(fontSize: 15),);
+
+
     }
 
     return Scaffold(
