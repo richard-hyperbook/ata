@@ -192,7 +192,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                 ),
                 /*AuthUserStreamWidget(
                           builder: (BuildContext context) =>*/
-                SizedBox(
+                /*SizedBox(
                   width: MediaQuery.sizeOf(context).width *
                       kStateSelectorWidthFactor,
                   height: kStateSelectorHeight,
@@ -207,11 +207,11 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       FFIcons.keyeSlash,
                     ),
                   ),
-                ),
+                ),*/
                 /* ),*/
                 /*AuthUserStreamWidget(
                           builder: (BuildContext context) =>*/
-                SizedBox(
+                /*SizedBox(
                   width: MediaQuery.sizeOf(context).width *
                       kStateSelectorWidthFactor,
                   height: kStateSelectorHeight,
@@ -226,11 +226,11 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       FFIcons.kprogressOne,
                     ),
                   ),
-                ),
+                ),*/
                 /* ),*/
                 /* AuthUserStreamWidget(
                           builder: (BuildContext context) =>*/
-                SizedBox(
+                /*SizedBox(
                   width: MediaQuery.sizeOf(context).width *
                       kStateSelectorWidthFactor,
                   height: kStateSelectorHeight,
@@ -245,11 +245,11 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       FFIcons.kprogressTwo,
                     ),
                   ),
-                ),
+                ),*/
                 /* ),*/
                 /* AuthUserStreamWidget(
                           builder: (BuildContext context) =>*/
-                SizedBox(
+                /*SizedBox(
                   width: MediaQuery.sizeOf(context).width *
                       kStateSelectorWidthFactor,
                   height: kStateSelectorHeight,
@@ -264,11 +264,11 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       FFIcons.kprogressFull,
                     ),
                   ),
-                ),
+                ),*/
                 /* ),*/
                 /*AuthUserStreamWidget(
                           builder: (BuildContext context) =>*/
-                SizedBox(
+                /*SizedBox(
                   width: MediaQuery.sizeOf(context).width *
                       kStateSelectorWidthFactor,
                   height: kStateSelectorHeight,
@@ -283,11 +283,11 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       FFIcons.khighlight,
                     ),
                   ),
-                ),
+                ),*/
                 /* ),*/
                 /*AuthUserStreamWidget(
                           builder: (BuildContext context) =>*/
-                SizedBox(
+                /*SizedBox(
                   width: MediaQuery.sizeOf(context).width *
                       kStateSelectorWidthFactor,
                   height: kStateSelectorHeight,
@@ -302,7 +302,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       FFIcons.kthumbsDown,
                     ),
                   ),
-                ),
+                ),*/
                 /*  ),*/
                 Align(
                   alignment: const AlignmentDirectional(0.0, 0.05),

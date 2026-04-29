@@ -300,15 +300,6 @@ class FFAppState extends ChangeNotifier {
   }
 }
 
-LatLng? _latLngFromString(String? val) {
-  if (val == null) {
-    return null;
-  }
-  final List<String> split = val.split(',');
-  final double lat = double.parse(split.first);
-  final double lng = double.parse(split.last);
-  return LatLng(lat, lng);
-}
 
 void _safeInit(Function() initializeField) {
   try {

@@ -173,33 +173,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) {
               ),
             ),
           ),
-          FFRoute(
-            name: 'hyperbook_edit',
-            path: 'hyperbookEdit',
-            builder: (context, params) => HyperbookEditWidget(
-              hyperbook: params.getParam(
-                  'hyperbook',
-                  ParamType.DocumentReference,
-                  false,
-                  ['hyperbooks']) as DocumentReference?,
-              hyperbookTitle:
-                  params.getParam('hyperbookTitle', ParamType.String) as String,
-              hyperbookBlurb:
-                  params.getParam('hyperbookBlurb', ParamType.String) as String,
-              startChapter: params.getParam(
-                  'startChapter',
-                  ParamType.DocumentReference,
-                  false,
-                  ['hyperbooks', 'chapters']) as DocumentReference?,
-              moderator: params.getParam(
-                  'moderator',
-                  ParamType.DocumentReference,
-                  false,
-                  ['users']) as DocumentReference?,
-              nonMemberRole:
-                  params.getParam('nonMemberRole', ParamType.String) as String,
-            ),
-          ),
+
           FFRoute(
             name: 'tutorial',
             path: 'tutorial',
@@ -221,19 +195,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) {
                     page: TutorialWidget()/*#IntroductionWidget()*/,
                   ),
           ),
-          FFRoute(
-            name: 'backup_hyperbook',
-            path: 'backupHyperbook',
-            builder: (context, params) => BackupHyperbookWidget(
-              hyperbook: params.getParam(
-                  'hyperbook',
-                  ParamType.DocumentReference,
-                  false,
-                  ['hyperbooks']) as DocumentReference?,
-              hyperbookTitle:
-                  params.getParam('hyperbookTitle', ParamType.String) as String,
-            ),
-          ),
+
           FFRoute(
               name: 'session_display',
               path: 'sessionDisplay',

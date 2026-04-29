@@ -7,7 +7,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   desktop_webview_window
   file_selector_windows
   flutter_inappwebview_windows
-  flutter_localization
   flutter_sound
   permission_handler_windows
   record_windows
