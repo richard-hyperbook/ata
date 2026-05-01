@@ -12,7 +12,7 @@ import 'flutter_flow/flutter_flow_theme.dart';
 import 'dart:math';
 import 'appwrite_interface.dart';
 
-final int versionNumber = 58;
+final int versionNumber = 59;
 
 
 late SharedPreferences globalSharedPrefs;
