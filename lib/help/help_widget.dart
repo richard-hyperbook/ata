@@ -11,9 +11,6 @@ import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
-import '/flutter_flow/upload_data.dart';
 import 'help_model.dart';
 import '../../appwrite_interface.dart';
 import 'package:appwrite/models.dart' as models;
@@ -35,7 +32,7 @@ import '/../custom_code/widgets/toast.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:video_player/video_player.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+// import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import '../../paypal/paypal_widget.dart';

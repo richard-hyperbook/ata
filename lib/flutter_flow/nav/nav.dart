@@ -175,28 +175,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) {
           ),
 
           FFRoute(
-            name: 'tutorial',
-            path: 'tutorial',
-            builder: (context, params) => NavBarPage(
-              initialPage: '',
-              page: TutorialWidget(),
-
-          ),
-
-
-          ),
-          FFRoute(
-            name: 'introduction',
-            path: 'introduction',
-            builder: (context, params) => params.isEmpty
-                ? NavBarPage(initialPage: 'introduction')
-                : NavBarPage(
-                    initialPage: 'introduction',
-                    page: TutorialWidget()/*#IntroductionWidget()*/,
-                  ),
-          ),
-
-          FFRoute(
               name: 'session_display',
               path: 'sessionDisplay',
               builder: (context, params) {

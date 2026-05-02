@@ -45,10 +45,8 @@ import 'package:video_player/video_player.dart';
 // import '../platform/audio_recorder_platform.dart';
 
 // part 'appwrite_interface.g.dart';
-import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter_new/log.dart';
-import 'package:ffmpeg_kit_flutter_new/session.dart';
-import 'package:ffmpeg_kit_flutter_new/statistics.dart';
+import 'package:ffmpeg_kit_flutter_new_min/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new_min/session.dart';
 import 'package:permission_handler/permission_handler.dart' as permissionHandler;
 
 /*

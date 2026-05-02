@@ -46,14 +46,9 @@ import 'package:appwrite/models.dart' as models;
 import 'package:appwrite/enums.dart' as enums;
 // import 'package:compressor/compressor.dart';
 // import '/custom_code/widgets/audio_trimmer.dart';
-import '/custom_code/widgets/trimmer2.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter_new/log.dart';
-import 'package:ffmpeg_kit_flutter_new/session.dart';
-import 'package:ffmpeg_kit_flutter_new/statistics.dart';
-import 'package:ffmpeg_kit_flutter_new/ffprobe_kit.dart';
+
+
+import 'package:ffmpeg_kit_flutter_new_min/ffprobe_kit.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';

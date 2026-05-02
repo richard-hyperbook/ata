@@ -12,7 +12,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
-import '/flutter_flow/upload_data.dart';
+// import '/flutter_flow/upload_data.dart';
 import 'edit_profile_model.dart';
 import '../../appwrite_interface.dart';
 import 'package:appwrite/models.dart' as models;
