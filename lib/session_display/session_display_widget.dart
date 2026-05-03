@@ -30,7 +30,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../menu.dart';
 import '../../localDB.dart';
 import '../../login/login_widget.dart';
-import '../../paypal/paypal_widget.dart';
+//import '../../paypal/paypal_widget.dart';
 import '../../session_step_display/session_step_display_widget.dart';
 import '../../templates_page/templates_page_widget.dart';
 import 'package:ffmpeg_kit_flutter_new_min/ffmpeg_kit.dart';

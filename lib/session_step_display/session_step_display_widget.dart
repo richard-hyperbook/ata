@@ -30,7 +30,7 @@ import '../../localDB.dart';
 import '../../login/login_widget.dart';
 // import '../../map_display/map_display_widget.dart';
 // import '../../chapter_display/chapter_display_widget.dart';
-import '../../paypal/paypal_widget.dart';
+// import '../../paypal/paypal_widget.dart';
 // import '../../audio/audio_player.dart';
 // import '../../audio/audio_recorder.dart';
 import 'package:appwrite/appwrite.dart';

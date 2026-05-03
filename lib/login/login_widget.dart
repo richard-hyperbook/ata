@@ -26,7 +26,7 @@ import '../../session_display/session_display_widget.dart';
 import '../../profile_page/profile_page_widget.dart';
 // import '../../map_display/map_display_widget.dart';
 import '../../change_password/change_password_widget.dart';
-import '../../paypal/paypal_widget.dart';
+// import '../../paypal/paypal_widget.dart';
 import '../../help/help_widget.dart';
 import '../../conditional.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;

@@ -35,7 +35,7 @@ import 'package:video_player/video_player.dart';
 // import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import '../../paypal/paypal_widget.dart';
+// import '../../paypal/paypal_widget.dart';
 
 class HelpWidget extends StatefulWidget {
   const HelpWidget({super.key});
