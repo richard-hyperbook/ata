@@ -7,7 +7,7 @@ export '/session_display/session_display_widget.dart'
 export '/session_step_display/session_step_display_widget.dart'
     show SessionStepDisplayWidget;
 export '/login/login_widget.dart' show LoginWidget;
-export '/phone_sign_in/phone_sign_in_widget.dart' show PhoneSignInWidget;
+// export '/phone_sign_in/phone_sign_in_widget.dart' show PhoneSignInWidget;
 export '/profile_page/profile_page_widget.dart' show ProfilePageWidget;
 export '/register_page/register_page_widget.dart' show RegisterPageWidget;
 export '/settings/settings_widget.dart' show SettingsWidget;

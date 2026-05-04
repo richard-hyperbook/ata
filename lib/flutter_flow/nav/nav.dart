@@ -148,11 +148,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) {
             path: 'registerPage',
             builder: (context, params) => RegisterPageWidget(),
           ),
-          FFRoute(
+         /* FFRoute(
             name: 'phoneSignIn',
             path: 'phoneSignIn',
             builder: (context, params) => PhoneSignInWidget(),
-          ),
+          ),*/
           FFRoute(
             name: 'verifyPhone',
             path: 'verifyPhone',

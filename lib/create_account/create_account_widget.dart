@@ -14,7 +14,7 @@ import '../../appwrite_interface.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../phone_sign_in/phone_sign_in_widget.dart';
+// import '../../phone_sign_in/phone_sign_in_widget.dart';
 import '../../profile_page/profile_page_widget.dart';
 import '../../edit_profile/edit_profile_widget.dart';
 import '../../login/login_widget.dart';
@@ -156,7 +156,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                     ).displaySmall,
                                   ),
                                 ),
-                                InkWell(
+               /*                 InkWell(
                                   splashColor: Colors.transparent,
                                   focusColor: Colors.transparent,
                                   hoverColor: Colors.transparent,
@@ -186,7 +186,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                     ),
                                     child: kIconTelephone,
                                   ),
-                                ),
+                                ),*/
                               ],
                             ),
                           ),
