@@ -58,10 +58,10 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("release")
             // Enables code-related app optimization.
-            isMinifyEnabled = true
+            //isMinifyEnabled = false
 
             // Enables resource shrinking.
-            isShrinkResources = true
+            //isShrinkResources = true
 
         }
     }

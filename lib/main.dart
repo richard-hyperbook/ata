@@ -30,7 +30,7 @@ import 'appwrite_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'conditional.dart';
 import 'app_state.dart';
-import '/custom_code/widgets/revenue_cat.dart';
+
 
 
 appwrite.Client? client;
@@ -43,19 +43,23 @@ String? loadingParameter;
 // ScrollController hyperbookDisplayscrollController = ScrollController();
 
 void main() async {
+  print('(AAU1)');
   WidgetsFlutterBinding.ensureInitialized();
+  print('(AAU2)');
   setIsIncomingResetPassword();
+  print('(AAU3)');
 
   // debugPrintRebuildDirtyWidgets = true;
-  client = appwrite.Client()
-      .setEndpoint("http://localhost/v1")
-      .setProject("67cd5b6e000fe41c331e");
-  appwrite.Account account = appwrite.Account(client!);
+  // client = appwrite.Client()
+  //     .setEndpoint("http://localhost/v1")
+  //     .setProject("67cd5b6e000fe41c331e");
+  // appwrite.Account account = appwrite.Account(client!);
   showLogoEtcOnMap = true;
   usePathUrlStrategy();
+  print('(AAU4)');
   // await initFirebase();
   initAppwrite();
-  if (true) {
+/*  if (true) {
     // Only for debug mode.
     try {
       final emulatorHost =
@@ -70,13 +74,16 @@ void main() async {
       // ignore: avoid_print
       //>print('(N4000)$e');
     }
-  }
+  }*/
+  print('(AAU5)');
 
-  await FlutterFlowTheme.initialize();
+  // await FlutterFlowTheme.initialize();
   //>print('(SU8)${globalSharedPrefs}');
+  print('(AAU6)');
 
   final FFAppState appState = FFAppState(); // Initialize FFAppState
   // await appState.initializePersistedState();
+  print('(AAU7)');
 
   // await initializePersistedState();
   //>print('(SU6)${globalSharedPrefs}');
@@ -84,9 +91,9 @@ void main() async {
     create: (BuildContext context) => appState,
     child: MyApp(),
   ));
-  print('(RC30)');
-  await initializeRevenueCat();
-  print('(RC31)');
+  print('(AAU8)');
+
+  print('(AAU9)');
 
 }
 
@@ -200,7 +207,7 @@ class _MyAppState extends State<MyApp> {
 
   void setThemeMode(ThemeMode mode) => setState(() {
         _themeMode = mode;
-        FlutterFlowTheme.saveThemeMode(mode);
+
       });
 
   @override

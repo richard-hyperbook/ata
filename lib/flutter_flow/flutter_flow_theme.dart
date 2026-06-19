@@ -11,21 +11,23 @@ const String kThemeModeKey = '__theme_mode__';
 // SharedPreferences? globalSharedPrefs;
 
 abstract class FlutterFlowTheme {
-  static Future initialize() async =>
+ /* static Future initialize() async =>
       globalSharedPrefs = await SharedPreferences.getInstance();
+*/
 
   static ThemeMode get themeMode {
-    final bool? darkMode = globalSharedPrefs?.getBool(kThemeModeKey);
-    return darkMode == null
-        ? ThemeMode.system
-        : darkMode
+    // final bool? darkMode = globalSharedPrefs?.getBool(kThemeModeKey);
+    return/* darkMode == null
+        ? */ThemeMode.system
+       /* : darkMode
             ? ThemeMode.dark
-            : ThemeMode.light;
+            : ThemeMode.light*/;
   }
-
+/*
   static void saveThemeMode(ThemeMode mode) => mode == ThemeMode.system
       ? globalSharedPrefs?.remove(kThemeModeKey)
       : globalSharedPrefs?.setBool(kThemeModeKey, mode == ThemeMode.dark);
+*/
 
   static FlutterFlowTheme of(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark

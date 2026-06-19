@@ -32,7 +32,6 @@ import '../../conditional.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // import '../../platform/audio_recorder_platform.dart';
 import '../../create_account/create_account_widget.dart';
-import 'package:AIRStudio/custom_code/widgets/revenue_cat.dart';
 // import '../../chapter_read/chapter_read_widget.dart';
 import 'package:permission_handler/permission_handler.dart' as permissionHandler;
 
@@ -118,10 +117,10 @@ class _LoginWidgetState extends State<LoginWidget> {
       (context) async {
         // context.goNamedAuth('profilePage', context.mounted);
         print('<ME100>');
-        await initPlatformState();
+        /*await initPlatformState();
         await showCustomerInfo();
         await getPackages();
-        await presentPaywall();
+        await presentPaywall();*/
       },
       (context) {
         // context.goNamedAuth('profilePage', context.mounted);

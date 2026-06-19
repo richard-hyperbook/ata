@@ -204,9 +204,9 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                         if (currentUser!.userLevel == kUserLevelNotLoggedIn) {
                           String colorString = '';
 
-                          globalSharedPrefs.setString(
+       /*                   globalSharedPrefs.setString(
                               currentUser!.reference!.path! + '.' + kConectedUserColors,
-                              colorString);
+                              colorString);*/
                           //>print('(SU70)${colorString}');
                         } else {
                           await updateDocument(
