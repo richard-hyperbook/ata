@@ -47,7 +47,8 @@ import 'package:video_player/video_player.dart';
 // part 'appwrite_interface.g.dart';
 import 'package:ffmpeg_kit_flutter_new_min/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new_min/session.dart';
-import 'package:permission_handler/permission_handler.dart' as permissionHandler;
+import 'package:permission_handler/permission_handler.dart'
+    as permissionHandler;
 
 /*
 
@@ -69,7 +70,6 @@ Future<void> handlePermission(permissionHandler.Permission permission, String na
 }
 */
 
-
 enum FileKind { /*audio,*/ photo, video, wav, mp3, aac }
 
 const String _numericChars = '1234567890';
@@ -78,7 +78,8 @@ Random _numericRnd = Random();
 String getRandomNumericString(int length) => String.fromCharCodes(
       Iterable.generate(
         length,
-        (_) => _numericChars.codeUnitAt(_numericRnd.nextInt(_numericChars.length)),
+        (_) =>
+            _numericChars.codeUnitAt(_numericRnd.nextInt(_numericChars.length)),
       ),
     );
 
@@ -111,7 +112,7 @@ const kEndpoint = 'https://fra.cloud.appwrite.io/v1';
 const kProjectID = '696ddda6001b28f2352e';
 const kDevKey =
     // '4de99514ee3d5a8fb3cdf236ba66a91e9bdb37c8397f9f98542530bd2f6a71797d93b068276fc23c0aba27cbd1e41912d4362456a9a167150bc5a2d66265b86a94229cfaf7d63181b173898e5f322b28f4d1c9a6c3470fa129f933062428ceb4806c26ca5bfa8e91d7e88f8dcbc430d1eb864016906a31d0dd78bf6a9450794d';
-'208620233cb2c5e9b25390faaf083a63e134e35af4909eca15b6e4ff70a25f3c76c43dcc258f18683a5f5adc222804a3b13f2508b40a6e60c11c9c8f00e3829870e4a66b296e838ecfcea659170c3870d20ba82f86216fe55ac4db3f0cf72c3b8ffa8e1774186657e1f9bfa1929853a9d04b4350bdff1f919199e4e5a7eea31a';
+    '208620233cb2c5e9b25390faaf083a63e134e35af4909eca15b6e4ff70a25f3c76c43dcc258f18683a5f5adc222804a3b13f2508b40a6e60c11c9c8f00e3829870e4a66b296e838ecfcea659170c3870d20ba82f86216fe55ac4db3f0cf72c3b8ffa8e1774186657e1f9bfa1929853a9d04b4350bdff1f919199e4e5a7eea31a';
 const imageFilenameHead = kEndpoint + '/storage/buckets';
 
 final DocumentReference databaseRef = DocumentReference(
@@ -122,7 +123,8 @@ final DocumentReference sessionStepsRef = DocumentReference(
 );
 final DocumentReference sessionsRef = DocumentReference(path: 'sessions');
 final DocumentReference usersRef = DocumentReference(path: 'users');
-final DocumentReference infoRef = DocumentReference(path: '69a9253600091c44ad9f');
+final DocumentReference infoRef =
+    DocumentReference(path: '69a9253600091c44ad9f');
 final DocumentReference backupStorageRef = DocumentReference(
   path: '680746de003983073d29',
 );
@@ -141,8 +143,6 @@ final DocumentReference templatesRef = DocumentReference(
 final DocumentReference airsRef = DocumentReference(
   path: '69d229dd000910a8aad9',
 );
-
-
 
 final DocumentReference constraintsRef = DocumentReference(path: '');
 
@@ -247,7 +247,8 @@ const double kMapNodeMoveMinChange = 2.0;
 const int kLimitDatabaseListDocuments = 1000;
 const int kLimitStorageListDocuments = 1000;
 
-const PageTransitionType kStandardPageTransitionType = PageTransitionType.leftToRight;
+const PageTransitionType kStandardPageTransitionType =
+    PageTransitionType.leftToRight;
 const Duration kStandardTransitionTime = Duration(milliseconds: 1000);
 const Duration kStandardReverseTransitionTime = Duration(milliseconds: 300);
 
@@ -290,8 +291,11 @@ Future<void> loadConstraisMatrix() async {
 TablesDB? tablesDB;
 void initAppwrite() {
   print('(AAT30)');
-  client =
-      Client().setEndpoint(kEndpoint).setProject(kProjectID).setDevKey(kDevKey).setSelfSigned();
+  client = Client()
+      .setEndpoint(kEndpoint)
+      .setProject(kProjectID)
+     // .setDevKey(kDevKey)
+      .setSelfSigned();
   account = Account(client!);
   tablesDB = TablesDB(client!);
   print('(AAT31)${client},,,,${account}++++${tablesDB}');
@@ -631,19 +635,20 @@ Future<models.DocumentList> listDocumentsWithOneQueryDocumentReference({
         ],
       );
     } else {
-      print('(TTP9A)${collection!.path}<<<<${attribute}....${value!.path}++++${orderByAttribute}');
+      print(
+          '(TTP9A)${collection!.path}<<<<${attribute}....${value!.path}++++${orderByAttribute}');
       docs = await appwriteDatabases!.listDocuments(
         databaseId: databaseRef.path!,
         collectionId: collection!.path!,
         queries: [
           Query.equal(attribute, value!.path),
           Query.limit(kLimitDatabaseListDocuments),
-           Query.orderDesc(orderByAttribute),
+          Query.orderDesc(orderByAttribute),
         ],
       );
       print('(TTP9B)${docs.documents.length}....${docs.total}++++${docs}');
     }
-  } on AppwriteException  catch (e) {
+  } on AppwriteException catch (e) {
     print('(N8B)${e}');
   }
   return docs;
@@ -678,7 +683,7 @@ Future<models.DocumentList> listDocumentsWithOneQueryBool({
         ],
       );
     }
-  } on AppwriteException  catch (e) {
+  } on AppwriteException catch (e) {
     print('(N8G)${e}');
   }
   return docs;
@@ -1059,11 +1064,11 @@ List<String> extractQuestions(dynamic q) {
   return qqq;
 }
 
-Future<List<TemplatesRecord>> listTemplateList(DocumentReference? creatorId) async {
+Future<List<TemplatesRecord>> listTemplateList(
+    DocumentReference? creatorId) async {
   // models.DocumentList docs = await listDocuments(
   //   collection: templatesRef,
   // );
-
 
   models.DocumentList docsMaster = await listDocumentsWithOneQueryBool(
     collection: templatesRef,
@@ -1072,7 +1077,7 @@ Future<List<TemplatesRecord>> listTemplateList(DocumentReference? creatorId) asy
     orderByAttribute: kTemplateName,
   );
   models.DocumentList docsMine = models.DocumentList(total: 0, documents: []);
-  if(creatorId != null) {
+  if (creatorId != null) {
     docsMine = await listDocumentsWithOneQueryDocumentReference(
       collection: templatesRef,
       attribute: kTemplateCreatorId,
@@ -1080,8 +1085,8 @@ Future<List<TemplatesRecord>> listTemplateList(DocumentReference? creatorId) asy
       orderByAttribute: kTemplateName,
     );
   }
-  print('(TTP1A)${templatesRef.path}<<<<${creatorId!.path}....${kTemplateCreatorId},,,,${docsMine.documents.length}');
-
+  print(
+      '(TTP1A)${templatesRef.path}<<<<${creatorId!.path}....${kTemplateCreatorId},,,,${docsMine.documents.length}');
 
   print('(TTP2)${docsMaster.documents.length}....${docsMine.documents.length}');
   List<TemplatesRecord> items = [];
@@ -1120,7 +1125,8 @@ Future<List<TemplatesRecord>> listTemplateList(DocumentReference? creatorId) asy
 }
 
 Future<List<TemplatesRecord>> listOwnedPlusMasterTemplateList() async {
-  models.DocumentList docsUser = await listDocumentsWithOneQueryDocumentReference(
+  models.DocumentList docsUser =
+      await listDocumentsWithOneQueryDocumentReference(
     collection: templatesRef,
     attribute: kTemplateCreatorId,
     value: currentUser!.reference,
@@ -1378,9 +1384,11 @@ Future<List<SessionStepsRecord>> listSessionStepList({
   */
 
     // bool photoFileValid = await File(appDirPath! + '/photo' + d.$id + '.jpg').exists();
-    bool photoFileValid = await File(getFilePath(FileKind.photo, d.$id)).exists();
+    bool photoFileValid =
+        await File(getFilePath(FileKind.photo, d.$id)).exists();
     bool audioFileValid = await File(getFilePath(FileKind.aac, d.$id)).exists();
-    print('(PE1)${appDirPath! + '/photo' + d.$id + '.jpg'}....${photoFileValid}');
+    print(
+        '(PE1)${appDirPath! + '/photo' + d.$id + '.jpg'}....${photoFileValid}');
 
     SessionStepsRecord h = SessionStepsRecord(
       reference: DocumentReference(path: d.$id),
@@ -1502,7 +1510,8 @@ Future<List<UsersRecord>> listUsersListWithEmail({String? email}) async {
   return uu;
 }
 
-Future<List<UsersRecord>> listUsersClientsOfUser({DocumentReference? therapist}) async {
+Future<List<UsersRecord>> listUsersClientsOfUser(
+    {DocumentReference? therapist}) async {
   models.DocumentList docs;
   print('(N22106)${therapist}¤¤¤¤${usersRef}');
   if (therapist == null) {
@@ -1695,8 +1704,6 @@ Future<void> deleteUser() async {
   print('(DD102)${result}');
 }
 
-
-
 bool canUserSeeSession(DocumentReference? user, SessionsRecord? session) {
   //>print('(N404A)${Session!.title}####${user}&&&&${Session!.nonMemberRole}');
   if (currentUser!.reference == null) return false;
@@ -1711,7 +1718,8 @@ bool canUserSeeSession(DocumentReference? user, SessionsRecord? session) {
       return true;
     } else {
       //>print('(N404T)${role}');
-      if ((role == kRoleTherapist) && (session.therapistId!.path == currentUser!.reference!.path)) {
+      if ((role == kRoleTherapist) &&
+          (session.therapistId!.path == currentUser!.reference!.path)) {
         return true;
       }
 
@@ -1735,9 +1743,12 @@ Future<String?> createStorageImageFile({
   // List<String> splitFilename = name!.split('.');
   // final String preffix = splitFilename.first;
   // final String suffix = splitFilename.last;
-  final String truncatedName = (name!.length > 15) ? name.substring(0, 15) : name;
-  final String fileId = chapter!.path! + kStorageFilenameSpitString + randomFileNumber;
-  final String storageFilename = chapter.path! + kStorageFilenameSpitString + truncatedName;
+  final String truncatedName =
+      (name!.length > 15) ? name.substring(0, 15) : name;
+  final String fileId =
+      chapter!.path! + kStorageFilenameSpitString + randomFileNumber;
+  final String storageFilename =
+      chapter.path! + kStorageFilenameSpitString + truncatedName;
   //>print('(QE30)${fileId}++++${storageFilename}');
 
   models.File result = await storage.createFile(
@@ -1756,7 +1767,8 @@ Future<String?> createStorageImageFile({
   final b_id = artTheopyAIRphotosRef.path!;
   final f_id = fileId;
   final p_id = kProjectID;
-  final String url = '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
+  final String url =
+      '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
   //>print('(IS2)${head}££££${url}????');
 
   return url;
@@ -1788,7 +1800,8 @@ Future<String?> storeStorageFile({
   final b_id = artTheopyAIRphotosRef.path!;
   final f_id = storageFileId;
   final p_id = kProjectID;
-  final String url = '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
+  final String url =
+      '${head}/${b_id}/files/${f_id}/preview?project=${p_id}&mode=admin';
   print('(AU73)${head}££££${url}????');
   return url;
 }
@@ -1902,7 +1915,9 @@ Future<bool> copySessionStepStorageFiletoLocal({
     }
   }
   print('(DE73)${localBucketId},,,,${fileId}----${dirPath[0]}...${dirPath[1]}');
-  await storage.getFileDownload(bucketId: localBucketId!, fileId: fileId!).then((bytes) {
+  await storage
+      .getFileDownload(bucketId: localBucketId!, fileId: fileId!)
+      .then((bytes) {
     print('(DE74)${bytes.length}....${localPath}');
     final file = File(localPath);
     file.writeAsBytesSync(bytes);
@@ -1968,11 +1983,12 @@ Future<bool> copyAnyStorageFiletoLocal({
   var deleteResponse;
   try {
     var deleteResponse = await localFile.delete();
-  } on Exception catch (e){
+  } on Exception catch (e) {
     print('(DE179)${e}....${deleteResponse}');
   }
   print('(DE173)${deleteResponse}>>>>${localBucketId},,,,${fileId}');
-  Uint8List bytes = await storage.getFileDownload(bucketId: localBucketId!, fileId: fileId!);
+  Uint8List bytes =
+      await storage.getFileDownload(bucketId: localBucketId!, fileId: fileId!);
   print('(DE174)${bytes.length}....${localPath}');
   localFile.writeAsBytesSync(bytes);
   print('(DE176)');
@@ -2075,8 +2091,12 @@ Future<String?> readStorageFile({
   required String? hyperbookTitle,
   required int? versionNumber,
 }) async {
-  String expandedFilename =
-      user!.path! + '_' + hyperbookTitle! + '-' + versionNumber.toString() + '.json';
+  String expandedFilename = user!.path! +
+      '_' +
+      hyperbookTitle! +
+      '-' +
+      versionNumber.toString() +
+      '.json';
   Uint8List bytes = await storage.getFileDownload(
     bucketId: backupStorageRef.path!,
     fileId: expandedFilename,
@@ -2152,7 +2172,8 @@ Future<bool> doesStorageFileExist({String? bucketId, String? fileId}) async {
   return (fileList.files.length > 0);
 }
 
-Future<models.FileList> listStorageFilesOfStorageStep({required String? bucketId, required String? sessionStepId}) async {
+Future<models.FileList> listStorageFilesOfStorageStep(
+    {required String? bucketId, required String? sessionStepId}) async {
   print(
     '(XY6)${bucketId}....${kAttrStorageName}----${sessionStepId}',
   );
@@ -2249,7 +2270,8 @@ Future<bool> executeFFmpeg(String command) async {
   logString += 'Duration: ${duration}ms\n';
   logString += 'Output: $output\n';
   debugPrint('session: $output');
-  print('>>>>>>>>(FF4)FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}');
+  print(
+      '>>>>>>>>(FF4)FFMPEG error: ${returnCode}, Duration: ${duration}, command: ${command}');
   if ((returnCode == 0) || (returnCode == '0')) {
     return true;
   } else {

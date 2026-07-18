@@ -70,3 +70,8 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    val billing_version = "9.1.0"
+    implementation("com.android.billingclient:billing-ktx:$billing_version")
+}

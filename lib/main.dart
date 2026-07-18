@@ -30,8 +30,8 @@ import 'appwrite_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'conditional.dart';
 import 'app_state.dart';
-
-
+import 'package:path_provider/path_provider.dart';
+import 'dart:io' as dartio;
 
 appwrite.Client? client;
 appwrite.Databases? databases;
@@ -58,7 +58,9 @@ void main() async {
   usePathUrlStrategy();
   print('(AAU4)');
   // await initFirebase();
-  initAppwrite();
+  // dartio.Directory dir = await getApplicationDocumentsDirectory();
+  // print('(JN1)${dir.path}');
+ initAppwrite();
 /*  if (true) {
     // Only for debug mode.
     try {
